@@ -1,0 +1,148 @@
+---
+name: Aerospace Kinetic HUD
+colors:
+  surface: '#fcf9f8'
+  surface-dim: '#dcd9d9'
+  surface-bright: '#fcf9f8'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#f6f3f2'
+  surface-container: '#f0edec'
+  surface-container-high: '#ebe7e7'
+  surface-container-highest: '#e5e2e1'
+  on-surface: '#1c1b1b'
+  on-surface-variant: '#3b494c'
+  inverse-surface: '#313030'
+  inverse-on-surface: '#f3f0ef'
+  outline: '#6b7a7d'
+  outline-variant: '#bac9cc'
+  surface-tint: '#006875'
+  primary: '#006875'
+  on-primary: '#ffffff'
+  primary-container: '#00e5ff'
+  on-primary-container: '#00626e'
+  inverse-primary: '#00daf3'
+  secondary: '#a83900'
+  on-secondary: '#ffffff'
+  secondary-container: '#fd5900'
+  on-secondary-container: '#501600'
+  tertiary: '#2e6c00'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#6cec00'
+  on-tertiary-container: '#2b6600'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#9cf0ff'
+  primary-fixed-dim: '#00daf3'
+  on-primary-fixed: '#001f24'
+  on-primary-fixed-variant: '#004f58'
+  secondary-fixed: '#ffdbcf'
+  secondary-fixed-dim: '#ffb59a'
+  on-secondary-fixed: '#380d00'
+  on-secondary-fixed-variant: '#802900'
+  tertiary-fixed: '#80ff2c'
+  tertiary-fixed-dim: '#67e100'
+  on-tertiary-fixed: '#092100'
+  on-tertiary-fixed-variant: '#215100'
+  background: '#fcf9f8'
+  on-background: '#1c1b1b'
+  surface-variant: '#e5e2e1'
+typography:
+  display-hero:
+    fontFamily: JetBrains Mono
+    fontSize: 64px
+    fontWeight: '800'
+    lineHeight: 64px
+    letterSpacing: -0.04em
+spacing:
+  gutter: 1rem
+  gutter-mobile: 0.5rem
+  margin: 1.5rem
+  margin-mobile: 0.75rem
+  space-xs: 0.25rem
+  space-sm: 0.5rem
+  space-md: 1rem
+  space-lg: 1.5rem
+  space-xl: 2.5rem
+---
+
+## Brand & Style
+
+This design system delivers an uncompromising, high-velocity telemetry interface engineered for extreme outdoor visibility and biometric tracking. Fusing raw brutalist data density with high-performance aerospace heads-up displays (HUD), the visual language prioritizes rapid cognitive acquisition under severe sunlight and high-motion conditions. 
+
+The aesthetic is severe, calculated, and industrial. It strips away organic softening, skeuomorphic illusions, and decorative fluff, substituting them with razor-sharp framing, monospaced tabular counters, and stark chromatic contrast. The interface feels less like a lifestyle application and more like a tactical flight-recorder mounted to an elite endurance athlete.
+
+## Colors
+
+The color palette is calibrated for photon-level dominance against deep solar glare in a clean light mode environment:
+
+- **Primary (#00E5FF):** Electric Cyan serves as the core telemetry beam. It powers primary vector readouts, active tracking states, and focal metrics.
+- **Secondary (#FF5A00):** Kinetic Neon Orange provides urgent physiological feedback, zone-threshold warnings, instantaneous split markers, and high-priority triggers.
+- **Tertiary (#76FF03):** High-luminescence Signal Green is reserved exclusively for live GPS lock status, cadence optimization targets, and confirmed telemetry pulses.
+- **Neutral Canvas (#121212):** High-contrast grounding to anchor the light interface while maintaining stark optical separation.
+- **Surface Elevation (#1E1E1E):** Distinct structural housing for metric containers and split-lap blocks.
+- **Structural Outlines (#2A2A2A):** Low-bleed mechanical framing holding 1px containment borders. High-contrast state shifts snap borders to #00E5FF or #FF5A00 at full alpha.
+
+## Typography
+
+Typography functions as instrumentation. 
+
+- *Data Counters & Metrics:* Set in JetBrains Mono with fixed-width tabular figures enabled (font-variant-numeric: tabular-nums). Dynamic digits (pace, heart rate, elapsed time, wattage) maintain strict horizontal spatial stability without layout shaking during microsecond recalculations.
+- *Section Headers & Telemetry Labels:* Set in Space Grotesk to provide industrial geometric tension against the monospace grid. All metadata markers, sub-labels, and units of measurement are set strictly in uppercase with positive tracking (letter-spacing: 0.08em to 0.12em) to guarantee glyph separation when viewed through sweat or direct midday sunlight.
+
+## Layout & Spacing
+
+The layout philosophy follows a rigid, high-density telemetry grid. Spacing is tight, mathematical, and built on an explicit 4px baseline module to maximize glanceable viewport capacity.
+
+- *Grid Structure:* A 12-column dynamic framework on desktop and tablet, collapsing to a high-utility 4-column HUD array on mobile devices.
+- *Adaptive Breakpoints:*
+  - Mobile (< 768px): 0.75rem outer margins, 0.5rem gutters. Edge-to-edge modular data cards maximize tap surface area for gloved or running hands.
+  - Tablet (768px - 1024px): 1.5rem margins, 1rem gutters. Split-screen layout separating live route vector maps from stacked biometric blocks.
+  - Desktop (> 1024px): 2rem margins with locked modular dashboard bays for historical pace analysis and telemetry playback.
+- *Padding Philosophy:* Data cells use condensed vertical padding (space-xs to space-sm) and broad horizontal framing (space-md) to mirror mechanical avionics instrument clusters.
+
+## Elevation & Depth
+
+Visual hierarchy is maintained entirely without skeuomorphic blurs, diffused dropshadows, or synthetic ambient lighting:
+
+- *Zero-Shadow Rule:* No standard drop-shadows exist in this system. Soft shadows soften boundaries and deteriorate sunlight contrast.
+- *Border Architecture:* Depth and state layering are communicated using solid 1px and 2px borders set at #2A2A2A. Elevated or active cards replace the structural border with high-contrast #00E5FF or #FF5A00.
+- *Tonal Stepping:* Surfaces step from Base Canvas (#121212) to Instrument Bay (#1E1E1E), rising to Active Sub-modules (#252525).
+- *Reticle Insets:* Highlighted sub-components utilize sharp interior 1px corner markers or high-alpha outer bounds rather than floating elevation layers.
+
+## Shapes
+
+The geometric rule across all primitives is absolute: border-radius: 0px.
+
+Curves degrade digital precision and compromise peripheral optical capture during movement. Every button, card, modal frame, input field, and data container terminates in strict 90-degree right angles. 
+
+Where decorative accents are permitted, they must take the form of 45-degree chamfered corner notches (clipping paths) or crosshair indexing ticks, reinforcing the physical chassis of real-time avionics instrumentation.
+
+## Components
+
+### Buttons & Trigger Controls
+- *Primary Kinetic Action:* Solid #00E5FF fill with stark #121212 typography in JetBrains Mono bold uppercase. Zero corner radius. On active press: instant inversion to #121212 background with #00E5FF text and a 2px interior border.
+- *Secondary Split/Lap Trigger:* Solid #FF5A00 fill with #121212 text. Minimum tap target of 56px height to allow zero-look tactile engagement while running.
+- *Ghost/Diagnostic Action:* Background transparent, 1px #2A2A2A border, text #FFFFFF. Hover/focus snaps border to #00E5FF.
+
+### Metric HUD Cards
+- Background: #1E1E1E. Border: 1px #2A2A2A.
+- Structure: Label positioned in top-left in label-caps (#8A8A8A), value in center in display-hero (#00E5FF or #FFFFFF), measurement units bottom-right in label-mono-sm (#FF5A00).
+- Critical threshold breach: Card border flashes to 2px #FF5A00 with an optional 10% #FF5A00 translucent background tint.
+
+### Telemetry Chips & Segment Toggles
+- Fixed-height 28px monolithic blocks.
+- Unselected: #121212 background, 1px #2A2A2A border, #8A8A8A text.
+- Selected: #00E5FF background, 0px border, #121212 bold text. No transitional cross-fades; instantaneous binary toggling.
+
+### Data Lists & Splits
+- Monospaced rows separated by 1px solid horizontal dividers (#2A2A2A).
+- Left-aligned split sequence counter (e.g., KM 04), center-aligned instantaneous pace, right-aligned heart-rate zone indicator. Alternating rows do not use zebra striping; hierarchy is driven entirely by numerical weight.
+
+### Inputs & Scrubbers
+- Text fields use #1E1E1E fill with 1px #2A2A2A bottom-line emphasis or full perimeter box. Caret is a non-blinking solid #00E5FF block.
+- Scrubbers and range sliders feature squared slider thumbs (12px by 20px) sliding over an unrounded 2px solid track.
+
+### Specialized Hardware Components: Horizon Pitch Bar & Reticle Target
+- Pitch & Cadence Indicator: A vertical calibrated ladder using 1px tick marks every 4px, indexing heart rate spikes directly against target pace gates.

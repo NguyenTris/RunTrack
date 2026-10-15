@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="20dp">
+
+        <!-- Landscape Split Guidelines -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.03" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_land_split"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.46" />
+
+        <!-- Top Header Bar (Spans across Left Pane) -->
+        <View
+            android:id="@+id/indicator_header"
+            android:layout_width="3dp"
+            android:layout_height="16dp"
+            android:background="@drawable/bg_header_tag_indicator"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_header_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_header_title" />
+
+        <TextView
+            android:id="@+id/tv_header_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.05"
+            android:text="@string/header_status_bar"
+            android:textColor="@color/electric_cyan"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toTopOf="@+id/guideline_top"
+            tools:text="09:41:08  GPS  🔒" />
+
+        <TextView
+            android:id="@+id/tv_header_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:letterSpacing="0.12"
+            android:text="@string/header_pacepulse"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_header_status"
+            app:layout_constraintEnd_toStartOf="@+id/tv_header_status"
+            app:layout_constraintStart_toEndOf="@+id/indicator_header"
+            app:layout_constraintTop_toTopOf="@+id/tv_header_status"
+            tools:text="PACEPULSE // XÁC THỰC" />
+
+        <View
+            android:id="@+id/header_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/surface_border"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_land_split"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_header_title" />
+
+        <!-- LEFT PANE: Screen Title, Subtitle, Security Telemetry Card -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:lineSpacingExtra="2dp"
+            android:maxLines="2"
+            android:text="@string/title_khoi_tao_phien"
+            android:textColor="@color/text_primary"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:autoSizeMaxTextSize="32sp"
+            app:autoSizeMinTextSize="20sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_land_split"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header_divider"
+            tools:text="KHỞI TẠO\nPHIÊN" />
+
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:letterSpacing="0.1"
+            android:text="@string/subtitle_xac_thuc"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_land_split"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            tools:text="XÁC THỰC TÀI KHOẢN NGƯỜI CHẠY" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_security"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:cardBackgroundColor="@color/surface_card"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_land_split"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_subtitle"
+            app:strokeColor="@color/surface_border"
+            app:strokeWidth="1dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/tv_card_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.1"
+                    android:text="@string/card_label_bao_mat"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="KẾT NỐI BẢO MẬT" />
+
+                <TextView
+                    android:id="@+id/tv_card_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/card_val_128bit"
+                    android:textColor="@color/electric_cyan"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_card_label"
+                    tools:text="128-BIT" />
+
+                <TextView
+                    android:id="@+id/tv_card_sub"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:letterSpacing="0.08"
+                    android:text="@string/card_sub_tls"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_card_value"
+                    tools:text="TLS 1.3 / KÊNH ĐÃ MÃ HÓA" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_card_waveform"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/cd_waveform"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_ecg_waveform"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/ic_ecg_waveform" />
+
+                <TextView
+                    android:id="@+id/tv_card_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:letterSpacing="0.08"
+                    android:text="@string/card_status_on_dinh"
+                    android:textColor="@color/signal_green"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_card_waveform"
+                    tools:text="[ỔN ĐỊNH]" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- RIGHT PANE: Sub-Header Tag & Step Indicators -->
+        <TextView
+            android:id="@+id/tv_sub_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:letterSpacing="0.1"
+            android:text="@string/tag_xac_thuc"
+            android:textColor="@color/electric_cyan"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toTopOf="@+id/guideline_top"
+            tools:text="XÁC THỰC / 01" />
+
+        <View
+            android:id="@+id/indicator_step_5"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:background="@drawable/bg_indicator_inactive"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_sub_tag"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_sub_tag"
+            app:layout_constraintWidth_max="20dp" />
+
+        <View
+            android:id="@+id/indicator_step_4"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_indicator_inactive"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_sub_tag"
+            app:layout_constraintEnd_toStartOf="@+id/indicator_step_5"
+            app:layout_constraintTop_toTopOf="@+id/tv_sub_tag"
+            app:layout_constraintWidth_max="20dp" />
+
+        <View
+            android:id="@+id/indicator_step_3"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_indicator_inactive"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_sub_tag"
+            app:layout_constraintEnd_toStartOf="@+id/indicator_step_4"
+            app:layout_constraintTop_toTopOf="@+id/tv_sub_tag"
+            app:layout_constraintWidth_max="20dp" />
+
+        <View
+            android:id="@+id/indicator_step_2"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_indicator_inactive"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_sub_tag"
+            app:layout_constraintEnd_toStartOf="@+id/indicator_step_3"
+            app:layout_constraintTop_toTopOf="@+id/tv_sub_tag"
+            app:layout_constraintWidth_max="20dp" />
+
+        <View
+            android:id="@+id/indicator_step_1"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_indicator_active"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_sub_tag"
+            app:layout_constraintEnd_toStartOf="@+id/indicator_step_2"
+            app:layout_constraintTop_toTopOf="@+id/tv_sub_tag"
+            app:layout_constraintWidth_max="20dp" />
+
+        <!-- RIGHT PANE: Email Input -->
+        <TextView
+            android:id="@+id/tv_label_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:letterSpacing="0.1"
+            android:text="@string/label_email"
+            android:textColor="@color/text_primary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/tv_sub_tag"
+            tools:text="TÊN ĐỊNH DANH / EMAIL" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_email"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="6dp"
+            app:boxBackgroundMode="none"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/tv_label_email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input_focused"
+                android:inputType="textEmailAddress"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:text="@string/hint_email"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                tools:text="runner@pacepulse.io" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- RIGHT PANE: Password Input -->
+        <TextView
+            android:id="@+id/tv_label_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:letterSpacing="0.1"
+            android:text="@string/label_password"
+            android:textColor="@color/text_primary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/til_email"
+            tools:text="MẬT KHẨU" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_password_container"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input_default"
+            android:paddingStart="14dp"
+            android:paddingEnd="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/tv_label_password">
+
+            <TextView
+                android:id="@+id/btn_toggle_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/surface_card"
+                android:letterSpacing="0.08"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp"
+                android:text="@string/toggle_show_pass"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="[HIỆN]" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_password"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:inputType="textPassword"
+                android:padding="0dp"
+                android:text="@string/hint_password"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_toggle_password"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="••••••••••" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:letterSpacing="0.08"
+            android:text="@string/link_forgot_password"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="@+id/layout_password_container"
+            app:layout_constraintTop_toBottomOf="@+id/layout_password_container"
+            tools:text="QUÊN MẬT KHẤU? ↗" />
+
+        <!-- Primary Action Button: Login -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_primary_login"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="14dp"
+            android:letterSpacing="0.1"
+            android:text="@string/btn_login"
+            android:textColor="@color/bg_dark"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/kinetic_orange"
+            app:cornerRadius="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/tv_forgot_password"
+            tools:text="ĐĂNG NHẬP" />
+
+        <!-- Secondary Action Button: Social Login -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_secondary_login"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:letterSpacing="0.08"
+            android:text="@string/btn_login_third_party"
+            android:textColor="@color/text_primary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:cornerRadius="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/btn_primary_login"
+            app:strokeColor="@color/surface_border"
+            app:strokeWidth="1dp"
+            tools:text="ĐĂNG NHẬP QUA // GOOGLE | STRAVA" />
+
+        <!-- Footer Register Callout -->
+        <TextView
+            android:id="@+id/tv_register_prompt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:letterSpacing="0.08"
+            android:text="@string/text_register_prompt"
+            android:textColor="@color/text_primary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/btn_secondary_login"
+            tools:text="CHƯA CÓ TÀI KHOẢN? [ĐĂNG KÝ]" />
+
+        <TextView
+            android:id="@+id/tv_register_sub"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:text="@string/text_register_sub"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/tv_register_prompt"
+            tools:text="MỘT TÀI KHOẢN. KẾT NỐI MỌI BƯỚC CHẠY." />
+
+        <!-- Bottom Footer Divider & Status -->
+        <View
+            android:id="@+id/footer_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/surface_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card_security" />
+
+        <View
+            android:id="@+id/indicator_footer_dot"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:background="@drawable/bg_indicator_active"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_footer_status"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_footer_status" />
+
+        <TextView
+            android:id="@+id/tv_footer_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:letterSpacing="0.1"
+            android:text="@string/footer_cho_xac_thuc"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/indicator_footer_dot"
+            app:layout_constraintTop_toBottomOf="@+id/footer_divider"
+            tools:text="CHỜ XÁC THỰC" />
+
+        <TextView
+            android:id="@+id/tv_footer_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.1"
+            android:text="@string/footer_version"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_footer_status"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_footer_status"
+            tools:text="PP_OS / V.2.04" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

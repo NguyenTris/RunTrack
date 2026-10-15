@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="20dp"
+    android:viewportWidth="200"
+    android:viewportHeight="20">
+
+    <!-- Repeating Barcode Lines -->
+    <path
+        android:pathData="M2,0 V20 M6,0 V20 M8,0 V20 M14,0 V20 M18,0 V20 M20,0 V20 M24,0 V20 M30,0 V20 M34,0 V20 M40,0 V20 M42,0 V20 M48,0 V20 M52,0 V20 M58,0 V20 M62,0 V20 M64,0 V20 M70,0 V20 M74,0 V20 M80,0 V20 M82,0 V20 M88,0 V20 M92,0 V20 M98,0 V20 M102,0 V20 M104,0 V20 M110,0 V20 M114,0 V20 M120,0 V20 M122,0 V20 M128,0 V20 M132,0 V20 M138,0 V20 M142,0 V20 M144,0 V20 M150,0 V20 M154,0 V20 M160,0 V20 M162,0 V20 M168,0 V20 M172,0 V20 M178,0 V20 M182,0 V20 M184,0 V20 M190,0 V20 M194,0 V20 M198,0 V20"
+        android:strokeColor="#55555B"
+        android:strokeWidth="2" />
+
+    <!-- Cyan Highlight Barcode Lines -->
+    <path
+        android:pathData="M10,0 V20 M84,0 V20 M124,0 V20 M174,0 V20"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="3" />
+
+</vector>

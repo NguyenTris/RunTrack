@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Standard Colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- PacePulse Cyberpunk Telemetry HUD Palette -->
+    <color name="bg_dark">#0A0D0E</color>
+    <color name="surface_card">#121619</color>
+    <color name="surface_input">#121214</color>
+    <color name="surface_border">#262B30</color>
+
+    <!-- Cyberpunk Accents -->
+    <color name="electric_cyan">#00E5FF</color>
+    <color name="kinetic_orange">#FF5500</color>
+    <color name="neon_green">#39FF14</color>
+    <color name="signal_green">#39FF14</color>
+    <color name="logo_orange">#FF9500</color>
+
+    <!-- Typography & Indicators -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#8E8E93</color>
+    <color name="text_tertiary">#55555B</color>
+    <color name="indicator_inactive">#252528</color>
+</resources>

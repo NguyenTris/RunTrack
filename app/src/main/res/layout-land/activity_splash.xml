@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true"
+    tools:context=".SplashActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp">
+
+        <!-- Landscape Split Guidelines -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.04" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_logo_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_logo_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.88" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_land_split"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.45" />
+
+        <!-- LEFT PANE: Header Tag & Central Logo Grid -->
+        <View
+            android:id="@+id/indicator_header"
+            android:layout_width="3dp"
+            android:layout_height="14dp"
+            android:background="@drawable/bg_header_tag_indicator"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_header_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_header_title" />
+
+        <TextView
+            android:id="@+id/tv_header_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.15"
+            android:text="@string/header_code"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toTopOf="@+id/guideline_top"
+            tools:text="RT / 01" />
+
+        <TextView
+            android:id="@+id/tv_header_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:letterSpacing="0.15"
+            android:text="@string/header_system"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_header_code"
+            app:layout_constraintEnd_toStartOf="@+id/tv_header_code"
+            app:layout_constraintStart_toEndOf="@+id/indicator_header"
+            app:layout_constraintTop_toTopOf="@+id/tv_header_code"
+            tools:text="ENDURANCE SYSTEM" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_logo_grid"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/cd_logo"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_runtrack_logo"
+            app:layout_constraintBottom_toTopOf="@+id/guideline_logo_bottom"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_land_split"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/guideline_logo_top"
+            tools:src="@drawable/ic_runtrack_logo" />
+
+        <!-- RIGHT PANE: Title, Subtitle, Step Indicators & Action Button -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/title_runtrack"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            app:autoSizeMaxTextSize="38sp"
+            app:autoSizeMinTextSize="22sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toTopOf="@+id/guideline_top"
+            app:layout_constraintWidth_max="480dp"
+            tools:text="RunTrack" />
+
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/subtitle_runtrack"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            app:layout_constraintWidth_max="480dp"
+            tools:text="Kết nối nhịp tim,\nvẽ đường kỷ lục" />
+
+        <!-- Step Progress Indicator Bars in Right Pane -->
+        <View
+            android:id="@+id/indicator_step_5"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:background="@drawable/bg_indicator_inactive"
+            app:layout_constraintBottom_toBottomOf="@+id/indicator_step_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/indicator_step_1"
+            app:layout_constraintWidth_max="32dp" />
+
+        <View
+            android:id="@+id/indicator_step_4"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_indicator_inactive"
+            app:layout_constraintBottom_toBottomOf="@+id/indicator_step_1"
+            app:layout_constraintEnd_toStartOf="@+id/indicator_step_5"
+            app:layout_constraintTop_toTopOf="@+id/indicator_step_1"
+            app:layout_constraintWidth_max="32dp" />
+
+        <View
+            android:id="@+id/indicator_step_3"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_indicator_inactive"
+            app:layout_constraintBottom_toBottomOf="@+id/indicator_step_1"
+            app:layout_constraintEnd_toStartOf="@+id/indicator_step_4"
+            app:layout_constraintTop_toTopOf="@+id/indicator_step_1"
+            app:layout_constraintWidth_max="32dp" />
+
+        <View
+            android:id="@+id/indicator_step_2"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_indicator_active"
+            app:layout_constraintBottom_toBottomOf="@+id/indicator_step_1"
+            app:layout_constraintEnd_toStartOf="@+id/indicator_step_3"
+            app:layout_constraintTop_toTopOf="@+id/indicator_step_1"
+            app:layout_constraintWidth_max="32dp" />
+
+        <View
+            android:id="@+id/indicator_step_1"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_indicator_active"
+            app:layout_constraintEnd_toStartOf="@+id/indicator_step_2"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/tv_subtitle"
+            app:layout_constraintWidth_max="32dp" />
+
+        <!-- Step Label Below Indicators -->
+        <TextView
+            android:id="@+id/tv_step_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:text="@string/step_label_khoi_dong"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/indicator_step_1"
+            tools:text="KHỞI ĐỘNG" />
+
+        <!-- Divider Line with Slashes -->
+        <View
+            android:id="@+id/divider_line_left"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="24dp"
+            android:background="@color/surface_border"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_divider_slashes"
+            app:layout_constraintEnd_toStartOf="@+id/tv_divider_slashes"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toTopOf="@+id/tv_divider_slashes"
+            app:layout_constraintWidth_max="140dp" />
+
+        <TextView
+            android:id="@+id/tv_divider_slashes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="12dp"
+            android:text="@string/divider_slashes"
+            android:textColor="@color/kinetic_orange"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/tv_step_label"
+            tools:text="//" />
+
+        <View
+            android:id="@+id/divider_line_right"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/surface_border"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_divider_slashes"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_divider_slashes"
+            app:layout_constraintTop_toTopOf="@+id/tv_divider_slashes"
+            app:layout_constraintWidth_max="140dp" />
+
+        <!-- Kinetic Action Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_action"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:letterSpacing="0.1"
+            android:text="@string/btn_start_run"
+            android:textColor="@color/bg_dark"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/electric_cyan"
+            app:cornerRadius="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_land_split"
+            app:layout_constraintTop_toBottomOf="@+id/tv_divider_slashes"
+            app:layout_constraintWidth_max="480dp"
+            tools:text="BẮT ĐẦU CHẠY" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

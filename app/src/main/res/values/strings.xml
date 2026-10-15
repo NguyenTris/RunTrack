@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">RunTrack</string>
+
+    <!-- Splash Screen Strings -->
+    <string name="header_system">ENDURANCE SYSTEM</string>
+    <string name="header_code">RT / 01</string>
+    <string name="cd_logo">RunTrack Telemetry Logo</string>
+    <string name="title_runtrack">RunTrack</string>
+    <string name="subtitle_runtrack">Kết nối nhịp tim,\nvẽ đường kỷ lục</string>
+    <string name="step_label_khoi_dong">KHỞI ĐỘNG</string>
+    <string name="divider_slashes">//</string>
+    <string name="btn_start_run">BẮT ĐẦU CHẠY</string>
+
+    <!-- PacePulse Common Strings -->
+    <string name="header_pacepulse">PACEPULSE // XÁC THỰC</string>
+    <string name="header_status_bar">09:41:08  GPS  🔒</string>
+    <string name="tag_xac_thuc">XÁC THỰC / 01</string>
+    <string name="tag_xac_thuc_01">XÁC THỰC / 01</string>
+    <string name="tag_xac_thuc_04">XÁC THỰC / 04</string>
+    <string name="footer_version">PP_OS / V.2.04</string>
+
+    <!-- Login Screen Strings (Image 1) -->
+    <string name="title_khoi_tao_phien">KHỞI TẠO\nPHIÊN</string>
+    <string name="subtitle_xac_thuc">XÁC THỰC TÀI KHOẢN NGƯỜI CHẠY</string>
+    <string name="card_label_bao_mat">KẾT NỐI BẢO MẬT</string>
+    <string name="card_val_128bit">128-BIT</string>
+    <string name="card_sub_tls">TLS 1.3 / KÊNH ĐÃ MÃ HÓA</string>
+    <string name="card_status_on_dinh">[ỔN ĐỊNH]</string>
+
+    <string name="label_email">TÊN ĐỊNH DANH / EMAIL</string>
+    <string name="hint_email">runner@pacepulse.io</string>
+    <string name="label_password">MẬT KHẨU</string>
+    <string name="hint_password">••••••••••</string>
+    <string name="toggle_show_pass">[HIỆN]</string>
+    <string name="toggle_hide_pass">[ẨN]</string>
+    <string name="link_forgot_password">QUÊN MẬT KHẤU? ↗</string>
+
+    <string name="btn_login">ĐĂNG NHẬP</string>
+    <string name="btn_login_third_party">ĐĂNG NHẬP QUA // GOOGLE | STRAVA</string>
+    <string name="text_register_prompt">CHƯA CÓ TÀI KHOẢN? [ĐĂNG KÝ]</string>
+    <string name="text_register_sub">MỘT TÀI KHOẢN. KẾT NỐI MỌI BƯỚC CHẠY.</string>
+    <string name="footer_cho_xac_thuc">CHỜ XÁC THỰC</string>
+
+    <!-- Auth Success Screen Strings (Image 2) -->
+    <string name="title_login_success">ĐĂNG NHẬP\nTHÀNH CÔNG</string>
+    <string name="subtitle_login_success">ĐÃ XÁC THỰC / HỆ THỐNG SẴN SÀNG</string>
+    <string name="card_label_runner">THẺ NGƯỜI CHẠY</string>
+    <string name="card_status_verified">[ĐÃ XÁC MINH]</string>
+    <string name="runner_id_label">ĐỊNH DANH HIỆN TẠI</string>
+    <string name="runner_name">NIGHTRUNNER_07</string>
+    <string name="runner_pp_id">PP-ID / 0848-7291</string>
+    <string name="runner_session">PHIÊN / A7F2-89C1</string>
+    <string name="runner_date">07/10/2026</string>
+
+    <string name="row_xac_thuc_tk">XÁC THỰC TÀI KHOẢN</string>
+    <string name="status_da_xac_minh">ĐÃ XÁC MINH ✓</string>
+    <string name="row_mat_khau">MẬT KHẨU</string>
+    <string name="status_da_ma_hoa">ĐÃ MÃ HÓA ✓</string>
+    <string name="row_kenh_du_lieu">KÊNH DỮ LIỆU</string>
+    <string name="status_da_ket_noi">ĐÃ KẾT NỐI ✓</string>
+
+    <string name="text_next_journey">HÀNH TRÌNH TIẾP THEO BẮT ĐẦU TỪ ĐÂY.</string>
+    <string name="btn_enter_dashboard">VÀO BẢNG ĐIỀU KHIỂN</string>
+    <string name="btn_switch_account">ĐỔI TÀI KHOẢN [ĐĂNG XUẤT]</string>
+    <string name="sub_connection_established">ĐÃ THIẾT LẬP KẾT NỐI / 09:41:12 UTC</string>
+    <string name="footer_session_active">PHIÊN ĐANG HOẠT ĐỘNG</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_waveform">TLS Waveform Pulse</string>
+    <string name="cd_shield_check">Verified Shield Icon</string>
+    <string name="cd_barcode">Barcode Pattern</string>
+</resources>

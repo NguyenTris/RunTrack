@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- HUD Background Grid Lines -->
+    <!-- Vertical Grid Lines -->
+    <path
+        android:pathData="M40,20 L40,180 M70,20 L70,180 M100,20 L100,180 M130,20 L130,180 M160,20 L160,180"
+        android:strokeColor="#1F2A2A2E"
+        android:strokeWidth="1" />
+
+    <!-- Horizontal Grid Lines -->
+    <path
+        android:pathData="M20,40 L180,40 M20,70 L180,70 M20,100 L180,100 M20,130 L180,130 M20,160 L180,160"
+        android:strokeColor="#1F2A2A2E"
+        android:strokeWidth="1" />
+
+    <!-- Corner HUD Brackets -->
+    <path
+        android:pathData="M30,45 L30,30 L45,30"
+        android:strokeColor="#3A3A3E"
+        android:strokeWidth="1.5" />
+    <path
+        android:pathData="M155,30 L170,30 L170,45"
+        android:strokeColor="#3A3A3E"
+        android:strokeWidth="1.5" />
+    <path
+        android:pathData="M30,155 L30,170 L45,170"
+        android:strokeColor="#3A3A3E"
+        android:strokeWidth="1.5" />
+    <path
+        android:pathData="M155,170 L170,170 L170,155"
+        android:strokeColor="#3A3A3E"
+        android:strokeWidth="1.5" />
+
+    <!-- Top-Left Cyan Accent Dot -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M30,30 h5 v5 h-5 z" />
+
+    <!-- Geometric "R" Symbol in Kinetic Orange -->
+    <!-- Left Vertical Stem -->
+    <path
+        android:fillColor="#FF9500"
+        android:pathData="M70,55 h20 v90 h-20 z" />
+
+    <!-- Top Horizontal Bar & Top Loop -->
+    <path
+        android:fillColor="#FF9500"
+        android:pathData="M90,55 h35 l15,15 v25 h-40 v-15 h20 v-10 h-30 z" />
+
+    <!-- Middle Connection & Right Leg -->
+    <path
+        android:fillColor="#FF9500"
+        android:pathData="M90,95 h35 l20,50 h-25 l-15,-35 h-15 v35 h-0 z" />
+
+    <!-- Downward Orange Caret Accent -->
+    <path
+        android:fillColor="#FF5500"
+        android:pathData="M130,148 L138,158 L146,148 Z" />
+
+    <!-- Horizontal Orange Line Accent -->
+    <path
+        android:pathData="M125,135 L165,135"
+        android:strokeColor="#FF5500"
+        android:strokeWidth="3" />
+
+    <!-- Bottom-Right Corner Orange Dot Accent -->
+    <path
+        android:fillColor="#FF5500"
+        android:pathData="M167,167 h4 v4 h-4 z" />
+
+</vector>
