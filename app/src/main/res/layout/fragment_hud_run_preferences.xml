@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-02] TÙY CHỌN CHẠY & GIỌNG NÓI (RUN PREFERENCES & AUDIO CUES) -->
+<!-- Architecture: RelativeLayout (Root) + ScrollView > LinearLayout (Body) + RelativeLayout (Toggles) -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER STRIP -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="CONFIG // RUN PREFERENCES"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="AUDIO CUES ACTIVE"
+            android:textColor="@color/hud_signal"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+    </LinearLayout>
+
+    <!-- TOP APP BAR -->
+    <RelativeLayout
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_top_bar_height"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:text="&lt; HUB"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_body"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.1"
+            android:text="TÙY CHỌN CHẠY &amp; GIỌNG NÓI"
+            android:textAllCaps="true"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="@dimen/hud_text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/hud_badge_cyan"
+            android:fontFamily="monospace"
+            android:paddingStart="@dimen/hud_space_xs"
+            android:paddingTop="@dimen/hud_space_2xs"
+            android:paddingEnd="@dimen/hud_space_xs"
+            android:paddingBottom="@dimen/hud_space_2xs"
+            android:text="RUN PREF"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_badge" />
+    </RelativeLayout>
+
+    <!-- FIXED BOTTOM SAVE BUTTON -->
+    <Button
+        android:id="@+id/btnSavePreferences"
+        style="@style/HudButton.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_btn_primary_height"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/hud_space_md"
+        android:text="LƯU TÙY CHỌN CHẠY" />
+
+    <!-- SCROLLABLE FORM -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnSavePreferences"
+        android:layout_below="@id/topAppBar"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/hud_space_md">
+
+            <!-- GROUP 1: AUDIO CUES -->
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ HƯỚNG DẪN BẰNG GIỌNG NÓI (AUDIO CUES)" />
+
+            <!-- Toggle Row 1: Audio Cues Master Switch -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/switchAudioCues"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PHÁT GIỌNG NÓI ĐỊNH KỲ" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Thông báo vận tốc (Pace) &amp; nhịp tim qua tai nghe"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchAudioCues"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:checked="true" />
+            </RelativeLayout>
+
+            <!-- Audio Frequency Selector -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_card_container"
+                android:orientation="vertical"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="TẦN SUẤT THÔNG BÁO PACE &amp; HR"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <!-- 3 Segmented Options -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="@dimen/hud_space_sm"
+                    android:background="@color/hud_surface_sub"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnInterval500m"
+                        style="@style/HudButton.Outline"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="500 M"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <Button
+                        android:id="@+id/btnInterval1km"
+                        style="@style/HudButton.Primary"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="1.0 KM"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <Button
+                        android:id="@+id/btnInterval2km"
+                        style="@style/HudButton.Outline"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="2.0 KM"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- GROUP 2: GPS & TRACKING MECHANISM -->
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ CƠ CHẾ THEO DÕI GPS" />
+
+            <!-- Auto-pause Toggle -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_card_container"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/switchAutoPause"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TỰ ĐỘNG DỪNG (AUTO-PAUSE)" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Tự ngắt bộ đếm khi vận tốc &lt; 1.0 km/h (chờ đèn đỏ)"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchAutoPause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:checked="true" />
+            </RelativeLayout>
+
+            <!-- GROUP 3: UNITS & MAP DISPLAY -->
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ HỆ ĐO LƯỜNG &amp; HIỂN THỊ BẢN ĐỒ" />
+
+            <!-- Unit Selector -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:orientation="vertical"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="ĐƠN VỊ ĐO ĐẠC TOÀN HỆ THỐNG"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="@dimen/hud_space_sm"
+                    android:background="@color/hud_surface_sub"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnUnitMetric"
+                        style="@style/HudButton.Primary"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="METRIC (KM, M)"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <Button
+                        android:id="@+id/btnUnitImperial"
+                        style="@style/HudButton.Outline"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="IMPERIAL (MILES, FT)"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- High-Contrast Map Toggle -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_card_container"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/switchHighContrastMap"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="BẢN ĐỒ HIGH-CONTRAST DARK HUD" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Tối ưu đường Polyline dưới ánh nắng gắt"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchHighContrastMap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:checked="true" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
