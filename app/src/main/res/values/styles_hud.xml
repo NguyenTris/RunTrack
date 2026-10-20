@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PacePulse Aerospace Kinetic HUD - Styles & Text Appearances -->
+<resources>
+    <!-- Text Appearances -->
+    <style name="HudText">
+        <item name="android:textColor">@color/hud_text_primary</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <style name="HudText.DisplayHero">
+        <item name="android:textSize">@dimen/hud_text_hero_metric</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/hud_primary</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <style name="HudText.DisplayAlert">
+        <item name="android:textSize">@dimen/hud_text_hero_metric</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/hud_alert</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <style name="HudText.TopBarTitle">
+        <item name="android:textSize">@dimen/hud_text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/hud_text_primary</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.1</item>
+    </style>
+
+    <style name="HudText.SectionHeader">
+        <item name="android:textSize">@dimen/hud_text_section</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/hud_text_dim</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.12</item>
+    </style>
+
+    <style name="HudText.BarTitle">
+        <item name="android:textSize">@dimen/hud_text_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/hud_text_primary</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <style name="HudText.Telemetry">
+        <item name="android:textSize">@dimen/hud_text_caption</item>
+        <item name="android:textColor">@color/hud_text_cyan</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <!-- Button Styles -->
+    <style name="HudButton">
+        <item name="android:layout_height">@dimen/hud_btn_height</item>
+        <item name="android:textSize">@dimen/hud_text_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:gravity">center</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="HudButton.Primary">
+        <item name="android:background">@drawable/hud_btn_primary</item>
+        <item name="android:textColor">@color/hud_canvas</item>
+    </style>
+
+    <style name="HudButton.Alert">
+        <item name="android:background">@drawable/hud_btn_alert</item>
+        <item name="android:textColor">@color/hud_canvas</item>
+    </style>
+
+    <style name="HudButton.Outline">
+        <item name="android:background">@drawable/hud_btn_outline</item>
+        <item name="android:textColor">@color/hud_text_primary</item>
+    </style>
+</resources>

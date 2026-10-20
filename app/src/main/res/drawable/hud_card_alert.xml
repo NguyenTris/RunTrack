@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Alert Metric HUD Container - Neon Orange Stroke -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/hud_surface" />
+    <stroke android:width="@dimen/hud_border_thick" android:color="@color/hud_alert" />
+    <corners android:radius="@dimen/hud_radius_zero" />
+</shape>
