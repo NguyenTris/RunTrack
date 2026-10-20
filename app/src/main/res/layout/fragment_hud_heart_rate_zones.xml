@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-04] HIỆU CHỈNH VÙNG NHỊP TIM & BÁO ĐỘNG (HR ZONES & THRESHOLD ALERTS) -->
+<!-- Architecture: RelativeLayout (Root) + ScrollView > LinearLayout (Body) + Horizon Pitch Bar (5 Zones) -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER STRIP -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="BIOMETRIC TELEMETRY // HR ZONES"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="WARNING ACTIVE"
+            android:textColor="@color/hud_alert"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+    </LinearLayout>
+
+    <!-- TOP APP BAR -->
+    <RelativeLayout
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_top_bar_height"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:text="&lt; HUB"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_body"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.1"
+            android:text="VÙNG NHỊP TIM &amp; BÁO ĐỘNG"
+            android:textAllCaps="true"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="@dimen/hud_text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/hud_badge_orange"
+            android:fontFamily="monospace"
+            android:paddingStart="@dimen/hud_space_xs"
+            android:paddingTop="@dimen/hud_space_2xs"
+            android:paddingEnd="@dimen/hud_space_xs"
+            android:paddingBottom="@dimen/hud_space_2xs"
+            android:text="ZONE CAL"
+            android:textColor="@color/hud_alert"
+            android:textSize="@dimen/hud_text_badge" />
+    </RelativeLayout>
+
+    <!-- FIXED BOTTOM SAVE BUTTON -->
+    <Button
+        android:id="@+id/btnSaveSafetyConfig"
+        style="@style/HudButton.Alert"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_btn_primary_height"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/hud_space_md"
+        android:text="LƯU CẤU HÌNH NGƯỠNG AN TOÀN" />
+
+    <!-- SCROLLABLE BODY -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnSaveSafetyConfig"
+        android:layout_below="@id/topAppBar"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/hud_space_md">
+
+            <!-- THRESHOLD BREACH METRIC BAY (Orange Border) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_card_alert"
+                android:orientation="vertical"
+                android:padding="@dimen/hud_space_md">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="NGƯỠNG BÁO NGUY HIỂM (BREACH)"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:fontFamily="monospace"
+                        android:text="ZONE 5 TRIGGER"
+                        android:textColor="@color/hud_alert"
+                        android:textSize="@dimen/hud_text_caption"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <!-- Big HR Readout -->
+                <TextView
+                    android:id="@+id/tvThresholdBpmVal"
+                    style="@style/HudText.DisplayAlert"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:text="185 BPM" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="Kích hoạt đèn chớp cam &amp; rung ngắt quãng khi nhịp tim duy trì > 185 bpm quá 30 giây."
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ HORIZON PITCH BAR (5 PHÂN VÙNG)" />
+
+            <!-- HORIZON PITCH BAR (5 ZONES CONTAINER) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_card_container"
+                android:orientation="vertical"
+                android:padding="@dimen/hud_space_sm">
+
+                <!-- ZONE 5 (Red Line) -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginBottom="@dimen/hud_space_xs"
+                    android:background="#331508"
+                    android:paddingStart="@dimen/hud_space_sm"
+                    android:paddingEnd="@dimen/hud_space_sm">
+
+                    <TextView
+                        android:id="@+id/tagZ5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="ZONE 5  CỰC ĐẠI (>90%)"
+                        android:textColor="@color/hud_alert"
+                        android:textSize="@dimen/hud_text_caption"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="> 172 BPM"
+                        android:textColor="@color/hud_text_orange"
+                        android:textSize="@dimen/hud_text_caption" />
+                </RelativeLayout>
+
+                <!-- ZONE 4 (Anaerobic) -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginBottom="@dimen/hud_space_xs"
+                    android:background="#282210"
+                    android:paddingStart="@dimen/hud_space_sm"
+                    android:paddingEnd="@dimen/hud_space_sm">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="ZONE 4  KỴ KHÍ (80-90%)"
+                        android:textColor="@color/hud_zone_4"
+                        android:textSize="@dimen/hud_text_caption"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="153 - 171 BPM"
+                        android:textColor="@color/hud_text_sub"
+                        android:textSize="@dimen/hud_text_caption" />
+                </RelativeLayout>
+
+                <!-- ZONE 3 (Aerobic) -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginBottom="@dimen/hud_space_xs"
+                    android:background="#182813"
+                    android:paddingStart="@dimen/hud_space_sm"
+                    android:paddingEnd="@dimen/hud_space_sm">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="ZONE 3  HIẾU KHÍ (70-80%)"
+                        android:textColor="@color/hud_signal"
+                        android:textSize="@dimen/hud_text_caption"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="134 - 152 BPM"
+                        android:textColor="@color/hud_text_sub"
+                        android:textSize="@dimen/hud_text_caption" />
+                </RelativeLayout>
+
+                <!-- ZONE 2 (Fat Burn) -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginBottom="@dimen/hud_space_xs"
+                    android:background="#152427"
+                    android:paddingStart="@dimen/hud_space_sm"
+                    android:paddingEnd="@dimen/hud_space_sm">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="ZONE 2  ĐỐT MỠ (60-70%)"
+                        android:textColor="@color/hud_primary"
+                        android:textSize="@dimen/hud_text_caption"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="115 - 133 BPM"
+                        android:textColor="@color/hud_text_sub"
+                        android:textSize="@dimen/hud_text_caption" />
+                </RelativeLayout>
+
+                <!-- ZONE 1 (Warm Up) -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="#1C1C1C"
+                    android:paddingStart="@dimen/hud_space_sm"
+                    android:paddingEnd="@dimen/hud_space_sm">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="ZONE 1  PHỤC HỒI (50-60%)"
+                        android:textColor="@color/hud_zone_1"
+                        android:textSize="@dimen/hud_text_caption"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="monospace"
+                        android:text="95 - 114 BPM"
+                        android:textColor="@color/hud_text_sub"
+                        android:textSize="@dimen/hud_text_caption" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- Haptic Alert Toggle -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/hud_card_container"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/switchHapticAlert"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="RUNG PHẢN HỒI KHI VƯỢT NGƯỠNG" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Rung xúc giác mạnh liên tục mỗi 5s khi chạm Zone 5"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchHapticAlert"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:checked="true" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
