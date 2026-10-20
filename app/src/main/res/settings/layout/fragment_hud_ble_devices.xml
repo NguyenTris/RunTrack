@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-05] QUẢN LÝ THIẾT BỊ NGOẠI VI BLE (PAIRED BLE DEVICES BAY) -->
+<!-- Architecture: RelativeLayout (Root) + ScrollView > LinearLayout (Body) + RelativeLayout (Device Cards) -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER STRIP -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="HARDWARE // BLE PERIPHERALS"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="2 SENSORS ONLINE"
+            android:textColor="@color/hud_signal"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+    </LinearLayout>
+
+    <!-- TOP APP BAR -->
+    <RelativeLayout
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_top_bar_height"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:text="&lt; HUB"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_body"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.1"
+            android:text="THIẾT BỊ NGOẠI VI (BLE)"
+            android:textAllCaps="true"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="@dimen/hud_text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/hud_badge_cyan"
+            android:fontFamily="monospace"
+            android:paddingStart="@dimen/hud_space_xs"
+            android:paddingTop="@dimen/hud_space_2xs"
+            android:paddingEnd="@dimen/hud_space_xs"
+            android:paddingBottom="@dimen/hud_space_2xs"
+            android:text="BLE BAY"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_badge" />
+    </RelativeLayout>
+
+    <!-- FIXED BOTTOM SCAN BUTTON (54dp large touch target) -->
+    <Button
+        android:id="@+id/btnScanNewDevices"
+        style="@style/HudButton.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_btn_primary_height"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/hud_space_md"
+        android:text="[+] QUÉT &amp; THÊM THIẾT BỊ MỚI" />
+
+    <!-- SCROLLABLE LIST -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnScanNewDevices"
+        android:layout_below="@id/topAppBar"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/hud_space_md">
+
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ CẢM BIẾN ĐANG KẾT NỐI (ACTIVE)" />
+
+            <!-- DEVICE 1: POLAR H10 CHEST STRAP (Green Accent) -->
+            <RelativeLayout
+                android:id="@+id/cardDeviceHrm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_green"
+                android:padding="@dimen/hud_space_md">
+
+                <!-- Header Row -->
+                <TextView
+                    android:id="@+id/tvHrmName"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="POLAR H10 CHEST STRAP" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/hud_badge_green"
+                    android:fontFamily="monospace"
+                    android:paddingStart="@dimen/hud_space_xs"
+                    android:paddingEnd="@dimen/hud_space_xs"
+                    android:text="PRIMARY HRM"
+                    android:textColor="@color/hud_signal"
+                    android:textSize="9sp" />
+
+                <!-- UUID Subtext -->
+                <TextView
+                    android:id="@+id/tvHrmUuid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvHrmName"
+                    android:layout_marginTop="@dimen/hud_space_2xs"
+                    android:fontFamily="monospace"
+                    android:text="GATT SERVICE: 0x180D (HEART RATE) // BLE 5.2"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <!-- Telemetry Row (Battery, RSSI, BPM) -->
+                <LinearLayout
+                    android:id="@+id/rowHrmMetrics"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvHrmUuid"
+                    android:layout_marginTop="@dimen/hud_space_sm"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:text="PIN: 88% [■■■■□]"
+                        android:textColor="@color/hud_text_cyan"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:text="RSSI: -52 DBM"
+                        android:textColor="@color/hud_signal"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="62 BPM"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="@dimen/hud_text_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Actions Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:layout_below="@id/rowHrmMetrics"
+                    android:layout_marginTop="@dimen/hud_space_sm"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnDisconnectHrm"
+                        style="@style/HudButton.Outline"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="@dimen/hud_space_xs"
+                        android:layout_weight="1"
+                        android:text="NGẮT KẾT NỐI"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <Button
+                        android:id="@+id/btnTestHrm"
+                        style="@style/HudButton.Primary"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/hud_space_xs"
+                        android:layout_weight="1"
+                        android:text="TEST CẢM BIẾN"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- DEVICE 2: ALPHAFLY 3 FOOTPOD (Cyan Accent) -->
+            <RelativeLayout
+                android:id="@+id/cardDevicePod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_cyan"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvPodName"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="ALPHAFLY 3 FOOTPOD" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/hud_badge_cyan"
+                    android:fontFamily="monospace"
+                    android:paddingStart="@dimen/hud_space_xs"
+                    android:paddingEnd="@dimen/hud_space_xs"
+                    android:text="CADENCE POD"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="9sp" />
+
+                <TextView
+                    android:id="@+id/tvPodUuid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvPodName"
+                    android:layout_marginTop="@dimen/hud_space_2xs"
+                    android:fontFamily="monospace"
+                    android:text="GATT SERVICE: 0x1814 (RUNNING SPEED &amp; CADENCE)"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <LinearLayout
+                    android:id="@+id/rowPodMetrics"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvPodUuid"
+                    android:layout_marginTop="@dimen/hud_space_sm"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:text="PIN: 94% [■■■■■]"
+                        android:textColor="@color/hud_text_cyan"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:text="RSSI: -64 DBM"
+                        android:textColor="@color/hud_signal"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="178 SPM"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="@dimen/hud_text_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:layout_below="@id/rowPodMetrics"
+                    android:layout_marginTop="@dimen/hud_space_sm"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnDisconnectPod"
+                        style="@style/HudButton.Outline"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="@dimen/hud_space_xs"
+                        android:layout_weight="1"
+                        android:text="NGẮT KẾT NỐI"
+                        android:textSize="@dimen/hud_text_caption" />
+
+                    <Button
+                        android:id="@+id/btnCalibratePod"
+                        style="@style/HudButton.Outline"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/hud_space_xs"
+                        android:layout_weight="1"
+                        android:text="HIỆU CHUẨN GÓC"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

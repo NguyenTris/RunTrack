@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-01] MASTER SETTINGS & PERIPHERALS HUB -->
+<!-- Architecture: RelativeLayout (Root) + ScrollView > LinearLayout (Body) + RelativeLayout (Bars) -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER TELEMETRY STRIP (Fixed Top) -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.1"
+            android:text="PACEPULSE // HUD V2.4"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+
+        <TextView
+            android:id="@+id/tvGpsStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.1"
+            android:text="GPS LOCK 100%"
+            android:textColor="@color/hud_signal"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+    </LinearLayout>
+
+    <!-- TOP APP BAR (Fixed below telemetry strip) -->
+    <RelativeLayout
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_top_bar_height"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:text="&lt; HOME"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_body"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.1"
+            android:text="BẢNG CÀI ĐẶT &amp; THIẾT BỊ"
+            android:textAllCaps="true"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="@dimen/hud_text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/hud_badge_cyan"
+            android:fontFamily="monospace"
+            android:paddingStart="@dimen/hud_space_xs"
+            android:paddingTop="@dimen/hud_space_2xs"
+            android:paddingEnd="@dimen/hud_space_xs"
+            android:paddingBottom="@dimen/hud_space_2xs"
+            android:text="MASTER HUB"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_badge" />
+    </RelativeLayout>
+
+    <!-- BOTTOM STATUS STRIP (Fixed Bottom) -->
+    <LinearLayout
+        android:id="@+id/bottomStatusStrip"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="STATION: RUNNER #016"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="@dimen/hud_text_caption" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="SYS_STATUS: 200 OK"
+            android:textColor="@color/hud_signal"
+            android:textSize="@dimen/hud_text_caption" />
+    </LinearLayout>
+
+    <!-- SCROLLABLE BODY CONTENT -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomStatusStrip"
+        android:layout_below="@id/topAppBar"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/hud_space_md">
+
+            <!-- SECTION 1: HARDWARE & PERIPHERALS -->
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ THIẾT BỊ NGOẠI VI // HARDWARE TELEMETRY" />
+
+            <!-- BAR 1: BLE DEVICES (Green Accent) -->
+            <RelativeLayout
+                android:id="@+id/barBleDevices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_green"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvBleTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="THIẾT BỊ CẢM BIẾN BLE" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_signal"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvBleTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/hud_badge_green"
+                        android:fontFamily="monospace"
+                        android:paddingStart="@dimen/hud_space_xs"
+                        android:paddingEnd="@dimen/hud_space_xs"
+                        android:text="ONLINE"
+                        android:textColor="@color/hud_signal"
+                        android:textSize="9sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/hud_space_sm"
+                        android:fontFamily="monospace"
+                        android:text="POLAR H10 CHEST | PIN: 88% | 62 BPM"
+                        android:textColor="@color/hud_text_cyan"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- BAR 2: HEART RATE ZONES & ALERTS (Orange Accent) -->
+            <RelativeLayout
+                android:id="@+id/barHeartRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_bg_bar_orange"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvHrTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="VÙNG NHỊP TIM &amp; CẢNH BÁO" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_alert"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvHrTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/hud_badge_orange"
+                        android:fontFamily="monospace"
+                        android:paddingStart="@dimen/hud_space_xs"
+                        android:paddingEnd="@dimen/hud_space_xs"
+                        android:text="ALERT 185"
+                        android:textColor="@color/hud_alert"
+                        android:textSize="9sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/hud_space_sm"
+                        android:fontFamily="monospace"
+                        android:text="MAX: 192 BPM | ZONE 5 TRIGGER"
+                        android:textColor="@color/hud_text_orange"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- SECTION 2: WORKOUT CONFIGURATION -->
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ CẤU HÌNH TẬP LUYỆN // PREFERENCES" />
+
+            <!-- BAR 3: GOALS (Cyan Accent) -->
+            <RelativeLayout
+                android:id="@+id/barGoals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_cyan"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvGoalsTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="MỤC TIÊU TẬP LUYỆN TUẦN" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvGoalsTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/hud_badge_cyan"
+                        android:fontFamily="monospace"
+                        android:paddingStart="@dimen/hud_space_xs"
+                        android:paddingEnd="@dimen/hud_space_xs"
+                        android:text="69%"
+                        android:textColor="@color/hud_primary"
+                        android:textSize="9sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/hud_space_sm"
+                        android:fontFamily="monospace"
+                        android:text="34.5 / 50.0 KM | CÒN 3 NGÀY"
+                        android:textColor="@color/hud_text_cyan"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- BAR 4: RUN PREFERENCES (Cyan Accent) -->
+            <RelativeLayout
+                android:id="@+id/barRunPreferences"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_cyan"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvRunPrefTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="TÙY CHỌN CHẠY &amp; GIỌNG NÓI" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvRunPrefTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="AUDIO CUES: 1KM | AUTO-PAUSE: BẬT | METRIC"
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
+            <!-- BAR 5: BIOMETRICS (Neutral Accent) -->
+            <RelativeLayout
+                android:id="@+id/barBiometrics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvBioTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="HỒ SƠ THỂ CHẤT &amp; SINH TRẮC" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvBioTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="72.5 KG | 178 CM | BMI 22.9 | BMR 1,740 KCAL"
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
+            <!-- BAR 6: PERMISSIONS (Neutral Accent) -->
+            <RelativeLayout
+                android:id="@+id/barPermissions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvPermTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="QUYỀN HỆ THỐNG &amp; BẢO MẬT" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvPermTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/hud_badge_green"
+                        android:fontFamily="monospace"
+                        android:paddingStart="@dimen/hud_space_xs"
+                        android:paddingEnd="@dimen/hud_space_xs"
+                        android:text="GPS BG: OK"
+                        android:textColor="@color/hud_signal"
+                        android:textSize="9sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/hud_space_sm"
+                        android:fontFamily="monospace"
+                        android:text="JWT ENCRYPTED"
+                        android:textColor="@color/hud_text_sub"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- EMERGENCY LOGOUT BUTTON -->
+            <Button
+                android:id="@+id/btnLogout"
+                style="@style/HudButton.Outline"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/hud_btn_height"
+                android:layout_marginTop="@dimen/hud_space_sm"
+                android:text="ĐĂNG XUẤT AN TOÀN // REVOKE JWT" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

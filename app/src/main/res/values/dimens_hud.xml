@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PacePulse Aerospace Kinetic HUD - Spacing & Sizing Tokens -->
+<resources>
+    <!-- Strict 0dp Corner Radius across all primitives -->
+    <dimen name="hud_radius_zero">0dp</dimen>
+
+    <!-- Structural Mechanical Border Widths -->
+    <dimen name="hud_border_thin">1dp</dimen>
+    <dimen name="hud_border_thick">2dp</dimen>
+    <dimen name="hud_bar_accent_left">4dp</dimen>
+
+    <!-- Spacing (Based on explicit 4dp baseline module) -->
+    <dimen name="hud_space_2xs">2dp</dimen>
+    <dimen name="hud_space_xs">4dp</dimen>
+    <dimen name="hud_space_sm">8dp</dimen>
+    <dimen name="hud_space_md">12dp</dimen>
+    <dimen name="hud_space_lg">16dp</dimen>
+    <dimen name="hud_space_xl">24dp</dimen>
+    <dimen name="hud_space_2xl">32dp</dimen>
+
+    <!-- Heights for Ergonomic Touch Targets while Moving -->
+    <dimen name="hud_touch_target_min">48dp</dimen>
+    <dimen name="hud_btn_height">50dp</dimen>
+    <dimen name="hud_btn_primary_height">54dp</dimen>
+    <dimen name="hud_btn_compact_height">36dp</dimen>
+    <dimen name="hud_top_bar_height">48dp</dimen>
+    <dimen name="hud_telemetry_strip_height">24dp</dimen>
+
+    <!-- Text Sizes -->
+    <dimen name="hud_text_telemetry_strip">9sp</dimen>
+    <dimen name="hud_text_badge">10sp</dimen>
+    <dimen name="hud_text_caption">11sp</dimen>
+    <dimen name="hud_text_body">12sp</dimen>
+    <dimen name="hud_text_title">13sp</dimen>
+    <dimen name="hud_text_section">10sp</dimen>
+    <dimen name="hud_text_hero_metric">36sp</dimen>
+    <dimen name="hud_text_display">48sp</dimen>
+</resources>

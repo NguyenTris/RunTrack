@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PacePulse Aerospace Kinetic HUD - Color Palette Tokens -->
+<resources>
+    <!-- Core HUD Telemetry Colors -->
+    <color name="hud_primary">#00E5FF</color>
+    <color name="hud_primary_variant">#006875</color>
+    <color name="hud_primary_container">#00252B</color>
+
+    <color name="hud_alert">#FF5A00</color>
+    <color name="hud_alert_variant">#A83900</color>
+    <color name="hud_alert_container">#3B1000</color>
+
+    <color name="hud_signal">#76FF03</color>
+    <color name="hud_signal_variant">#2E6C00</color>
+    <color name="hud_signal_container">#0A2900</color>
+
+    <!-- Surfaces & Grounding -->
+    <color name="hud_canvas">#121212</color>
+    <color name="hud_surface">#1E1E1E</color>
+    <color name="hud_surface_card">#1A1A1A</color>
+    <color name="hud_surface_sub">#161616</color>
+    <color name="hud_surface_dark">#0D0D0D</color>
+
+    <!-- Structural Borders (1px Zero-Bleed Mechanical Outlines) -->
+    <color name="hud_border_structural">#2A2A2A</color>
+    <color name="hud_border_dim">#1F1F1F</color>
+    <color name="hud_border_active">#00E5FF</color>
+    <color name="hud_border_alert">#FF5A00</color>
+
+    <!-- Typography Colors -->
+    <color name="hud_text_primary">#FFFFFF</color>
+    <color name="hud_text_secondary">#E5E2E1</color>
+    <color name="hud_text_dim">#8A8A8A</color>
+    <color name="hud_text_sub">#BAC9CC</color>
+    <color name="hud_text_cyan">#9CF0FF</color>
+    <color name="hud_text_orange">#FFB59A</color>
+    <color name="hud_text_green">#76FF03</color>
+
+    <!-- Zones Spectrum -->
+    <color name="hud_zone_1">#6B7A7D</color>
+    <color name="hud_zone_2">#00E5FF</color>
+    <color name="hud_zone_3">#76FF03</color>
+    <color name="hud_zone_4">#FFAA00</color>
+    <color name="hud_zone_5">#FF5A00</color>
+
+    <!-- Modal Scrim Overlay -->
+    <color name="hud_scrim_overlay">#D9000000</color>
+</resources>

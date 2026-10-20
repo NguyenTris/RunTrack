@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-10] MODAL CẢNH BÁO AN TOÀN SỨC KHỎE KHẨN CẤP (CRITICAL ALERT DIALOG) -->
+<!-- Architecture: FrameLayout (Dim Overlay) + Centered LinearLayout (2px Orange Stroke Box) -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_scrim_overlay"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="@dimen/hud_space_md">
+
+    <!-- CENTERED ALERT BOX -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/hud_dialog_alert"
+        android:orientation="vertical"
+        android:padding="@dimen/hud_space_lg">
+
+        <!-- TITLE BAR -->
+        <TextView
+            style="@style/HudText.BarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.12"
+            android:text="▲ CẢNH BÁO QUÁ TẢI TIM MẠCH KHẨN CẤP"
+            android:textColor="@color/hud_alert"
+            android:textSize="@dimen/hud_text_title"
+            android:textStyle="bold" />
+
+        <!-- DETAIL DESCRIPTION -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/hud_space_sm"
+            android:fontFamily="monospace"
+            android:lineSpacingExtra="4dp"
+            android:text="Cảm biến POLAR H10 phát hiện nhịp tim của bạn đạt mức 188 BPM (vượt quá ngưỡng an toàn 185 BPM) liên tục trong 4 phút tại KM thứ 4.2."
+            android:textColor="@color/hud_text_secondary"
+            android:textSize="@dimen/hud_text_caption" />
+
+        <!-- TELEMETRY RECOVERY BANNER -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/hud_space_sm"
+            android:layout_marginBottom="@dimen/hud_space_sm"
+            android:background="@color/hud_alert_container"
+            android:padding="@dimen/hud_space_sm">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:fontFamily="monospace"
+                android:text="ZONE: 5.4 CRITICAL"
+                android:textColor="@color/hud_text_orange"
+                android:textSize="@dimen/hud_text_caption"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:fontFamily="monospace"
+                android:text="HỒI PHỤC: 48H"
+                android:textColor="@color/hud_text_orange"
+                android:textSize="@dimen/hud_text_caption" />
+        </RelativeLayout>
+
+        <!-- SAFETY PROTOCOL INSTRUCTIONS -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:lineSpacingExtra="3dp"
+            android:text="■ KHUYẾN NGHỊ AN TOÀN:\n1. Giảm ngay tốc độ chuyển sang đi bộ chậm.\n2. Hít thở sâu bằng mũi, thở đều bằng miệng.\n3. Bổ sung điện giải và không ngồi xuống đột ngột."
+            android:textColor="@color/hud_text_sub"
+            android:textSize="@dimen/hud_text_caption" />
+
+        <!-- TWO ACTION BUTTONS -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="@dimen/hud_space_md"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnResetAlert"
+                style="@style/HudButton.Alert"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/hud_space_xs"
+                android:layout_weight="1"
+                android:text="TÔI ĐÃ ỔN // RESET"
+                android:textSize="@dimen/hud_text_caption" />
+
+            <Button
+                android:id="@+id/btnStopWorkout"
+                style="@style/HudButton.Outline"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/hud_space_xs"
+                android:layout_weight="1"
+                android:text="DỪNG BÀI CHẠY"
+                android:textSize="@dimen/hud_text_caption" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

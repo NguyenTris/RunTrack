@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Metric HUD Container - Zero Radius 1px Border -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/hud_surface" />
+    <stroke android:width="@dimen/hud_border_thin" android:color="@color/hud_border_structural" />
+    <corners android:radius="@dimen/hud_radius_zero" />
+</shape>

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-09] TRUNG TÂM THÔNG BÁO (NOTIFICATIONS CENTER) -->
+<!-- Architecture: RelativeLayout (Root) + Filter Tabs + ScrollView > LinearLayout (Cards) -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER STRIP -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="NOTIFICATIONS // INBOX"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="1 CẢNH BÁO MỚI"
+            android:textColor="@color/hud_alert"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+    </LinearLayout>
+
+    <!-- TOP APP BAR -->
+    <RelativeLayout
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_top_bar_height"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:text="&lt; HOME"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_body"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.1"
+            android:text="TRUNG TÂM THÔNG BÁO"
+            android:textAllCaps="true"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="@dimen/hud_text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/hud_badge_orange"
+            android:fontFamily="monospace"
+            android:paddingStart="@dimen/hud_space_xs"
+            android:paddingTop="@dimen/hud_space_2xs"
+            android:paddingEnd="@dimen/hud_space_xs"
+            android:paddingBottom="@dimen/hud_space_2xs"
+            android:text="2 CHƯA ĐỌC"
+            android:textColor="@color/hud_alert"
+            android:textSize="@dimen/hud_text_badge" />
+    </RelativeLayout>
+
+    <!-- HORIZONTAL FILTER TABS -->
+    <HorizontalScrollView
+        android:id="@+id/filterScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topAppBar"
+        android:background="@color/hud_surface_dark"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingTop="@dimen/hud_space_sm"
+        android:paddingEnd="@dimen/hud_space_md"
+        android:paddingBottom="@dimen/hud_space_sm"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/tabAll"
+                style="@style/HudButton.Primary"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/hud_space_xs"
+                android:paddingStart="@dimen/hud_space_md"
+                android:paddingEnd="@dimen/hud_space_md"
+                android:text="TẤT CẢ"
+                android:textSize="@dimen/hud_text_caption" />
+
+            <Button
+                android:id="@+id/tabAlerts"
+                style="@style/HudButton.Outline"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/hud_space_xs"
+                android:paddingStart="@dimen/hud_space_md"
+                android:paddingEnd="@dimen/hud_space_md"
+                android:text="CẢNH BÁO (1)"
+                android:textColor="@color/hud_alert"
+                android:textSize="@dimen/hud_text_caption" />
+
+            <Button
+                android:id="@+id/tabRecords"
+                style="@style/HudButton.Outline"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/hud_space_xs"
+                android:paddingStart="@dimen/hud_space_md"
+                android:paddingEnd="@dimen/hud_space_md"
+                android:text="KỶ LỤC"
+                android:textColor="@color/hud_signal"
+                android:textSize="@dimen/hud_text_caption" />
+
+            <Button
+                android:id="@+id/tabSystem"
+                style="@style/HudButton.Outline"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingStart="@dimen/hud_space_md"
+                android:paddingEnd="@dimen/hud_space_md"
+                android:text="HỆ THỐNG"
+                android:textColor="@color/hud_text_dim"
+                android:textSize="@dimen/hud_text_caption" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- FIXED BOTTOM MARK ALL READ BUTTON -->
+    <Button
+        android:id="@+id/btnMarkAllRead"
+        style="@style/HudButton.Outline"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_btn_primary_height"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/hud_space_md"
+        android:text="ĐÁNH DẤU ĐÃ ĐỌC TẤT CẢ" />
+
+    <!-- NOTIFICATIONS LIST (SCROLLVIEW OR RECYCLERVIEW CONTAINER) -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnMarkAllRead"
+        android:layout_below="@id/filterScrollView"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/hud_space_md">
+
+            <!-- NOTIFICATION 1: CRITICAL HEART RATE BREACH (Orange Accent) -->
+            <RelativeLayout
+                android:id="@+id/notifItemAlert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_bg_bar_orange"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvNotif1Title"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="! VƯỢT NGƯỠNG NHỊP TIM AN TOÀN"
+                    android:textColor="@color/hud_alert" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="06:42"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <TextView
+                    android:id="@+id/tvNotif1Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvNotif1Title"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="Buổi chạy sáng nay: Nhịp tim đạt 188 BPM trong 4 phút tại KM thứ 4.2."
+                    android:textColor="@color/hud_text_primary"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvNotif1Body"
+                    android:layout_marginTop="@dimen/hud_space_2xs"
+                    android:fontFamily="monospace"
+                    android:text="[NHẤP ĐỂ XEM CHI TIẾT &amp; HƯỚNG DẪN HỒI PHỤC]"
+                    android:textColor="@color/hud_text_orange"
+                    android:textSize="9sp" />
+            </RelativeLayout>
+
+            <!-- NOTIFICATION 2: PERSONAL RECORD (Green Accent) -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_bg_bar_green"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvNotif2Title"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="KỶ LỤC CÁ NHÂN MỚI (5KM)"
+                    android:textColor="@color/hud_signal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="HÔM QUA"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvNotif2Title"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="Pace trung bình đạt 4:32 min/km // Đã mở khóa huy hiệu Brutalist Top 10."
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
+            <!-- NOTIFICATION 3: CLOUD SYNC SUCCESS (Neutral Accent) -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvNotif3Title"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="HỆ THỐNG ĐỒNG BỘ CLOUD" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="20/10"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvNotif3Title"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="12 bản ghi GPS đã được đẩy lên PostGIS server an toàn."
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
+            <!-- NOTIFICATION 4: ADMIN ANNOUNCEMENT (Neutral Accent) -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvNotif4Title"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="THÔNG BÁO TỪ QUẢN TRỊ VIÊN" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="18/10"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvNotif4Title"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="Bảng xếp hạng tháng 10 sẽ chốt vào 23:59 ngày 31/10 tới."
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

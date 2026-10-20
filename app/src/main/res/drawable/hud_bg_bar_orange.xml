@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Navigation Bar Background - Orange Alert Left Accent -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/hud_surface_card" />
+            <stroke android:width="@dimen/hud_border_thin" android:color="@color/hud_border_structural" />
+            <corners android:radius="@dimen/hud_radius_zero" />
+        </shape>
+    </item>
+    <item android:width="4dp" android:gravity="left">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/hud_alert" />
+            <corners android:radius="@dimen/hud_radius_zero" />
+        </shape>
+    </item>
+</layer-list>

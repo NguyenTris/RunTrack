@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Primary Kinetic Action Button State Selector (Zero Radius) -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Pressed State: Invert to Black with Cyan Border -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/hud_canvas" />
+            <stroke android:width="@dimen/hud_border_thick" android:color="@color/hud_primary" />
+            <corners android:radius="@dimen/hud_radius_zero" />
+        </shape>
+    </item>
+    <!-- Default Normal State: Solid Electric Cyan Fill -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/hud_primary" />
+            <corners android:radius="@dimen/hud_radius_zero" />
+        </shape>
+    </item>
+</selector>
