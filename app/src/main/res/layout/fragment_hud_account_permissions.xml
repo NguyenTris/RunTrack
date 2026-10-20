@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-08] TÀI KHOẢN & QUYỀN HỆ THỐNG (SECURITY & PERMISSIONS) -->
+<!-- Architecture: RelativeLayout (Root) + ScrollView > LinearLayout (Body) + RelativeLayout (Rows) -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER STRIP -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="SYSTEM // PERMISSIONS &amp; AUTH"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="SECURITY LEVEL A"
+            android:textColor="@color/hud_signal"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+    </LinearLayout>
+
+    <!-- TOP APP BAR -->
+    <RelativeLayout
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_top_bar_height"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:text="&lt; HUB"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_body"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.1"
+            android:text="TÀI KHOẢN &amp; QUYỀN HỆ THỐNG"
+            android:textAllCaps="true"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="@dimen/hud_text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/hud_badge_cyan"
+            android:fontFamily="monospace"
+            android:paddingStart="@dimen/hud_space_xs"
+            android:paddingTop="@dimen/hud_space_2xs"
+            android:paddingEnd="@dimen/hud_space_xs"
+            android:paddingBottom="@dimen/hud_space_2xs"
+            android:text="SECURITY"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_badge" />
+    </RelativeLayout>
+
+    <!-- FIXED BOTTOM REVOKE JWT BUTTON -->
+    <Button
+        android:id="@+id/btnRevokeJwt"
+        style="@style/HudButton.Outline"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_btn_primary_height"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/hud_space_md"
+        android:text="HỦY PHIÊN ĐĂNG NHẬP (REVOKE JWT)"
+        android:textColor="@color/hud_alert" />
+
+    <!-- SCROLLABLE BODY -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnRevokeJwt"
+        android:layout_below="@id/topAppBar"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/hud_space_md">
+
+            <!-- SECTION 1: ANDROID PERMISSIONS -->
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ QUYỀN HỆ THỐNG ANDROID" />
+
+            <!-- Permission 1: Background Location -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/tagBgLoc"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GPS CHẠY NGẦM (BACKGROUND)" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Yêu cầu: 'Allow all the time' để vẽ Polyline"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tagBgLoc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/hud_badge_green"
+                    android:fontFamily="monospace"
+                    android:paddingStart="@dimen/hud_space_xs"
+                    android:paddingTop="@dimen/hud_space_2xs"
+                    android:paddingEnd="@dimen/hud_space_xs"
+                    android:paddingBottom="@dimen/hud_space_2xs"
+                    android:text="GRANTED"
+                    android:textColor="@color/hud_signal"
+                    android:textSize="@dimen/hud_text_badge" />
+            </RelativeLayout>
+
+            <!-- Permission 2: Foreground Service -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/tagFgService"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FOREGROUND SERVICE" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Chống hệ điều hành tự động tắt khi tắt màn hình"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tagFgService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/hud_badge_green"
+                    android:fontFamily="monospace"
+                    android:paddingStart="@dimen/hud_space_xs"
+                    android:paddingTop="@dimen/hud_space_2xs"
+                    android:paddingEnd="@dimen/hud_space_xs"
+                    android:paddingBottom="@dimen/hud_space_2xs"
+                    android:text="ACTIVE"
+                    android:textColor="@color/hud_signal"
+                    android:textSize="@dimen/hud_text_badge" />
+            </RelativeLayout>
+
+            <!-- Permission 3: Bluetooth BLE -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_card_container"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/tagBlePerm"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="BLUETOOTH SCAN &amp; CONNECT" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Truy cập Bluetooth GATT để đọc nhịp tim"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tagBlePerm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/hud_badge_green"
+                    android:fontFamily="monospace"
+                    android:paddingStart="@dimen/hud_space_xs"
+                    android:paddingTop="@dimen/hud_space_2xs"
+                    android:paddingEnd="@dimen/hud_space_xs"
+                    android:paddingBottom="@dimen/hud_space_2xs"
+                    android:text="GRANTED"
+                    android:textColor="@color/hud_signal"
+                    android:textSize="@dimen/hud_text_badge" />
+            </RelativeLayout>
+
+            <!-- SECTION 2: ACCOUNT SECURITY -->
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ BẢO MẬT TÀI KHOẢN &amp; PHIÊN LÀM VIỆC" />
+
+            <!-- Change Password Action -->
+            <RelativeLayout
+                android:id="@+id/btnChangePassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvPwdTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="ĐỔI MẬT KHẨU TÀI KHOẢN" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[ĐỔI &gt;]"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvPwdTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="Mật khẩu cập nhật lần cuối: 30 ngày trước"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
+            <!-- 2FA Authenticator Switch -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_card_container"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/switch2Fa"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="XÁC THỰC 2 LỚP (2FA TOTP)" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Bảo vệ tài khoản với Google Authenticator"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch2Fa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:checked="true" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
