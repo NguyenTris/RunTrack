@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-06] RADAR QUÉT THIẾT BỊ BLE MỚI (BLE SCANNER RADAR HUD) -->
+<!-- Architecture: RelativeLayout (Root) + FrameLayout (Concentric Radar HUD) + LinearLayout (Discovered List) -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER STRIP -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="BLE GATT SERVICE // SCANNER"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="SCANNING 2.4GHZ"
+            android:textColor="@color/hud_signal"
+            android:textSize="@dimen/hud_text_telemetry_strip" />
+    </LinearLayout>
+
+    <!-- TOP APP BAR -->
+    <RelativeLayout
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_top_bar_height"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:text="&lt; DEVICES"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_body"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.1"
+            android:text="QUÉT THIẾT BỊ NGOẠI VI"
+            android:textAllCaps="true"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="@dimen/hud_text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/hud_badge_cyan"
+            android:fontFamily="monospace"
+            android:paddingStart="@dimen/hud_space_xs"
+            android:paddingTop="@dimen/hud_space_2xs"
+            android:paddingEnd="@dimen/hud_space_xs"
+            android:paddingBottom="@dimen/hud_space_2xs"
+            android:text="RADAR"
+            android:textColor="@color/hud_primary"
+            android:textSize="@dimen/hud_text_badge" />
+    </RelativeLayout>
+
+    <!-- FIXED BOTTOM STOP SCANNING BUTTON -->
+    <Button
+        android:id="@+id/btnStopScanning"
+        style="@style/HudButton.Alert"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_btn_primary_height"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/hud_space_md"
+        android:text="DỪNG QUÉT RADAR" />
+
+    <!-- SCROLLABLE BODY -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnStopScanning"
+        android:layout_below="@id/topAppBar"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/hud_space_md">
+
+            <!-- FRAME LAYOUT: CONCENTRIC RADAR HUD -->
+            <FrameLayout
+                android:id="@+id/radarContainer"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/hud_space_sm"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_card_container">
+
+                <!-- Outer Bounding Box Stroke -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/hud_card_alert"
+                    android:alpha="0.3" />
+
+                <!-- Center Crosshair Horizontal -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center"
+                    android:background="@color/hud_primary"
+                    android:alpha="0.3" />
+
+                <!-- Center Crosshair Vertical -->
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="@color/hud_primary"
+                    android:alpha="0.3" />
+
+                <!-- Inner Range Box (140dp) -->
+                <View
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/hud_card_container" />
+
+                <!-- Core Radar Reticle (70dp) -->
+                <View
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/hud_btn_outline" />
+
+                <!-- Blip 1: Polar H10 Position -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="45dp"
+                    android:layout_marginEnd="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/hud_space_xs"
+                        android:fontFamily="monospace"
+                        android:text="POLAR H10"
+                        android:textColor="@color/hud_signal"
+                        android:textSize="9sp" />
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@color/hud_signal" />
+                </LinearLayout>
+
+                <!-- Blip 2: Coros Sensor Position -->
+                <View
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginBottom="60dp"
+                    android:background="@color/hud_primary" />
+            </FrameLayout>
+
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ THIẾT BỊ PHÁT HIỆN GẦN ĐÂY" />
+
+            <!-- DISCOVERED DEVICE 1 (Green Accent) -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_bg_bar_green"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvDisc1Title"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="POLAR H10 CHEST STRAP" />
+
+                <Button
+                    android:id="@+id/btnPairHrm"
+                    style="@style/HudButton.Primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:paddingStart="@dimen/hud_space_sm"
+                    android:paddingEnd="@dimen/hud_space_sm"
+                    android:text="GHÉP ĐÔI"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvDisc1Title"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/hud_badge_green"
+                        android:fontFamily="monospace"
+                        android:paddingStart="@dimen/hud_space_xs"
+                        android:paddingEnd="@dimen/hud_space_xs"
+                        android:text="RSSI: -54 DBM"
+                        android:textColor="@color/hud_signal"
+                        android:textSize="9sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/hud_space_sm"
+                        android:fontFamily="monospace"
+                        android:text="UUID: 0x180D (HEART RATE)"
+                        android:textColor="@color/hud_text_cyan"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- DISCOVERED DEVICE 2 (Cyan Accent) -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_bg_bar_cyan"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvDisc2Title"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="COROS PACE 3 SENSOR" />
+
+                <Button
+                    android:id="@+id/btnPairCoros"
+                    style="@style/HudButton.Outline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:paddingStart="@dimen/hud_space_sm"
+                    android:paddingEnd="@dimen/hud_space_sm"
+                    android:text="GHÉP ĐÔI"
+                    android:textSize="@dimen/hud_text_caption" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvDisc2Title"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/hud_badge_cyan"
+                        android:fontFamily="monospace"
+                        android:paddingStart="@dimen/hud_space_xs"
+                        android:paddingEnd="@dimen/hud_space_xs"
+                        android:text="RSSI: -78 DBM"
+                        android:textColor="@color/hud_primary"
+                        android:textSize="9sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/hud_space_sm"
+                        android:fontFamily="monospace"
+                        android:text="BROADCASTING GATT"
+                        android:textColor="@color/hud_text_sub"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
