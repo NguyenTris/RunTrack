@@ -4,22 +4,44 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- PacePulse Cyberpunk Telemetry HUD Palette -->
+    <!-- PacePulse Cyberpunk Palette -->
     <color name="bg_dark">#0A0D0E</color>
-    <color name="surface_card">#121619</color>
-    <color name="surface_input">#121214</color>
+    <color name="surface_card">#1A1D21</color>
+    <color name="surface_card_sub">#121619</color>
     <color name="surface_border">#262B30</color>
+    <color name="surface_input">#121214</color>
+    <color name="card_stroke">#262B30</color>
 
     <!-- Cyberpunk Accents -->
-    <color name="electric_cyan">#00E5FF</color>
     <color name="kinetic_orange">#FF5500</color>
+    <color name="electric_cyan">#00E5FF</color>
     <color name="neon_green">#39FF14</color>
     <color name="signal_green">#39FF14</color>
     <color name="logo_orange">#FF9500</color>
+    <color name="accent_yellow">#FFB300</color>
+
+    <!-- Heart Rate Zones -->
+    <color name="hr_zone_1">#E64A19</color>
+    <color name="hr_zone_2">#FF5500</color>
+    <color name="hr_zone_3">#39FF14</color>
+    <color name="hr_zone_4">#FFCC00</color>
+    <color name="hr_zone_5">#FF3300</color>
+
+    <!-- UI State Colors -->
+    <color name="tab_active_bg">#00E5FF</color>
+    <color name="tab_active_text">#0A0D0E</color>
+    <color name="tab_inactive_bg">#22262B</color>
+    <color name="tab_inactive_text">#FFFFFF</color>
+
+    <!-- Ripple Button Concentric Colors -->
+    <color name="start_ripple_outer">#33FF5500</color>
+    <color name="start_ripple_mid">#80FF5500</color>
+    <color name="start_ripple_center">#FFFF5500</color>
 
     <!-- Typography & Indicators -->
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#8E8E93</color>
     <color name="text_tertiary">#55555B</color>
     <color name="indicator_inactive">#252528</color>
+    <color name="bottom_nav_bg">#121619</color>
 </resources>
