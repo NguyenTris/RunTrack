@@ -51,7 +51,9 @@ class TrackingActivity : AppCompatActivity() {
 
         val btnStop = findViewById<MaterialCardView>(R.id.btn_hold_stop)
         btnStop?.setOnClickListener {
-            Toast.makeText(this, "Giữ để kết thúc buổi chạy", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, RunSummaryActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
         val btnGpsArt = findViewById<View>(R.id.btn_gps_art)

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_lap_item_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="8dp"
+    android:weightSum="4">
+
+    <TextView
+        android:id="@+id/tv_lap_km"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="monospace"
+        android:textColor="@color/text_primary"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        tools:text="KM 5 ⚡" />
+
+    <TextView
+        android:id="@+id/tv_lap_pace"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="monospace"
+        android:textColor="@color/text_primary"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        tools:text="5'08&quot; ★ PB" />
+
+    <TextView
+        android:id="@+id/tv_lap_hr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="monospace"
+        android:textColor="@color/text_secondary"
+        android:textSize="11sp"
+        tools:text="172 bpm" />
+
+    <TextView
+        android:id="@+id/tv_lap_elevation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="monospace"
+        android:gravity="end"
+        android:textColor="@color/text_secondary"
+        android:textSize="11sp"
+        tools:text="+7m" />
+
+</LinearLayout>
