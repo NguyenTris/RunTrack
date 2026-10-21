@@ -77,4 +77,9 @@
         <item name="android:background">@drawable/hud_btn_outline</item>
         <item name="android:textColor">@color/hud_text_primary</item>
     </style>
+
+    <!-- Shape Appearance for Circular Avatars -->
+    <style name="CircleAvatar">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

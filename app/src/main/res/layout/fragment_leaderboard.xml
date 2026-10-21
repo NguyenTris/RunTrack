@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout_leaderboard"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    tools:context=".AuthSuccessActivity">
+
+    <!-- Sticky User Rank Card ("VỊ TRÍ CỦA BẠN") -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_user_rank"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="12dp"
+        app:cardBackgroundColor="@color/surface_card"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@color/kinetic_orange"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_user_rank"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/tv_user_rank_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="VỊ TRÍ CỦA BẠN"
+                android:textColor="@color/kinetic_orange"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_user_rank_ratio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="#128 / 1.248"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_user_avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:contentDescription="Avatar"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_nav_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_user_rank_label"
+                app:shapeAppearanceOverlay="@style/CircleAvatar"
+                app:strokeColor="@color/kinetic_orange"
+                app:strokeWidth="1dp" />
+
+            <TextView
+                android:id="@+id/tv_user_name_sticky"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
+                android:text="Trần Minh Anh"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tv_user_time_sticky"
+                app:layout_constraintStart_toEndOf="@+id/iv_user_avatar"
+                app:layout_constraintTop_toTopOf="@+id/iv_user_avatar" />
+
+            <TextView
+                android:id="@+id/tv_user_gap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:text="Cách hạng 127: 11 giây"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                app:layout_constraintEnd_toStartOf="@+id/tv_user_time_sticky"
+                app:layout_constraintStart_toEndOf="@+id/iv_user_avatar"
+                app:layout_constraintTop_toBottomOf="@+id/tv_user_name_sticky" />
+
+            <TextView
+                android:id="@+id/tv_user_time_sticky"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="23:48"
+                android:textColor="@color/kinetic_orange"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_user_avatar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_user_avatar" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Scrollable Main Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_leaderboard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/card_user_rank"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Top Navigation Bar -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:id="@+id/tv_btn_home"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:drawableStart="@drawable/dot_orange"
+                    android:drawablePadding="6dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center_vertical"
+                    android:text="&lt; TRANG CHỦ"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="monospace"
+                    android:text="RT / 05"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="10sp" />
+            </RelativeLayout>
+
+            <!-- Screen Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bảng xếp hạng"
+                android:textColor="@color/text_primary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="16dp"
+                android:text="Những bước chạy. Những kỷ lục."
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <!-- Segmented Tabs -->
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_group_leaderboard"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginBottom="16dp"
+                app:checkedButton="@+id/btn_tab_global"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_tab_global"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/kinetic_orange"
+                    android:fontFamily="monospace"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="Toàn ứng dụng"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/card_stroke"
+                    app:strokeWidth="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_tab_friends"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/surface_card"
+                    android:fontFamily="monospace"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="Bạn bè"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/card_stroke"
+                    app:strokeWidth="1dp" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <!-- Personal Record Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:id="@+id/tv_pr_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="KỶ LỤC CÁ NHÂN"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_pr_time_frame"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="Toàn thời gian"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_pr_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="5 "
+                        android:textColor="@color/kinetic_orange"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_pr_label" />
+
+                    <TextView
+                        android:id="@+id/tv_pr_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="KM "
+                        android:textColor="@color/kinetic_orange"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBaseline_toBaselineOf="@+id/tv_pr_number"
+                        app:layout_constraintStart_toEndOf="@+id/tv_pr_number" />
+
+                    <TextView
+                        android:id="@+id/tv_pr_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="nhanh nhất"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBaseline_toBaselineOf="@+id/tv_pr_number"
+                        app:layout_constraintStart_toEndOf="@+id/tv_pr_unit" />
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:contentDescription="Stopwatch"
+                        android:src="@drawable/ic_stopwatch"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_pr_number"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tv_pr_number" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Thời gian tăng dần · Đơn vị phút:giây"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_pr_number" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Top 3 Podium Section Header -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="monospace"
+                    android:text="DẪN ĐẦU"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_runners_count_podium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="monospace"
+                    android:text="1.248 người chạy"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+            </RelativeLayout>
+
+            <!-- TOP 3 PODIUM -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_top_3_podium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guide_33"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.33" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guide_66"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.66" />
+
+                <!-- Rank 1 (Center Column) -->
+                <ImageView
+                    android:id="@+id/iv_crown_rank1"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="Crown 1"
+                    android:src="@drawable/ic_crown_orange"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_66"
+                    app:layout_constraintStart_toEndOf="@+id/guide_33"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_avatar_rank1"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="4dp"
+                    android:contentDescription="Avatar 1"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_nav_profile"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_66"
+                    app:layout_constraintStart_toEndOf="@+id/guide_33"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_crown_rank1"
+                    app:shapeAppearanceOverlay="@style/CircleAvatar"
+                    app:strokeColor="@color/kinetic_orange"
+                    app:strokeWidth="2dp" />
+
+                <TextView
+                    android:id="@+id/tv_name_rank1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="Minh Khoa"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_66"
+                    app:layout_constraintStart_toEndOf="@+id/guide_33"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_avatar_rank1" />
+
+                <TextView
+                    android:id="@+id/tv_time_rank1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="16:42"
+                    android:textColor="@color/kinetic_orange"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_66"
+                    app:layout_constraintStart_toEndOf="@+id/guide_33"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_name_rank1" />
+
+                <TextView
+                    android:id="@+id/badge_rank1"
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_badge_dark"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="01"
+                    android:textColor="@color/kinetic_orange"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_66"
+                    app:layout_constraintStart_toEndOf="@+id/guide_33"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_time_rank1" />
+
+                <!-- Rank 2 (Left Column) -->
+                <ImageView
+                    android:id="@+id/iv_crown_rank2"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="24dp"
+                    android:contentDescription="Crown 2"
+                    android:src="@drawable/ic_crown_gray"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_avatar_rank2"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="4dp"
+                    android:contentDescription="Avatar 2"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_nav_profile"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_crown_rank2"
+                    app:shapeAppearanceOverlay="@style/CircleAvatar"
+                    app:strokeColor="@color/card_stroke"
+                    app:strokeWidth="1dp" />
+
+                <TextView
+                    android:id="@+id/tv_name_rank2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="Quốc An"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_avatar_rank2" />
+
+                <TextView
+                    android:id="@+id/tv_time_rank2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="17:08"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_name_rank2" />
+
+                <TextView
+                    android:id="@+id/badge_rank2"
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_day_inactive"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="02"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/guide_33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_time_rank2" />
+
+                <!-- Rank 3 (Right Column) -->
+                <ImageView
+                    android:id="@+id/iv_crown_rank3"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="24dp"
+                    android:contentDescription="Crown 3"
+                    android:src="@drawable/ic_crown_gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/guide_66"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_avatar_rank3"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="4dp"
+                    android:contentDescription="Avatar 3"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_nav_profile"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/guide_66"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_crown_rank3"
+                    app:shapeAppearanceOverlay="@style/CircleAvatar"
+                    app:strokeColor="@color/card_stroke"
+                    app:strokeWidth="1dp" />
+
+                <TextView
+                    android:id="@+id/tv_name_rank3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="Thùy Linh"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/guide_66"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_avatar_rank3" />
+
+                <TextView
+                    android:id="@+id/tv_time_rank3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="17:35"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/guide_66"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_name_rank3" />
+
+                <TextView
+                    android:id="@+id/badge_rank3"
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_day_inactive"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="03"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/guide_66"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_time_rank3" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Sub-Header Bar for Runners List -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="HẠNG / NGƯỜI CHẠY"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="PHÚT:GIÂY"
+                    android:textColor="@color/kinetic_orange"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <!-- Runners List (Rank 04+) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_leaderboard_ranks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_leaderboard_rank" />
+
+            <!-- Footer Notes -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Mỗi người lấy thành tích 5 km tốt nhất."
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:drawableStart="@drawable/dot_green"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:text="Chỉ tính buổi chạy được ghi nhận bằng GPS"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

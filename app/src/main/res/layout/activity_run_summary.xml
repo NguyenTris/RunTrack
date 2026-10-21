@@ -1,0 +1,1336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout_run_summary"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    tools:context=".AuthSuccessActivity">
+
+    <!-- Top Navigation Bar -->
+    <RelativeLayout
+        android:id="@+id/layout_top_bar_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/btn_back_summary"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_badge_dark"
+            android:contentDescription="Back"
+            android:padding="8dp"
+            android:src="@drawable/ic_arrow_back" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="CHI TIẾT BUỔI CHẠY"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:fontFamily="monospace"
+                android:text="TELEMETRY HUD"
+                android:textColor="@color/kinetic_orange"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_profile_avatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="Profile"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_nav_profile"
+            app:shapeAppearanceOverlay="@style/CircleAvatar" />
+    </RelativeLayout>
+
+    <!-- Main Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_summary"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_top_bar_summary">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Card 1: Achievement Card -->
+            <FrameLayout
+                android:id="@+id/card_achievement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_achievement_card"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="#33000000">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Medal"
+                            android:src="@drawable/ic_medal" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="monospace"
+                            android:text="HOÀN THÀNH XUẤT SẮC!"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="monospace"
+                            android:text="✪ Kỷ lục Pace tốt nhất tháng này"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Hôm nay, 06:15 - 06:44 · Chạy sáng Hồ Tây"
+                            android:textColor="#E0E0E0"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- Card 2: Map Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_map_summary"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/iv_map_route"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Map route"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_map_placeholder" />
+
+                    <!-- Top Left Badges -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge_dark"
+                            android:drawableStart="@drawable/dot_green"
+                            android:drawablePadding="6dp"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:text="GPS LOCKED"
+                            android:textColor="@color/white"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/bg_badge_dark"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:text="WEST LAKE RUNWAY"
+                            android:textColor="@color/white"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Top Right 3D View Badge -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/bg_badge_dark"
+                        android:drawableStart="@drawable/ic_target"
+                        android:drawablePadding="4dp"
+                        android:fontFamily="monospace"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        android:text="3D VIEW"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Bottom Badges -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_badge_dark"
+                        android:drawableStart="@drawable/dot_orange"
+                        android:drawablePadding="6dp"
+                        android:fontFamily="monospace"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        android:text="LỘ TRÌNH 5.42 KM"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_badge_dark"
+                        android:fontFamily="monospace"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        android:text="FINISH: PHỦ TÂY HỒ"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 3: Distance & 4-Grid Stats -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_distance_stats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="monospace"
+                            android:text="TỔNG QUÃNG ĐƯỜNG"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/bg_badge_dark"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="6dp"
+                            android:paddingVertical="2dp"
+                            android:text="OFFICIAL TRACK"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="9sp" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="monospace"
+                            android:text="5.42"
+                            android:textColor="@color/text_primary"
+                            android:textSize="44sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:fontFamily="monospace"
+                            android:text="KM"
+                            android:textColor="@color/kinetic_orange"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="monospace"
+                        android:text="📈 +0.42 km so với mục tiêu"
+                        android:textColor="@color/neon_green"
+                        android:textSize="11sp" />
+
+                    <!-- 2x2 Stats Grid -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical">
+
+                        <!-- Row 1 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="6dp"
+                            android:orientation="horizontal">
+
+                            <!-- Duration -->
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="3dp"
+                                android:layout_weight="1"
+                                app:cardBackgroundColor="@color/surface_card_sub"
+                                app:cardCornerRadius="6dp"
+                                app:cardElevation="0dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="10dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="monospace"
+                                            android:text="THỜI GIAN"
+                                            android:textColor="@color/text_secondary"
+                                            android:textSize="10sp" />
+
+                                        <ImageView
+                                            android:layout_width="14dp"
+                                            android:layout_height="14dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:contentDescription="Clock"
+                                            android:src="@drawable/ic_clock" />
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:fontFamily="monospace"
+                                        android:text="28:47"
+                                        android:textColor="@color/text_primary"
+                                        android:textSize="20sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="monospace"
+                                        android:text="ELAPSED: 29:12"
+                                        android:textColor="@color/text_secondary"
+                                        android:textSize="9sp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <!-- Pace -->
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="3dp"
+                                android:layout_weight="1"
+                                app:cardBackgroundColor="@color/surface_card_sub"
+                                app:cardCornerRadius="6dp"
+                                app:cardElevation="0dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="10dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="monospace"
+                                            android:text="PACE TB"
+                                            android:textColor="@color/text_secondary"
+                                            android:textSize="10sp" />
+
+                                        <ImageView
+                                            android:layout_width="14dp"
+                                            android:layout_height="14dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:contentDescription="Compass"
+                                            android:src="@drawable/ic_compass" />
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:fontFamily="monospace"
+                                        android:text="5'18&quot;"
+                                        android:textColor="@color/kinetic_orange"
+                                        android:textSize="20sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="monospace"
+                                        android:text="/KM (TỐC ĐỘ 11.3 KM/H)"
+                                        android:textColor="@color/text_secondary"
+                                        android:textSize="9sp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+
+                        <!-- Row 2 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <!-- Energy -->
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="3dp"
+                                android:layout_weight="1"
+                                app:cardBackgroundColor="@color/surface_card_sub"
+                                app:cardCornerRadius="6dp"
+                                app:cardElevation="0dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="10dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="monospace"
+                                            android:text="NĂNG LƯỢNG"
+                                            android:textColor="@color/text_secondary"
+                                            android:textSize="10sp" />
+
+                                        <ImageView
+                                            android:layout_width="14dp"
+                                            android:layout_height="14dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:contentDescription="Flame"
+                                            android:src="@drawable/ic_flame" />
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:fontFamily="monospace"
+                                        android:text="412"
+                                        android:textColor="@color/text_primary"
+                                        android:textSize="20sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="monospace"
+                                        android:text="KCAL TIÊU THỤ"
+                                        android:textColor="@color/text_secondary"
+                                        android:textSize="9sp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <!-- Avg Heart Rate -->
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="3dp"
+                                android:layout_weight="1"
+                                app:cardBackgroundColor="@color/surface_card_sub"
+                                app:cardCornerRadius="6dp"
+                                app:cardElevation="0dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="10dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="monospace"
+                                            android:text="NHỊP TIM TB"
+                                            android:textColor="@color/text_secondary"
+                                            android:textSize="10sp" />
+
+                                        <ImageView
+                                            android:layout_width="14dp"
+                                            android:layout_height="14dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:contentDescription="Heart"
+                                            android:src="@drawable/ic_pink_heart" />
+                                    </RelativeLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:gravity="bottom"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="monospace"
+                                            android:text="156"
+                                            android:textColor="@color/text_primary"
+                                            android:textSize="20sp"
+                                            android:textStyle="bold" />
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:fontFamily="monospace"
+                                            android:text="BPM"
+                                            android:textColor="@color/text_secondary"
+                                            android:textSize="10sp" />
+                                    </LinearLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="monospace"
+                                        android:text="MAX: 178 BPM"
+                                        android:textColor="#FF5252"
+                                        android:textSize="9sp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 4: Heart Rate Zones (PHÂN BỐ NHỊP TIM) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_hr_zones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_bio"
+                            android:drawablePadding="6dp"
+                            android:fontFamily="monospace"
+                            android:gravity="center_vertical"
+                            android:text="PHÂN BỐ NHỊP TIM"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:fontFamily="monospace"
+                            android:text="5 PHẦN VÙNG"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="10sp" />
+                    </RelativeLayout>
+
+                    <!-- Segmented Horizontal Bar -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal"
+                        android:weightSum="100">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="10"
+                            android:background="#6C757D" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="2dp"
+                            android:layout_weight="25"
+                            android:background="@color/electric_cyan" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="2dp"
+                            android:layout_weight="35"
+                            android:background="@color/neon_green" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="2dp"
+                            android:layout_weight="25"
+                            android:background="@color/kinetic_orange" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="2dp"
+                            android:layout_weight="5"
+                            android:background="#FF5252" />
+                    </LinearLayout>
+
+                    <!-- 5 Zone List Rows -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/dot_orange"
+                            android:drawablePadding="6dp"
+                            android:fontFamily="monospace"
+                            android:text="Z5 Cực đại (>175 bpm)"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:fontFamily="monospace"
+                                android:text="01:26"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:text="5%"
+                                android:textColor="@color/text_primary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/dot_orange"
+                            android:drawablePadding="6dp"
+                            android:fontFamily="monospace"
+                            android:text="Z4 Kỵ khí (160-174 bpm)"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:fontFamily="monospace"
+                                android:text="07:11"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:text="25%"
+                                android:textColor="@color/kinetic_orange"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/dot_green"
+                            android:drawablePadding="6dp"
+                            android:fontFamily="monospace"
+                            android:text="Z3 Hiếu khí (145-159 bpm)"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:fontFamily="monospace"
+                                android:text="10:04"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:text="35%"
+                                android:textColor="@color/neon_green"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/dot_cyan"
+                            android:drawablePadding="6dp"
+                            android:fontFamily="monospace"
+                            android:text="Z2 Đốt mỡ (130-144 bpm)"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:fontFamily="monospace"
+                                android:text="07:12"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:text="25%"
+                                android:textColor="@color/text_primary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/dot_green"
+                            android:drawablePadding="6dp"
+                            android:fontFamily="monospace"
+                            android:text="Z1 Khởi động (&lt;130 bpm)"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:fontFamily="monospace"
+                                android:text="02:54"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:text="10%"
+                                android:textColor="@color/text_primary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 5: Charts (BIẾN THIÊN PACE & CAO ĐỘ) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_charts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_analytics"
+                            android:drawablePadding="6dp"
+                            android:fontFamily="monospace"
+                            android:gravity="center_vertical"
+                            android:text="BIẾN THIÊN PACE &amp; CAO ĐỘ"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:text="— PACE "
+                                android:textColor="@color/kinetic_orange"
+                                android:textSize="9sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:fontFamily="monospace"
+                                android:text="— CAO ĐỘ"
+                                android:textColor="@color/electric_cyan"
+                                android:textSize="9sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <!-- Chart Placeholder Frame -->
+                    <!-- TODO: Insert MPAndroidChart LineChart here -->
+                    <FrameLayout
+                        android:id="@+id/container_line_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/surface_card_sub">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="Chart trace placeholder"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_ecg_waveform" />
+                    </FrameLayout>
+
+                    <!-- Bottom 2 Mini Cards -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/surface_card_sub"
+                            app:cardCornerRadius="6dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/card_stroke"
+                            app:strokeWidth="1dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:id="@+id/lbl_cadence"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="monospace"
+                                    android:text="CADENCE TB"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="9sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/lbl_cadence"
+                                    android:layout_marginTop="2dp"
+                                    android:fontFamily="monospace"
+                                    android:text="172 SPM"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerVertical="true"
+                                    android:contentDescription="Runner"
+                                    android:src="@drawable/ic_shoes" />
+                            </RelativeLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/surface_card_sub"
+                            app:cardCornerRadius="6dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/card_stroke"
+                            app:strokeWidth="1dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:id="@+id/lbl_elevation"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="monospace"
+                                    android:text="ĐỘ CAO ĐẠT ĐƯỢC"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="9sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/lbl_elevation"
+                                    android:layout_marginTop="2dp"
+                                    android:fontFamily="monospace"
+                                    android:text="+42 M"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerVertical="true"
+                                    android:contentDescription="Elevation"
+                                    android:src="@drawable/ic_target" />
+                            </RelativeLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 6: Lap Splits (CHI TIẾT LAPS) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_lap_splits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/dot_orange"
+                            android:drawablePadding="6dp"
+                            android:fontFamily="monospace"
+                            android:gravity="center_vertical"
+                            android:text="CHI TIẾT LAPS (SPLITS)"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/hud_badge_green"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="6dp"
+                            android:paddingVertical="2dp"
+                            android:text="NEGATIVE SPLIT 🔥"
+                            android:textColor="@color/bg_dark"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <!-- Table Titles Header Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="6dp"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="8dp"
+                        android:weightSum="4">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="monospace"
+                            android:text="KM"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="10sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="monospace"
+                            android:text="PACE"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="10sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="monospace"
+                            android:text="NHỊP TIM"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="10sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="monospace"
+                            android:gravity="end"
+                            android:text="CAO ĐỘ"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_lap_splits"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/item_lap_split" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 7: Equipment (THIẾT BỊ & TRANG BỊ) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_equipment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="monospace"
+                            android:text="THIẾT BỊ &amp; TRANG BỊ"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:fontFamily="monospace"
+                            android:text="SYNCED"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="10sp" />
+                    </RelativeLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_equipment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/item_equipment" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 8: Bottom Action Buttons -->
+            <LinearLayout
+                android:id="@+id/layout_action_buttons_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_summary"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:backgroundTint="@color/kinetic_orange"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.06"
+                    android:text="CHIA SẺ LÊN BẢNG TIN &amp; STRAVA"
+                    android:textColor="@color/bg_dark"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_share"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:iconTint="@color/bg_dark" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_export_gpx"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/surface_card"
+                        android:fontFamily="monospace"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="XUẤT FILE GPX"
+                        android:textColor="@color/text_primary"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="6dp"
+                        app:icon="@drawable/ic_download"
+                        app:iconGravity="textStart"
+                        app:iconPadding="4dp"
+                        app:iconTint="@color/electric_cyan"
+                        app:strokeColor="@color/card_stroke"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_back_home"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/surface_card"
+                        android:fontFamily="monospace"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="VỀ TRANG CHỦ"
+                        android:textColor="@color/text_primary"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="6dp"
+                        app:icon="@drawable/ic_home"
+                        app:iconGravity="textStart"
+                        app:iconPadding="4dp"
+                        app:iconTint="@color/kinetic_orange"
+                        app:strokeColor="@color/card_stroke"
+                        app:strokeWidth="1dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,7 +33,7 @@ public class AuthSuccessActivity extends AppCompatActivity {
 
         if (btnEnterDashboard != null) {
             btnEnterDashboard.setOnClickListener(v -> {
-                Intent intent = new Intent(AuthSuccessActivity.this, MainActivity.class);
+                Intent intent = new Intent(AuthSuccessActivity.this, DashboardActivity.class);
                 startActivity(intent);
                 finish();
             });
