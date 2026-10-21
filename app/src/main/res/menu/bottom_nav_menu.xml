@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_activity"
+        android:icon="@drawable/ic_nav_activity"
+        android:title="HOẠT ĐỘNG" />
+
+    <item
+        android:id="@+id/nav_tracking"
+        android:icon="@drawable/ic_nav_tracking"
+        android:title="THEO DÕI" />
+
+    <item
+        android:id="@+id/nav_leaderboard"
+        android:icon="@drawable/ic_nav_leaderboard"
+        android:title="XẾP HẠNG" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_nav_profile"
+        android:title="HỒ SƠ" />
+</menu>

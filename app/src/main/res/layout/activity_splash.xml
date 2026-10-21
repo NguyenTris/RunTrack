@@ -80,6 +80,11 @@
             tools:text="ENDURANCE SYSTEM" />
 
         <!-- Central Logo / HUD Graphic Area -->
+
+        <!-- Title Section -->
+
+        <!-- Subtitle Section -->
+
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_logo_grid"
             android:layout_width="0dp"
@@ -91,15 +96,13 @@
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_max="340dp"
+            app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/guideline_logo_top"
+            app:layout_constraintVertical_bias="0.0"
             app:layout_constraintWidth_max="340dp"
             app:layout_constraintWidth_percent="0.65"
             tools:src="@drawable/ic_runtrack_logo" />
-
-        <!-- Title Section -->
-
-        <!-- Subtitle Section -->
 
         <TextView
             android:id="@+id/tv_title"
@@ -182,19 +185,20 @@
             app:layout_constraintTop_toTopOf="@+id/indicator_step_1"
             app:layout_constraintWidth_max="36dp" />
 
+        <!-- Step Label Below Indicators -->
         <View
             android:id="@+id/indicator_step_1"
             android:layout_width="0dp"
             android:layout_height="3dp"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/bg_indicator_active"
             app:layout_constraintEnd_toStartOf="@+id/indicator_step_2"
+            app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_subtitle"
             app:layout_constraintWidth_max="36dp" />
 
-        <!-- Step Label Below Indicators -->
         <TextView
             android:id="@+id/tv_step_label"
             android:layout_width="0dp"
@@ -212,16 +216,6 @@
             tools:text="KHỞI ĐỘNG" />
 
         <!-- Divider with Orange Slashes -->
-        <View
-            android:id="@+id/divider_line_left"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@color/surface_border"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_divider_slashes"
-            app:layout_constraintEnd_toStartOf="@+id/tv_divider_slashes"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_divider_slashes"
-            app:layout_constraintWidth_max="180dp" />
 
         <TextView
             android:id="@+id/tv_divider_slashes"
@@ -239,6 +233,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_step_label"
             tools:text="//" />
 
+        <!-- Kinetic Action Button -->
         <View
             android:id="@+id/divider_line_right"
             android:layout_width="0dp"
@@ -246,11 +241,25 @@
             android:background="@color/surface_border"
             app:layout_constraintBottom_toBottomOf="@+id/tv_divider_slashes"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/tv_divider_slashes"
             app:layout_constraintTop_toTopOf="@+id/tv_divider_slashes"
+            app:layout_constraintVertical_bias="0.0"
             app:layout_constraintWidth_max="180dp" />
 
-        <!-- Kinetic Action Button -->
+        <View
+            android:id="@+id/divider_line_left"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/surface_border"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_divider_slashes"
+            app:layout_constraintEnd_toStartOf="@+id/tv_divider_slashes"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_divider_slashes"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintWidth_max="180dp" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_action"
             android:layout_width="0dp"
@@ -266,8 +275,10 @@
             app:cornerRadius="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_divider_slashes"
+            app:layout_constraintVertical_bias="0.0"
             app:layout_constraintWidth_max="480dp"
             tools:text="BẮT ĐẦU CHẠY" />
 

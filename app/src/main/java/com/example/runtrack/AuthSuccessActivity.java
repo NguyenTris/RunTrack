@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +32,11 @@ public class AuthSuccessActivity extends AppCompatActivity {
         TextView tvSwitchAccount = findViewById(R.id.tvSwitchAccount);
 
         if (btnEnterDashboard != null) {
-            btnEnterDashboard.setOnClickListener(v -> Toast.makeText(this, "Chuyển sang Bảng Điều Khiển...", Toast.LENGTH_SHORT).show());
+            btnEnterDashboard.setOnClickListener(v -> {
+                Intent intent = new Intent(AuthSuccessActivity.this, DashboardActivity.class);
+                startActivity(intent);
+                finish();
+            });
         }
 
         if (tvSwitchAccount != null) {

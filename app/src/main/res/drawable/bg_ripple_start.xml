@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer Concentric Ring (20% Opacity Orange Glow) -->
+    <item
+        android:width="140dp"
+        android:height="140dp"
+        android:gravity="center">
+        <shape android:shape="oval">
+            <solid android:color="@color/start_ripple_outer" />
+        </shape>
+    </item>
+
+    <!-- Middle Concentric Ring (50% Opacity Orange Pulse) -->
+    <item
+        android:width="104dp"
+        android:height="104dp"
+        android:gravity="center">
+        <shape android:shape="oval">
+            <solid android:color="@color/start_ripple_mid" />
+        </shape>
+    </item>
+
+    <!-- Core Center Button (100% Solid Orange) -->
+    <item
+        android:width="72dp"
+        android:height="72dp"
+        android:gravity="center">
+        <shape android:shape="oval">
+            <solid android:color="@color/start_ripple_center" />
+        </shape>
+    </item>
+</layer-list>

@@ -35,6 +35,42 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Dashboard / Home Activity -->
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Profile & Diagnostics Activity -->
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Leaderboard Activity -->
+        <activity
+            android:name=".LeaderboardActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- GPS Art Creator Activity -->
+        <activity
+            android:name=".GpsArtActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Live Telemetry Tracking Activity -->
+        <activity
+            android:name=".TrackingActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Post-Run Summary Activity -->
+        <activity
+            android:name=".RunSummaryActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>
