@@ -47,6 +47,7 @@ public class AuthSuccessActivity extends AppCompatActivity {
     private void logout() {
         SessionManager.setLoggedIn(this, false);
         Intent intent = new Intent(AuthSuccessActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

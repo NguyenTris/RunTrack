@@ -38,6 +38,15 @@ class DashboardActivity : AppCompatActivity() {
             val intent = Intent(this, GpsArtActivity::class.java)
             startActivity(intent)
         }
+
+        // Connect quick access cards to Profile and HUD Settings
+        findViewById<android.view.View>(R.id.card_profile)?.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
+
+        findViewById<android.view.View>(R.id.card_weekly_goal)?.setOnClickListener {
+            startActivity(Intent(this, HudSettingsActivity::class.java))
+        }
     }
 
     private fun setupBottomNavigation() {
