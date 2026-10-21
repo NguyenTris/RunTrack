@@ -35,6 +35,24 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Main Run Tracking Dashboard Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- HUD Settings & Peripherals Host Activity -->
+        <activity
+            android:name=".HudSettingsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- HUD Notifications Center Activity -->
+        <activity
+            android:name=".NotificationCenterActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>
