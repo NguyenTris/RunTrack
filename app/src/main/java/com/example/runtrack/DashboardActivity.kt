@@ -39,13 +39,17 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Connect quick access cards to Profile and HUD Settings
+        // Connect quick access cards to Profile, HUD Settings, and Chat
         findViewById<android.view.View>(R.id.card_profile)?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
 
         findViewById<android.view.View>(R.id.card_weekly_goal)?.setOnClickListener {
             startActivity(Intent(this, HudSettingsActivity::class.java))
+        }
+
+        findViewById<android.view.View>(R.id.btn_open_chat)?.setOnClickListener {
+            startActivity(Intent(this, com.example.runtrack.chat.ChatActivity::class.java))
         }
     }
 

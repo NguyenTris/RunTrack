@@ -37,6 +37,10 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), GpsArtActivity::class.java)
             startActivity(intent)
         }
+
+        view.findViewById<android.view.View>(R.id.btn_open_chat)?.setOnClickListener {
+            startActivity(Intent(requireContext(), com.example.runtrack.chat.ChatActivity::class.java))
+        }
     }
 
     private fun setupBottomNavigation(view: View) {

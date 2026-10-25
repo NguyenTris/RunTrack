@@ -77,6 +77,18 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Messages / Chat Activity -->
+        <activity
+            android:name=".chat.ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Chat Detail / Active Conversation Activity -->
+        <activity
+            android:name=".chat.ChatDetailActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- HUD Settings & Peripherals Host Activity -->
         <activity
             android:name=".HudSettingsActivity"

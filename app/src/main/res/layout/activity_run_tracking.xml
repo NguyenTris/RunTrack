@@ -438,6 +438,29 @@
             app:strokeWidth="1dp"
             tools:text="ĐĂNG NHẬP QUA // GOOGLE | STRAVA" />
 
+        <!-- Open Messages / Chat Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_open_chat"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:letterSpacing="0.1"
+            android:text="@string/chat_title"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:backgroundTint="#FF5722"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/ic_chat_bubble"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_secondary_login"
+            app:layout_constraintWidth_max="480dp"
+            tools:text="MỞ TIN NHẮN" />
+
         <!-- Footer Register Callout -->
         <TextView
             android:id="@+id/tv_register_prompt"
@@ -452,7 +475,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_secondary_login"
+            app:layout_constraintTop_toBottomOf="@+id/btn_open_chat"
             app:layout_constraintWidth_max="480dp"
             tools:text="CHƯA CÓ TÀI KHOẢN? [ĐĂNG KÝ]" />
 
