@@ -23,17 +23,15 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Open HUD Settings & Peripherals
-        view.findViewById<View>(R.id.layout_settings_container)?.setOnClickListener {
+        val openSettingsAction = {
             startActivity(Intent(requireContext(), HudSettingsActivity::class.java))
         }
 
-        view.findViewById<View>(R.id.layout_devices_container)?.setOnClickListener {
-            startActivity(Intent(requireContext(), HudSettingsActivity::class.java))
-        }
-
-        view.findViewById<View>(R.id.card_hr_zones)?.setOnClickListener {
-            startActivity(Intent(requireContext(), HudSettingsActivity::class.java))
-        }
+        view.findViewById<View>(R.id.btn_settings_hub)?.setOnClickListener { openSettingsAction() }
+        view.findViewById<View>(R.id.btn_settings_hub_item)?.setOnClickListener { openSettingsAction() }
+        view.findViewById<View>(R.id.layout_settings_container)?.setOnClickListener { openSettingsAction() }
+        view.findViewById<View>(R.id.layout_devices_container)?.setOnClickListener { openSettingsAction() }
+        view.findViewById<View>(R.id.card_hr_zones)?.setOnClickListener { openSettingsAction() }
 
         // Logout Button Handler
         val btnLogout = view.findViewById<MaterialButton>(R.id.btnLogout)
