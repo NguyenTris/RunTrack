@@ -36,9 +36,27 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/btn_settings_hub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_badge_dark"
+            android:drawableStart="@drawable/ic_target"
+            android:drawablePadding="6dp"
+            android:fontFamily="monospace"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:text="⚙ CÀI ĐẶT"
+            android:textColor="@color/kinetic_orange"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/tv_online_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:drawableStart="@drawable/dot_green"
             android:drawablePadding="6dp"
             android:fontFamily="monospace"
@@ -47,8 +65,9 @@
             android:textColor="@color/neon_green"
             android:textSize="10sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/btn_settings_hub"
+            app:layout_constraintEnd_toStartOf="@+id/btn_settings_hub"
+            app:layout_constraintTop_toTopOf="@+id/btn_settings_hub" />
 
         <TextView
             android:id="@+id/tv_runner_tag"
@@ -1304,6 +1323,76 @@
                         android:text="04"
                         android:textColor="@color/text_secondary"
                         android:textSize="11sp" />
+                </RelativeLayout>
+
+                <!-- Featured Settings Hub Main Entry -->
+                <RelativeLayout
+                    android:id="@+id/btn_settings_hub_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_card_left_border_orange"
+                    android:paddingHorizontal="12dp">
+
+                    <ImageView
+                        android:id="@+id/ic_sett_hub"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="Settings Hub"
+                        android:src="@drawable/ic_target" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="12dp"
+                        android:layout_toEndOf="@+id/ic_sett_hub"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:text="CÀI ĐẶT TỔNG QUAN "
+                                android:textColor="@color/text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_badge_dark"
+                                android:fontFamily="monospace"
+                                android:paddingHorizontal="4dp"
+                                android:text="HUD"
+                                android:textColor="@color/kinetic_orange"
+                                android:textSize="9sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="monospace"
+                            android:text="CẤU HÌNH THIẾT BỊ, NHỊP TIM &amp; MỤC TIÊU"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="Arrow"
+                        android:src="@drawable/ic_chevron_right" />
                 </RelativeLayout>
 
                 <!-- Setting 1 -->

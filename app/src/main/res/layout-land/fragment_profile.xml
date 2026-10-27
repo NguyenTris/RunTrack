@@ -36,9 +36,27 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/btn_settings_hub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_badge_dark"
+            android:drawableStart="@drawable/ic_target"
+            android:drawablePadding="6dp"
+            android:fontFamily="monospace"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:text="⚙ CÀI ĐẶT"
+            android:textColor="@color/kinetic_orange"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/tv_online_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:drawableStart="@drawable/dot_green"
             android:drawablePadding="6dp"
             android:fontFamily="monospace"
@@ -47,8 +65,9 @@
             android:textColor="@color/neon_green"
             android:textSize="10sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/btn_settings_hub"
+            app:layout_constraintEnd_toStartOf="@+id/btn_settings_hub"
+            app:layout_constraintTop_toTopOf="@+id/btn_settings_hub" />
 
         <TextView
             android:id="@+id/tv_runner_tag"

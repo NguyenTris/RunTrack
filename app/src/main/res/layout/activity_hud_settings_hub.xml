@@ -73,21 +73,6 @@
             android:textColor="@color/hud_text_primary"
             android:textSize="@dimen/hud_text_title"
             android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/hud_badge_cyan"
-            android:fontFamily="monospace"
-            android:paddingStart="@dimen/hud_space_xs"
-            android:paddingTop="@dimen/hud_space_2xs"
-            android:paddingEnd="@dimen/hud_space_xs"
-            android:paddingBottom="@dimen/hud_space_2xs"
-            android:text="MASTER HUB"
-            android:textColor="@color/hud_primary"
-            android:textSize="@dimen/hud_text_badge" />
     </RelativeLayout>
 
     <!-- BOTTOM STATUS STRIP (Fixed Bottom) -->

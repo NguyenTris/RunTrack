@@ -26,17 +26,15 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         // Open HUD Settings & Peripherals
-        findViewById<android.view.View>(R.id.layout_settings_container)?.setOnClickListener {
+        val openSettingsAction = {
             startActivity(Intent(this, HudSettingsActivity::class.java))
         }
 
-        findViewById<android.view.View>(R.id.layout_devices_container)?.setOnClickListener {
-            startActivity(Intent(this, HudSettingsActivity::class.java))
-        }
-
-        findViewById<android.view.View>(R.id.card_hr_zones)?.setOnClickListener {
-            startActivity(Intent(this, HudSettingsActivity::class.java))
-        }
+        findViewById<android.view.View>(R.id.btn_settings_hub)?.setOnClickListener { openSettingsAction() }
+        findViewById<android.view.View>(R.id.btn_settings_hub_item)?.setOnClickListener { openSettingsAction() }
+        findViewById<android.view.View>(R.id.layout_settings_container)?.setOnClickListener { openSettingsAction() }
+        findViewById<android.view.View>(R.id.layout_devices_container)?.setOnClickListener { openSettingsAction() }
+        findViewById<android.view.View>(R.id.card_hr_zones)?.setOnClickListener { openSettingsAction() }
 
         // Logout Button Handler
         val btnLogout = findViewById<MaterialButton>(R.id.btnLogout)
