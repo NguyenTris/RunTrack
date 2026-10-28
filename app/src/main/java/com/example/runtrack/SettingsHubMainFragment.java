@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.example.runtrack.settings.ThemeFragment;
+import com.example.runtrack.settings.LanguageFragment;
 
 /**
  * Main dashboard fragment inside HudSettingsActivity.
@@ -73,6 +74,12 @@ public class SettingsHubMainFragment extends Fragment {
         View barTheme = view.findViewById(R.id.barTheme);
         if (barTheme != null) {
             barTheme.setOnClickListener(v -> navigateTo(new ThemeFragment(), "THEME_SETTINGS"));
+        }
+
+        // Bar 8: Language & Font Scale
+        View barLanguage = view.findViewById(R.id.barLanguage);
+        if (barLanguage != null) {
+            barLanguage.setOnClickListener(v -> navigateTo(new LanguageFragment(), "LANGUAGE_SETTINGS"));
         }
 
         // Emergency Logout Button

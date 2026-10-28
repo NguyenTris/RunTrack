@@ -499,6 +499,46 @@
                     android:textSize="@dimen/hud_text_caption" />
             </RelativeLayout>
 
+            <!-- BAR 8: LANGUAGE & FONT SCALE -->
+            <RelativeLayout
+                android:id="@+id/barLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvLangTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="NGÔN NGỮ &amp; CỠ CHỮ" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvLangTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="TIẾNG VIỆT | CỠ CHỮ 100% | MONOSPACE"
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
             <!-- EMERGENCY LOGOUT BUTTON -->
             <Button
                 android:id="@+id/btnLogout"
