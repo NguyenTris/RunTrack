@@ -27,6 +27,7 @@ class NotificationCenterActivity : AppCompatActivity() {
 
     private var currentCategory = NotificationCategory.FRIENDS
     private var pendingInvitesCount = 2
+    private var unreadSystemCount = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,8 +62,10 @@ class NotificationCenterActivity : AppCompatActivity() {
         findViewById<View>(R.id.btnMarkAllRead)?.setOnClickListener {
             notificationAdapter.markAllAsRead()
             pendingInvitesCount = 0
+            unreadSystemCount = 0
             updateSummaryText()
             tabFriends.text = "BẠN BÈ"
+            tabSystem.text = "HỆ THỐNG"
             Toast.makeText(this, "Đã đánh dấu đã đọc tất cả thông báo", Toast.LENGTH_SHORT).show()
         }
     }
@@ -89,8 +92,31 @@ class NotificationCenterActivity : AppCompatActivity() {
             onPrimaryActionClick = { item, pos ->
                 item.isHandled = true
                 notificationAdapter.notifyItemChanged(pos)
-                val name = item.title.substringBefore(" vừa").substringBefore(" phá")
-                Toast.makeText(this, "Đã gửi lời chúc mừng tới $name! 🎉", Toast.LENGTH_SHORT).show()
+                when (item.primaryActionText) {
+                    "CHÚC MỪNG" -> {
+                        val name = item.title.substringBefore(" vừa").substringBefore(" phá")
+                        Toast.makeText(this, "Đã gửi lời chúc mừng tới $name! 🎉", Toast.LENGTH_SHORT).show()
+                    }
+                    "XEM THIẾT BỊ" -> {
+                        Toast.makeText(this, "Đang mở danh sách thiết bị đã đăng nhập...", Toast.LENGTH_SHORT).show()
+                    }
+                    "CẬP NHẬT" -> {
+                        Toast.makeText(this, "Bạn đang dùng phiên bản RunTrack 2.4 mới nhất!", Toast.LENGTH_SHORT).show()
+                    }
+                    "XEM CHI TIẾT" -> {
+                        Toast.makeText(this, "Điều khoản & Chính sách quyền riêng tư RunTrack v2.4", Toast.LENGTH_LONG).show()
+                    }
+                    else -> {
+                        Toast.makeText(this, "Đã xử lý thông báo", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
+            onSecondaryActionClick = { item, pos ->
+                item.isHandled = true
+                notificationAdapter.notifyItemChanged(pos)
+                if (item.secondaryActionText == "ĐÂY LÀ TÔI") {
+                    Toast.makeText(this, "Đã xác nhận phiên đăng nhập an toàn ✓", Toast.LENGTH_SHORT).show()
+                }
             }
         )
         rvNotifications.adapter = notificationAdapter
@@ -130,21 +156,36 @@ class NotificationCenterActivity : AppCompatActivity() {
                 tabSystem.setBackgroundResource(R.drawable.hud_bg_bar_orange)
                 tabSystem.setTextColor(getColor(R.color.white))
                 tvSubtitle.text = "Bảo mật, thiết bị và cập nhật ứng dụng."
-                notificationAdapter.updateList(getSystemNotificationsPlaceholder())
+                notificationAdapter.updateList(getSystemNotifications())
             }
         }
         updateSummaryText()
     }
 
     private fun updateSummaryText() {
-        if (currentCategory == NotificationCategory.FRIENDS) {
-            tvStatusSummary.text = if (pendingInvitesCount > 0) {
-                "$pendingInvitesCount LỜI MỜI ĐANG CHỜ"
-            } else {
-                "KHÔNG CÓ LỜI MỜI NÀO ĐANG CHỜ"
+        when (currentCategory) {
+            NotificationCategory.FRIENDS -> {
+                tvStatusSummary.text = if (pendingInvitesCount > 0) {
+                    "$pendingInvitesCount LỜI MỜI ĐANG CHỜ"
+                } else {
+                    "KHÔNG CÓ LỜI MỜI NÀO ĐANG CHỜ"
+                }
             }
-        } else {
-            tvStatusSummary.text = "TRẠNG THÁI HỆ THỐNG: BÌNH THƯỜNG"
+            NotificationCategory.SYSTEM -> {
+                tvStatusSummary.text = if (unreadSystemCount > 0) {
+                    "$unreadSystemCount CẢNH BÁO BẢO MẬT & THIẾT BỊ"
+                } else {
+                    "HỆ THỐNG: HOẠT ĐỘNG BÌNH THƯỜNG"
+                }
+            }
+            NotificationCategory.ALL -> {
+                val total = pendingInvitesCount + unreadSystemCount
+                tvStatusSummary.text = if (total > 0) {
+                    "$total MỤC CẦN CHÚ Ý"
+                } else {
+                    "KHÔNG CÓ THÔNG BÁO MỚI"
+                }
+            }
         }
     }
 
@@ -257,32 +298,108 @@ class NotificationCenterActivity : AppCompatActivity() {
         )
     }
 
-    private fun getAllNotifications(): List<NotificationItem> {
-        val all = mutableListOf<NotificationItem>()
-        all.addAll(getFriendsNotifications())
-        return all
-    }
-
-    private fun getSystemNotificationsPlaceholder(): List<NotificationItem> {
+    private fun getSystemNotifications(): List<NotificationItem> {
         return listOf(
+            // SECTION 1: BẢO MẬT & TÀI KHOẢN
             NotificationItem(
-                id = "sys_header",
+                id = "header_security",
                 type = NotificationType.HEADER,
                 category = NotificationCategory.SYSTEM,
                 title = "BẢO MẬT & TÀI KHOẢN",
                 badgeCount = "2 MỤC"
             ),
             NotificationItem(
-                id = "sys_1",
+                id = "sys_sec_1",
                 type = NotificationType.SYSTEM_SECURITY,
                 category = NotificationCategory.SYSTEM,
                 title = "Đăng nhập từ thiết bị mới",
-                subtitle = "MacBook Pro · Safari · Hà Nội",
+                subtitle = "MacBook Pro · Safari · Hà Nội. Nếu không phải bạn, hãy đổi mật khẩu ngay.",
                 timeAgo = "10 PHÚT",
-                avatarResId = R.drawable.ic_nav_profile,
+                avatarResId = R.drawable.ic_shield_security,
                 primaryActionText = "XEM THIẾT BỊ",
                 secondaryActionText = "ĐÂY LÀ TÔI"
+            ),
+            NotificationItem(
+                id = "sys_sec_2",
+                type = NotificationType.SYSTEM_SECURITY,
+                category = NotificationCategory.SYSTEM,
+                title = "Mật khẩu đã được đổi thành công",
+                subtitle = "Lần đổi gần nhất: 12/10/2026",
+                timeAgo = "3 NGÀY",
+                avatarResId = R.drawable.ic_shield_security
+            ),
+
+            // SECTION 2: THIẾT BỊ & ĐỒNG BỘ
+            NotificationItem(
+                id = "header_devices",
+                type = NotificationType.HEADER,
+                category = NotificationCategory.SYSTEM,
+                title = "THIẾT BỊ & ĐỒNG BỘ",
+                badgeCount = "2 MỤC"
+            ),
+            NotificationItem(
+                id = "sys_dev_1",
+                type = NotificationType.SYSTEM_DEVICE,
+                category = NotificationCategory.SYSTEM,
+                title = "Đã đồng bộ dây đeo Polar H10",
+                subtitle = "Nhịp tim và GPS hoạt động bình thường · Pin 82%",
+                timeAgo = "1 GIỜ",
+                avatarResId = R.drawable.ic_bluetooth
+            ),
+            NotificationItem(
+                id = "sys_dev_2",
+                type = NotificationType.SYSTEM_DEVICE,
+                category = NotificationCategory.SYSTEM,
+                title = "Pin Polar H10 còn 15%",
+                subtitle = "Hãy sạc trước buổi chạy dài tiếp theo",
+                timeAgo = "3 GIỜ",
+                avatarResId = R.drawable.ic_bluetooth
+            ),
+
+            // SECTION 3: ỨNG DỤNG & CHÍNH SÁCH
+            NotificationItem(
+                id = "header_app_policy",
+                type = NotificationType.HEADER,
+                category = NotificationCategory.SYSTEM,
+                title = "ỨNG DỤNG & CHÍNH SÁCH",
+                badgeCount = "3 MỤC"
+            ),
+            NotificationItem(
+                id = "sys_pol_1",
+                type = NotificationType.SYSTEM_POLICY,
+                category = NotificationCategory.SYSTEM,
+                title = "RunTrack 2.4.1 đã sẵn sàng",
+                subtitle = "Thêm chạy theo lộ trình chia sẻ, nhóm và thông báo mới",
+                timeAgo = "1 NGÀY",
+                avatarResId = R.drawable.ic_system_update,
+                primaryActionText = "CẬP NHẬT"
+            ),
+            NotificationItem(
+                id = "sys_pol_2",
+                type = NotificationType.SYSTEM_POLICY,
+                category = NotificationCategory.SYSTEM,
+                title = "Điều khoản & chính sách riêng tư được cập nhật",
+                subtitle = "Có hiệu lực từ 01/11/2026",
+                timeAgo = "2 NGÀY",
+                avatarResId = R.drawable.ic_system_update,
+                primaryActionText = "XEM CHI TIẾT"
+            ),
+            NotificationItem(
+                id = "sys_pol_3",
+                type = NotificationType.SYSTEM_POLICY,
+                category = NotificationCategory.SYSTEM,
+                title = "Bảo trì hệ thống 02:00–03:00 ngày 25/10",
+                subtitle = "Một số tính năng bản đồ có thể gián đoạn",
+                timeAgo = "3 NGÀY",
+                avatarResId = R.drawable.ic_system_update
             )
         )
+    }
+
+    private fun getAllNotifications(): List<NotificationItem> {
+        val all = mutableListOf<NotificationItem>()
+        all.addAll(getFriendsNotifications())
+        all.addAll(getSystemNotifications())
+        return all
     }
 }

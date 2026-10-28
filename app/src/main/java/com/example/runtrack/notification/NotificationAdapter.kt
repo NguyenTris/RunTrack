@@ -13,7 +13,8 @@ class NotificationAdapter(
     private var items: MutableList<NotificationItem>,
     private val onAcceptClick: (NotificationItem, Int) -> Unit,
     private val onRejectClick: (NotificationItem, Int) -> Unit,
-    private val onPrimaryActionClick: (NotificationItem, Int) -> Unit
+    private val onPrimaryActionClick: (NotificationItem, Int) -> Unit,
+    private val onSecondaryActionClick: ((NotificationItem, Int) -> Unit)? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -32,7 +33,7 @@ class NotificationAdapter(
             HeaderViewHolder(view)
         } else {
             val view = inflater.inflate(R.layout.item_notification_friend, parent, false)
-            FriendViewHolder(view)
+            ItemViewHolder(view)
         }
     }
 
@@ -40,7 +41,7 @@ class NotificationAdapter(
         val item = items[position]
         if (holder is HeaderViewHolder) {
             holder.bind(item)
-        } else if (holder is FriendViewHolder) {
+        } else if (holder is ItemViewHolder) {
             holder.bind(item, position)
         }
     }
@@ -80,7 +81,7 @@ class NotificationAdapter(
         }
     }
 
-    inner class FriendViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val ivAvatar: ImageView = itemView.findViewById(R.id.iv_avatar)
         private val tvTitle: TextView = itemView.findViewById(R.id.tv_title)
         private val tvSubtitle: TextView = itemView.findViewById(R.id.tv_subtitle)
@@ -124,11 +125,21 @@ class NotificationAdapter(
                         btnSecondary.visibility = View.GONE
                     }
                 } else {
-                    // E.g., "CHÚC MỪNG" or other primary actions
+                    // System actions or Kudos ("XEM THIẾT BỊ", "CẬP NHẬT", "CHÚC MỪNG", "XEM CHI TIẾT")
                     btnPrimary.setBackgroundResource(R.drawable.hud_bg_bar_cyan)
                     btnPrimary.setTextColor(itemView.context.getColor(R.color.hud_canvas))
                     btnPrimary.setOnClickListener { onPrimaryActionClick(item, bindingAdapterPosition) }
-                    btnSecondary.visibility = View.GONE
+
+                    if (item.secondaryActionText != null) {
+                        btnSecondary.visibility = View.VISIBLE
+                        btnSecondary.text = item.secondaryActionText
+                        btnSecondary.setOnClickListener {
+                            onSecondaryActionClick?.invoke(item, bindingAdapterPosition)
+                                ?: onRejectClick(item, bindingAdapterPosition)
+                        }
+                    } else {
+                        btnSecondary.visibility = View.GONE
+                    }
                 }
             } else {
                 layoutActions.visibility = View.GONE

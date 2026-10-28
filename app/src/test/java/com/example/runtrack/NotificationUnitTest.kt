@@ -55,6 +55,51 @@ class NotificationUnitTest {
     }
 
     @Test
+    fun testSystemNotificationSecurityActions() {
+        val secItem = NotificationItem(
+            id = "sys_sec_1",
+            type = NotificationType.SYSTEM_SECURITY,
+            category = NotificationCategory.SYSTEM,
+            title = "Đăng nhập từ thiết bị mới",
+            subtitle = "MacBook Pro · Safari · Hà Nội",
+            timeAgo = "10 PHÚT",
+            primaryActionText = "XEM THIẾT BỊ",
+            secondaryActionText = "ĐÂY LÀ TÔI"
+        )
+
+        assertEquals(NotificationCategory.SYSTEM, secItem.category)
+        assertEquals(NotificationType.SYSTEM_SECURITY, secItem.type)
+        assertEquals("XEM THIẾT BỊ", secItem.primaryActionText)
+        assertEquals("ĐÂY LÀ TÔI", secItem.secondaryActionText)
+
+        // Verify handling confirmation
+        secItem.isHandled = true
+        assertTrue(secItem.isHandled)
+    }
+
+    @Test
+    fun testSystemDeviceAndPolicyNotifications() {
+        val devItem = NotificationItem(
+            id = "sys_dev_1",
+            type = NotificationType.SYSTEM_DEVICE,
+            category = NotificationCategory.SYSTEM,
+            title = "Đã đồng bộ dây đeo Polar H10",
+            timeAgo = "1 GIỜ"
+        )
+        val polItem = NotificationItem(
+            id = "sys_pol_1",
+            type = NotificationType.SYSTEM_POLICY,
+            category = NotificationCategory.SYSTEM,
+            title = "RunTrack 2.4.1 đã sẵn sàng",
+            primaryActionText = "CẬP NHẬT"
+        )
+
+        assertEquals(NotificationType.SYSTEM_DEVICE, devItem.type)
+        assertEquals(NotificationType.SYSTEM_POLICY, polItem.type)
+        assertEquals("CẬP NHẬT", polItem.primaryActionText)
+    }
+
+    @Test
     fun testMarkAllAsRead() {
         val list = mutableListOf(
             NotificationItem(
@@ -66,9 +111,9 @@ class NotificationUnitTest {
             ),
             NotificationItem(
                 id = "2",
-                type = NotificationType.FRIEND_ACTIVITY,
-                category = NotificationCategory.FRIENDS,
-                title = "Lê Quốc Bảo thích buổi chạy",
+                type = NotificationType.SYSTEM_DEVICE,
+                category = NotificationCategory.SYSTEM,
+                title = "Pin Polar H10 còn 15%",
                 isRead = false
             )
         )
@@ -82,15 +127,15 @@ class NotificationUnitTest {
     @Test
     fun testHeaderItemProperties() {
         val header = NotificationItem(
-            id = "header_1",
+            id = "header_sec",
             type = NotificationType.HEADER,
-            category = NotificationCategory.FRIENDS,
-            title = "LỜI MỜI KẾT BẠN",
-            badgeCount = "2 ĐANG CHỜ"
+            category = NotificationCategory.SYSTEM,
+            title = "BẢO MẬT & TÀI KHOẢN",
+            badgeCount = "2 MỤC"
         )
 
         assertEquals(NotificationType.HEADER, header.type)
-        assertEquals("2 ĐANG CHỜ", header.badgeCount)
+        assertEquals("2 MỤC", header.badgeCount)
         assertNull(header.primaryActionText)
     }
 }
