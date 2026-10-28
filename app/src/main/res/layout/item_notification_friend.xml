@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_notif_card"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- User Avatar / Icon -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_nav_profile"
+            app:shapeAppearanceOverlay="@style/CircleAvatar"
+            app:strokeColor="@color/hud_border_structural"
+            app:strokeWidth="1dp" />
+
+        <!-- Notification Content -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="64dp"
+            android:layout_toEndOf="@+id/iv_avatar"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="Ngọc Mai muốn kết bạn với bạn"
+                android:textColor="@color/hud_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="sans-serif"
+                android:text="Cùng chạy tại Hồ Gươm · 2 bạn chung"
+                android:textColor="@color/hud_text_dim"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Timestamp Tag -->
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:fontFamily="monospace"
+            android:text="5 PHÚT"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="10sp" />
+    </RelativeLayout>
+
+    <!-- Action Buttons Row (Optional / Visible when actions present) -->
+    <LinearLayout
+        android:id="@+id/layout_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btn_primary"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:background="@drawable/hud_bg_bar_orange"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:minWidth="90dp"
+            android:paddingHorizontal="12dp"
+            android:text="CHẤP NHẬN"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btn_secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_notif_btn_outline"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:minWidth="80dp"
+            android:paddingHorizontal="12dp"
+            android:text="TỪ CHỐI"
+            android:textColor="@color/hud_text_secondary"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>
