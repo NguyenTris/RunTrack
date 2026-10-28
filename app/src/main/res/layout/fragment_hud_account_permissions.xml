@@ -352,6 +352,46 @@
                     android:textSize="@dimen/hud_text_caption" />
             </RelativeLayout>
 
+            <!-- Activity Privacy Action -->
+            <RelativeLayout
+                android:id="@+id/btnActivityPrivacy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvPrivacyTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="AI XEM ĐƯỢC HOẠT ĐỘNG" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[THIẾT LẬP &gt;]"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvPrivacyTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="Quyền riêng tư buổi chạy &amp; bản đồ GPS"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
             <!-- 2FA Authenticator Switch -->
             <RelativeLayout
                 android:layout_width="match_parent"

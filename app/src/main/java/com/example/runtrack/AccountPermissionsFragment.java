@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.runtrack.settings.ActivityPrivacyFragment;
 import com.example.runtrack.settings.LoggedInDevicesFragment;
 
 /**
@@ -53,6 +54,18 @@ public class AccountPermissionsFragment extends Fragment {
                     ((HudSettingsActivity) requireActivity()).navigateToFragment(new LoggedInDevicesFragment(), "LOGGED_IN_DEVICES");
                 } else {
                     Toast.makeText(requireContext(), "Mở quản lý thiết bị...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Activity Privacy Button
+        View btnActivityPrivacy = view.findViewById(R.id.btnActivityPrivacy);
+        if (btnActivityPrivacy != null) {
+            btnActivityPrivacy.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new ActivityPrivacyFragment(), "ACTIVITY_PRIVACY");
+                } else {
+                    Toast.makeText(requireContext(), "Mở quyền riêng tư...", Toast.LENGTH_SHORT).show();
                 }
             });
         }
