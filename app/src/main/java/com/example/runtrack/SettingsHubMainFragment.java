@@ -9,6 +9,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.runtrack.settings.ThemeFragment;
+import com.example.runtrack.settings.LanguageFragment;
+import com.example.runtrack.settings.ExportDataFragment;
+import com.example.runtrack.settings.HelpCenterFragment;
 
 /**
  * Main dashboard fragment inside HudSettingsActivity.
@@ -66,6 +70,30 @@ public class SettingsHubMainFragment extends Fragment {
         View barPermissions = view.findViewById(R.id.barPermissions);
         if (barPermissions != null) {
             barPermissions.setOnClickListener(v -> navigateTo(new AccountPermissionsFragment(), "PERMISSIONS"));
+        }
+
+        // Bar 7: Theme & HUD Palettes
+        View barTheme = view.findViewById(R.id.barTheme);
+        if (barTheme != null) {
+            barTheme.setOnClickListener(v -> navigateTo(new ThemeFragment(), "THEME_SETTINGS"));
+        }
+
+        // Bar 8: Language & Font Scale
+        View barLanguage = view.findViewById(R.id.barLanguage);
+        if (barLanguage != null) {
+            barLanguage.setOnClickListener(v -> navigateTo(new LanguageFragment(), "LANGUAGE_SETTINGS"));
+        }
+
+        // Bar 9: Export Telemetry & GPX
+        View barExportData = view.findViewById(R.id.barExportData);
+        if (barExportData != null) {
+            barExportData.setOnClickListener(v -> navigateTo(new ExportDataFragment(), "EXPORT_DATA"));
+        }
+
+        // Bar 10: Help Center & Support FAQ
+        View barHelpCenter = view.findViewById(R.id.barHelpCenter);
+        if (barHelpCenter != null) {
+            barHelpCenter.setOnClickListener(v -> navigateTo(new HelpCenterFragment(), "HELP_CENTER"));
         }
 
         // Emergency Logout Button

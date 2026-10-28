@@ -451,6 +451,174 @@
                 </LinearLayout>
             </RelativeLayout>
 
+            <!-- SECTION 4: SYSTEM & PERSONALIZATION -->
+            <TextView
+                style="@style/HudText.SectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:text="■ HỆ THỐNG &amp; TÙY BIẾN // CUSTOMIZATION" />
+
+            <!-- BAR 7: THEME & HUD PALETTES -->
+            <RelativeLayout
+                android:id="@+id/barTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvThemeTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="CHỦ ĐỀ &amp; GIAO DIỆN HUD" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvThemeTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="AEROSPACE DARK | HIGH CONTRAST NEON"
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
+            <!-- BAR 8: LANGUAGE & FONT SCALE -->
+            <RelativeLayout
+                android:id="@+id/barLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvLangTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="NGÔN NGỮ &amp; CỠ CHỮ" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvLangTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="TIẾNG VIỆT | CỠ CHỮ 100% | MONOSPACE"
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
+            <!-- BAR 9: EXPORT TELEMETRY & GPX -->
+            <RelativeLayout
+                android:id="@+id/barExportData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvExportTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="XUẤT DỮ LIỆU &amp; FILE GPX" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvExportTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="GPX | TCX | CSV | STRAVA COMPATIBLE"
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
+            <!-- BAR 10: HELP CENTER & SUPPORT FAQ -->
+            <RelativeLayout
+                android:id="@+id/barHelpCenter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvHelpTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="TRUNG TÂM TRỢ GIÚP &amp; HỎI ĐÁP FAQ" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvHelpTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="HỎI ĐÁP KỸ THUẬT | EMAIL 24/7 | HOTLINE 1900 6868"
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
             <!-- EMERGENCY LOGOUT BUTTON -->
             <Button
                 android:id="@+id/btnLogout"

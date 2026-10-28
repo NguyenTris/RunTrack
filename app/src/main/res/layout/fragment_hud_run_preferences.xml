@@ -221,6 +221,54 @@
                 android:layout_marginBottom="@dimen/hud_space_sm"
                 android:text="■ CƠ CHẾ THEO DÕI GPS" />
 
+            <!-- GPS Accuracy Submenu Navigation -->
+            <RelativeLayout
+                android:id="@+id/btnGpsAccuracy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/icArrowGps"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ĐỘ CHÍNH XÁC GPS" />
+
+                    <TextView
+                        android:id="@+id/tvCurrentGpsMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Tiêu chuẩn đường phố (2-3s)"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/icArrowGps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="monospace"
+                    android:text="&gt;"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
             <!-- Auto-pause Toggle -->
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -269,6 +317,54 @@
                 android:layout_marginBottom="@dimen/hud_space_sm"
                 android:text="■ HỆ ĐO LƯỜNG &amp; HIỂN THỊ BẢN ĐỒ" />
 
+            <!-- Units Settings Submenu Navigation -->
+            <RelativeLayout
+                android:id="@+id/btnUnitsSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/icArrowUnits"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HỆ ĐƠN VỊ &amp; ĐO LƯỜNG" />
+
+                    <TextView
+                        android:id="@+id/tvCurrentUnits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Metric (km, m, min/km, °C, kg)"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/icArrowUnits"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="monospace"
+                    android:text="&gt;"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
             <!-- Unit Selector -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -312,6 +408,54 @@
                         android:textSize="@dimen/hud_text_caption" />
                 </LinearLayout>
             </LinearLayout>
+
+            <!-- Map Style Submenu Navigation -->
+            <RelativeLayout
+                android:id="@+id/btnMapStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_md"
+                android:background="@drawable/hud_card_container"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/icArrowMap"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/HudText.BarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="KIỂU BẢN ĐỒ &amp; LỚP PHỦ" />
+
+                    <TextView
+                        android:id="@+id/tvCurrentMapStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/hud_space_2xs"
+                        android:fontFamily="monospace"
+                        android:text="Dark HUD (Độ tương phản cao)"
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="@dimen/hud_text_caption" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/icArrowMap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="monospace"
+                    android:text="&gt;"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
 
             <!-- High-Contrast Map Toggle -->
             <RelativeLayout

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="8dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="4dp">
+
+    <TextView
+        android:id="@+id/tv_section_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.08"
+        android:text="LỜI MỜI KẾT BẠN"
+        android:textColor="@color/hud_text_dim"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_section_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_badge_dark"
+        android:fontFamily="monospace"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
+        android:text="2 ĐANG CHỜ"
+        android:textColor="@color/kinetic_orange"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+</LinearLayout>

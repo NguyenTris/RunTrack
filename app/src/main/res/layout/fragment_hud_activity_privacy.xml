@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-PRIV-01] AI XEM ĐƯỢC HOẠT ĐỘNG (ACTIVITY PRIVACY SETTINGS) -->
+<!-- Aerospace Kinetic HUD Architecture -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER TELEMETRY STRIP (Fixed Top) -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:text="&lt; BẢO MẬT"
+            android:textColor="@color/hud_primary"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.1"
+            android:text="RT / PRIV-01"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- HEADER BLOCK -->
+    <LinearLayout
+        android:id="@+id/headerBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/hud_space_md"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:text="Ai xem được hoạt động"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif"
+            android:text="Kiểm soát đối tượng có thể nhìn thấy các buổi chạy và lộ trình GPS của bạn."
+            android:textColor="@color/hud_text_dim"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- FIXED BOTTOM SAVE BUTTON -->
+    <LinearLayout
+        android:id="@+id/bottomActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnSavePrivacy"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/hud_bg_bar_orange"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:text="LƯU THIẾT LẬP RIÊNG TƯ"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- SCROLLABLE BODY CONTENT -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomActionBar"
+        android:layout_below="@id/headerBlock"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/hud_space_md"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ PHẠM VI HIỂN THỊ MẶC ĐỊNH"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- OPTION 1: PUBLIC -->
+            <RelativeLayout
+                android:id="@+id/card_scope_public"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_public_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_public_indicator"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="MỌI NGƯỜI (CÔNG KHAI)"
+                            android:textColor="@color/hud_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_badge_dark"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="6dp"
+                            android:text="GLOBAL"
+                            android:textColor="@color/hud_text_dim"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Bất kỳ ai trên RunTrack đều có thể xem buổi chạy, bản đồ GPS và thành tích của bạn trên Bảng xếp hạng."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- OPTION 2: FRIENDS ONLY -->
+            <RelativeLayout
+                android:id="@+id/card_scope_friends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_friends_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="●"
+                    android:textColor="@color/kinetic_orange"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_friends_indicator"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="CHỈ BẠN BÈ (FOLLOWERS)"
+                            android:textColor="@color/hud_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_badge_orange"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="6dp"
+                            android:text="KHUYÊN DÙNG"
+                            android:textColor="@color/white"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Chỉ những người đã kết bạn mới có thể xem chi tiết buổi chạy và bình luận."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- OPTION 3: ONLY ME -->
+            <RelativeLayout
+                android:id="@+id/card_scope_private"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_private_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_private_indicator"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="CHỈ MÌNH TÔI (RIÊNG TƯ)"
+                            android:textColor="@color/hud_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_badge_dark"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="6dp"
+                            android:text="SECRET"
+                            android:textColor="@color/hud_text_dim"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Hoạt động lưu trữ bí mật. Bạn sẽ tự động ẩn khỏi bảng xếp hạng công khai."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- SECTION 2: PRIVACY ZONES & TELEMETRY SHIELD -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ VÙNG BẢO MẬT &amp; DỮ LIỆU ĐO ĐẠC"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- TOGGLE 1: PRIVACY ZONE 500M -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Ẩn điểm xuất phát &amp; kết thúc (500m)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Tự động che giấu bán kính 500m quanh nhà hoặc nơi làm việc trên bản đồ GPS."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_hide_start_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <!-- TOGGLE 2: HIDE BIOMETRICS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Ẩn dữ liệu nhịp tim và sinh trắc học"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Chỉ hiển thị khoảng cách và thời gian, ẩn vùng nhịp tim đối với người khác."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_hide_biometrics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="false" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

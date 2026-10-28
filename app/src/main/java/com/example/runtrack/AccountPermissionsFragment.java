@@ -10,6 +10,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.runtrack.settings.FriendRequestsFragment;
+import com.example.runtrack.settings.ActivityPrivacyFragment;
+import com.example.runtrack.settings.LoggedInDevicesFragment;
 
 /**
  * [SCR-08] Account Security & Background System Permissions Fragment.
@@ -35,7 +38,49 @@ public class AccountPermissionsFragment extends Fragment {
         // Change Password Button
         View btnChangePassword = view.findViewById(R.id.btnChangePassword);
         if (btnChangePassword != null) {
-            btnChangePassword.setOnClickListener(v -> Toast.makeText(requireContext(), "Mở hộp thoại đổi mật khẩu tài khoản...", Toast.LENGTH_SHORT).show());
+            btnChangePassword.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new ChangePasswordFragment(), "CHANGE_PASSWORD");
+                } else {
+                    Toast.makeText(requireContext(), "Mở giao diện đổi mật khẩu...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Logged-in Devices Button
+        View btnActiveDevices = view.findViewById(R.id.btnActiveDevices);
+        if (btnActiveDevices != null) {
+            btnActiveDevices.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new LoggedInDevicesFragment(), "LOGGED_IN_DEVICES");
+                } else {
+                    Toast.makeText(requireContext(), "Mở quản lý thiết bị...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Activity Privacy Button
+        View btnActivityPrivacy = view.findViewById(R.id.btnActivityPrivacy);
+        if (btnActivityPrivacy != null) {
+            btnActivityPrivacy.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new ActivityPrivacyFragment(), "ACTIVITY_PRIVACY");
+                } else {
+                    Toast.makeText(requireContext(), "Mở quyền riêng tư...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Friend Requests Button
+        View btnFriendRequests = view.findViewById(R.id.btnFriendRequests);
+        if (btnFriendRequests != null) {
+            btnFriendRequests.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new FriendRequestsFragment(), "FRIEND_REQUESTS");
+                } else {
+                    Toast.makeText(requireContext(), "Mở thiết lập lời mời kết bạn...", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         // Revoke JWT / Logout Button
