@@ -392,6 +392,46 @@
                     android:textSize="@dimen/hud_text_caption" />
             </RelativeLayout>
 
+            <!-- Friend Requests Action -->
+            <RelativeLayout
+                android:id="@+id/btnFriendRequests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvFriendReqTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="NHẬN LỜI MỜI KẾT BẠN" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[CẤU HÌNH &gt;]"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvFriendReqTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="Đối tượng gửi yêu cầu &amp; đề xuất CLB"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
             <!-- 2FA Authenticator Switch -->
             <RelativeLayout
                 android:layout_width="match_parent"

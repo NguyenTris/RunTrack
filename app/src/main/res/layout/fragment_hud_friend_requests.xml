@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-PRIV-02] NHẬN LỜI MỜI KẾT BẠN (FRIEND REQUESTS SETTINGS) -->
+<!-- Aerospace Kinetic HUD Architecture -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER TELEMETRY STRIP (Fixed Top) -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:text="&lt; BẢO MẬT"
+            android:textColor="@color/hud_primary"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.1"
+            android:text="RT / PRIV-02"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- HEADER BLOCK -->
+    <LinearLayout
+        android:id="@+id/headerBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/hud_space_md"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:text="Nhận lời mời kết bạn"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif"
+            android:text="Kiểm soát ai có thể tìm thấy bạn và gửi lời mời kết nối trên RunTrack."
+            android:textColor="@color/hud_text_dim"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- FIXED BOTTOM SAVE BUTTON -->
+    <LinearLayout
+        android:id="@+id/bottomActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnSaveFriendRequests"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/hud_bg_bar_orange"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:text="LƯU THIẾT LẬP KẾT BẠN"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- SCROLLABLE BODY CONTENT -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomActionBar"
+        android:layout_below="@id/headerBlock"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/hud_space_md"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- SECTION 1: WHO CAN SEND REQUESTS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ AI CÓ THỂ GỬI LỜI MỜI KẾT BẠN"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- OPTION 1: EVERYONE -->
+            <RelativeLayout
+                android:id="@+id/card_req_everyone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_everyone_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="●"
+                    android:textColor="@color/kinetic_orange"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_everyone_indicator"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="MỌI NGƯỜI (CÔNG KHAI)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Bất kỳ vận động viên nào trên RunTrack đều có thể gửi lời mời kết bạn cho bạn."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- OPTION 2: FRIENDS OF FRIENDS -->
+            <RelativeLayout
+                android:id="@+id/card_req_fof"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_fof_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_fof_indicator"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="BẠN CỦA BẠN BÈ"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Chỉ những người có ít nhất 1 bạn chung mới có thể gửi yêu cầu kết nối."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- OPTION 3: NO ONE -->
+            <RelativeLayout
+                android:id="@+id/card_req_no_one"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_no_one_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_no_one_indicator"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="KHÔNG AI CẢ (ĐÓNG KẾT NỐI)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Tạm thời không nhận yêu cầu kết bạn mới từ bất kỳ ai."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- SECTION 2: DISCOVERY & CLUB POLICIES -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ TÌM KIẾM &amp; ĐỀ XUẤT CÂU LẠC BỘ"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- TOGGLE 1: SEARCH BY CONTACT -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Tìm kiếm bằng SĐT hoặc Email"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Cho phép bạn bè trong danh bạ tìm thấy hồ sơ của bạn."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_allow_search_contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <!-- TOGGLE 2: SUGGEST TO CLUB MEMBERS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Gợi ý kết bạn với thành viên cùng CLB"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Hiển thị bạn trong danh sách gợi ý cho các runner cùng Câu lạc bộ."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_suggest_club"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <!-- TOGGLE 3: AUTO ACCEPT CLUB MEMBERS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Tự động đồng ý lời mời từ thành viên CLB"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Tự động kết bạn khi đồng đội trong CLB Sunrise Runners gửi yêu cầu."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_auto_accept_club"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="false" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.runtrack.settings.FriendRequestsFragment;
 import com.example.runtrack.settings.ActivityPrivacyFragment;
 import com.example.runtrack.settings.LoggedInDevicesFragment;
 
@@ -66,6 +67,18 @@ public class AccountPermissionsFragment extends Fragment {
                     ((HudSettingsActivity) requireActivity()).navigateToFragment(new ActivityPrivacyFragment(), "ACTIVITY_PRIVACY");
                 } else {
                     Toast.makeText(requireContext(), "Mở quyền riêng tư...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Friend Requests Button
+        View btnFriendRequests = view.findViewById(R.id.btnFriendRequests);
+        if (btnFriendRequests != null) {
+            btnFriendRequests.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new FriendRequestsFragment(), "FRIEND_REQUESTS");
+                } else {
+                    Toast.makeText(requireContext(), "Mở thiết lập lời mời kết bạn...", Toast.LENGTH_SHORT).show();
                 }
             });
         }
