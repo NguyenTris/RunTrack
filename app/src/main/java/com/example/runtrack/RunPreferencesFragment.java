@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.runtrack.settings.GpsAccuracyFragment;
 
 /**
  * [SCR-02] Run Preferences & Audio Cues Fragment.
@@ -29,6 +30,18 @@ public class RunPreferencesFragment extends Fragment {
         View btnBack = view.findViewById(R.id.btnBack);
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        }
+
+        // GPS Accuracy Submenu
+        View btnGpsAccuracy = view.findViewById(R.id.btnGpsAccuracy);
+        if (btnGpsAccuracy != null) {
+            btnGpsAccuracy.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new GpsAccuracyFragment(), "GPS_ACCURACY");
+                } else {
+                    Toast.makeText(requireContext(), "Mở thiết lập độ chính xác GPS...", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         // Interval selection toasts
