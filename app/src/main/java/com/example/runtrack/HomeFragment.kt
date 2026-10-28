@@ -57,7 +57,10 @@ class HomeFragment : Fragment() {
                     startActivity(intent)
                     true
                 }
-                R.id.nav_activity -> true
+                R.id.nav_activity -> {
+                    startActivity(Intent(requireContext(), ProgressActivity::class.java))
+                    false
+                }
                 R.id.nav_tracking -> {
                     val intent = Intent(requireContext(), GpsArtActivity::class.java)
                     startActivity(intent)

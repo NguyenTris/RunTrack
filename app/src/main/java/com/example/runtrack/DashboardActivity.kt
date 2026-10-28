@@ -57,6 +57,11 @@ class DashboardActivity : AppCompatActivity() {
         val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottom_navigation)
         bottomNav?.setOnItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.nav_activity -> {
+                    // Intercept "HOẠT ĐỘNG" click to launch ProgressActivity without changing tab state
+                    startActivity(Intent(this, ProgressActivity::class.java))
+                    false
+                }
                 R.id.nav_profile -> {
                     val intent = Intent(this, ProfileActivity::class.java)
                     startActivity(intent)
@@ -67,7 +72,6 @@ class DashboardActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-                R.id.nav_activity -> true
                 R.id.nav_tracking -> {
                     val intent = Intent(this, GpsArtActivity::class.java)
                     startActivity(intent)

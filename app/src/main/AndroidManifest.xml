@@ -29,6 +29,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Registration Activity -->
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Login Success / Verified Session Activity -->
         <activity
             android:name=".AuthSuccessActivity"
@@ -68,6 +74,12 @@
         <!-- Post-Run Summary Activity -->
         <activity
             android:name=".RunSummaryActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Progress & Activity Screen Activity -->
+        <activity
+            android:name=".ProgressActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 

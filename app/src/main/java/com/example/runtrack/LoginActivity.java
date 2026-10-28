@@ -37,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         tvTogglePassword = findViewById(R.id.tvTogglePassword);
         View btnLogin = findViewById(R.id.btnLogin);
+        View tvRegister = findViewById(R.id.tvRegister);
 
         if (tvTogglePassword != null && etPassword != null) {
             tvTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
@@ -44,6 +45,13 @@ public class LoginActivity extends AppCompatActivity {
 
         if (btnLogin != null) {
             btnLogin.setOnClickListener(v -> performLogin());
+        }
+
+        if (tvRegister != null) {
+            tvRegister.setOnClickListener(v -> {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            });
         }
     }
 
