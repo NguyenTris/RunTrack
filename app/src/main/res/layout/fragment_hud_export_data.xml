@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-EXPORT-01] XUẤT DỮ LIỆU CHẠY & GPX (EXPORT TELEMETRY & GPX) -->
+<!-- Aerospace Kinetic HUD Architecture -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER TELEMETRY STRIP (Fixed Top) -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:text="&lt; CÀI ĐẶT"
+            android:textColor="@color/hud_primary"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.1"
+            android:text="RT / EXPORT-01"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- HEADER BLOCK -->
+    <LinearLayout
+        android:id="@+id/headerBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/hud_space_md"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:text="Xuất dữ liệu chạy"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif"
+            android:text="Đóng gói tọa độ GPS, nhịp tim và cadence sang file GPX/TCX tương thích Strava, Garmin."
+            android:textColor="@color/hud_text_dim"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- FIXED BOTTOM SAVE BUTTON -->
+    <LinearLayout
+        android:id="@+id/bottomActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnExportNow"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/hud_bg_bar_orange"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:text="XUẤT &amp; CHIA SẺ FILE DỮ LIỆU"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- SCROLLABLE BODY CONTENT -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomActionBar"
+        android:layout_below="@id/headerBlock"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/hud_space_md"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- SECTION 1: EXPORT FILE FORMAT -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ ĐỊNH DẠNG FILE XUẤT (EXPORT FORMAT)"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- OPTION 1: GPX (DEFAULT) -->
+            <RelativeLayout
+                android:id="@+id/card_format_gpx"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_gpx_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="●"
+                    android:textColor="@color/kinetic_orange"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_gpx_indicator"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="GPX (GPS EXCHANGE FORMAT)"
+                            android:textColor="@color/hud_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_badge_orange"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="6dp"
+                            android:text="PHỔ BIẾN NHẤT"
+                            android:textColor="@color/white"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Định dạng tiêu chuẩn mở quốc tế. Nhập trực tiếp vào Strava, Garmin Connect, Suunto, Coros và Relive 3D."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- OPTION 2: TCX -->
+            <RelativeLayout
+                android:id="@+id/card_format_tcx"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_tcx_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_tcx_indicator"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="TCX (TRAINING CENTER XML)"
+                            android:textColor="@color/hud_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_badge_dark"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="6dp"
+                            android:text="HR + CADENCE"
+                            android:textColor="@color/hud_primary"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Bao gồm đầy đủ các trackpoint nhịp tim theo từng giây, vòng chạy (laps) và dữ liệu guồng chân Cadence."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- OPTION 3: CSV -->
+            <RelativeLayout
+                android:id="@+id/card_format_csv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_csv_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_csv_indicator"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="CSV (EXCEL &amp; GOOGLE SHEETS)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Bảng số liệu dạng bảng phẳng: Thời gian, Vĩ độ, Kinh độ, Vận tốc, Nhịp tim. Phù hợp phân tích nghiên cứu thể thao."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- OPTION 4: FIT -->
+            <RelativeLayout
+                android:id="@+id/card_format_fit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_fit_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_fit_indicator"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="FIT (GARMIN BINARY FORMAT)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Định dạng nén nhị phân siêu nhẹ của Garmin, tối ưu đồng bộ với đồng hồ thể thao chuyên dụng."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- SECTION 2: DATE RANGE -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ PHẠM VI BUỔI CHẠY (DATE RANGE)"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- RANGE 1: LAST 30 DAYS (DEFAULT) -->
+            <RelativeLayout
+                android:id="@+id/card_range_30d"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_range_30d_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="●"
+                    android:textColor="@color/kinetic_orange"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_range_30d_indicator"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="30 NGÀY GẦN NHẤT (~18 BUỔI CHẠY)"
+                    android:textColor="@color/hud_text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <!-- RANGE 2: THIS MONTH -->
+            <RelativeLayout
+                android:id="@+id/card_range_month"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_range_month_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_range_month_indicator"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="THÁNG HIỆN TẠI (TỪ ĐẦU THÁNG ĐẾN NAY)"
+                    android:textColor="@color/hud_text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <!-- RANGE 3: ALL TIME -->
+            <RelativeLayout
+                android:id="@+id/card_range_all"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_range_all_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_range_all_indicator"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="TOÀN BỘ LỊCH SỬ TỪ TRƯỚC ĐẾN NAY"
+                    android:textColor="@color/hud_text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <!-- SECTION 3: TELEMETRY INCLUSIONS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ THÀNH PHẦN TELEMETRY ĐÍNH KÈM"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- TOGGLE 1: HEART RATE -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Đính kèm dữ liệu Nhịp tim (Heart Rate BPM)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Ghi lại nhịp tim từng trackpoint từ dây đeo ngực hoặc đồng hồ BLE."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_include_hr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <!-- TOGGLE 2: CADENCE -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Đính kèm Guồng chân (Cadence SPM)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Số bước chạy mỗi phút ghi nhận từ cảm biến chuyển động."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_include_cadence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <!-- TOGGLE 3: ELEVATION -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Đính kèm Cao độ GPS (Elevation &amp; Slope)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Độ cao so với mực nước biển tính toán từ vệ tinh GPS và khí áp kế."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_include_elevation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
