@@ -312,6 +312,46 @@
                     android:textSize="@dimen/hud_text_caption" />
             </RelativeLayout>
 
+            <!-- Logged-in Devices Action -->
+            <RelativeLayout
+                android:id="@+id/btnActiveDevices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_sm"
+                android:background="@drawable/hud_card_container"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvDevicesTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="THIẾT BỊ ĐÃ ĐĂNG NHẬP" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[QUẢN LÝ &gt;]"
+                    android:textColor="@color/hud_primary"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvDevicesTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="3 thiết bị đang hoạt động đồng thời"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
             <!-- 2FA Authenticator Switch -->
             <RelativeLayout
                 android:layout_width="match_parent"

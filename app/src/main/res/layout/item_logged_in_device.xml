@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_notif_card"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Device Type Icon -->
+        <ImageView
+            android:id="@+id/iv_device_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_badge_dark"
+            android:contentDescription="Device Icon"
+            android:padding="6dp"
+            android:src="@drawable/ic_device_laptop" />
+
+        <!-- Device Info Block -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="90dp"
+            android:layout_toEndOf="@+id/iv_device_icon"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_device_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="MacBook Pro 16-inch"
+                android:textColor="@color/hud_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_device_client"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="sans-serif"
+                android:text="Safari 18.1 · Hà Nội, Việt Nam"
+                android:textColor="@color/hud_text_dim"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tv_device_ip_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="monospace"
+                android:text="IP: 118.70.x.x · 10 phút trước"
+                android:textColor="@color/hud_text_sub"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <!-- Logout Button -->
+        <TextView
+            android:id="@+id/btn_logout_device"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_notif_btn_outline"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:text="ĐĂNG XUẤT"
+            android:textColor="@color/hud_alert"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-SEC-02] THIẾT BỊ ĐÃ ĐĂNG NHẬP (LOGGED IN DEVICES) -->
+<!-- Aerospace Kinetic HUD Architecture -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER TELEMETRY STRIP (Fixed Top) -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:text="&lt; BẢO MẬT"
+            android:textColor="@color/hud_primary"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.1"
+            android:text="RT / SEC-02"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- HEADER BLOCK -->
+    <LinearLayout
+        android:id="@+id/headerBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/hud_space_md"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:text="Thiết bị đã đăng nhập"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif"
+            android:text="Quản lý danh sách các thiết bị có quyền truy cập vào tài khoản."
+            android:textColor="@color/hud_text_dim"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- FIXED BOTTOM LOGOUT ALL BUTTON -->
+    <LinearLayout
+        android:id="@+id/bottomActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnLogoutAllOthers"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_notif_btn_outline"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:text="ĐĂNG XUẤT KHỎI TẤT CẢ THIẾT BỊ KHÁC"
+            android:textColor="@color/hud_alert"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- SCROLLABLE BODY CONTENT -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomActionBar"
+        android:layout_below="@id/headerBlock"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/hud_space_md"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- SECTION 1: CURRENT DEVICE -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ THIẾT BỊ HIỆN TẠI (THIS DEVICE)"
+                android:textColor="@color/hud_signal"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_current_icon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_badge_dark"
+                        android:contentDescription="Phone"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_device_phone" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="96dp"
+                        android:layout_toEndOf="@+id/iv_current_icon"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_current_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="Samsung Galaxy S24 Ultra"
+                            android:textColor="@color/hud_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="sans-serif"
+                            android:text="RunTrack Android App v2.4 · Hà Nội"
+                            android:textColor="@color/hud_text_dim"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="monospace"
+                            android:text="IP: 118.70.14.92 · Đang hoạt động"
+                            android:textColor="@color/hud_signal"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/hud_badge_green"
+                        android:fontFamily="monospace"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="3dp"
+                        android:text="ONLINE"
+                        android:textColor="@color/hud_signal"
+                        android:textSize="9sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- SECTION 2: OTHER ACTIVE SESSIONS -->
+            <TextView
+                android:id="@+id/tv_other_devices_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ CÁC PHIÊN ĐĂNG NHẬP KHÁC"
+                android:textColor="@color/hud_text_dim"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_devices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_logged_in_device" />
+
+            <!-- Empty State Container -->
+            <TextView
+                android:id="@+id/tv_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_notif_card"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Không có phiên đăng nhập nào khác đang hoạt động."
+                android:textColor="@color/hud_text_dim"
+                android:textSize="11sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

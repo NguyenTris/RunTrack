@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.runtrack.settings.LoggedInDevicesFragment;
 
 /**
  * [SCR-08] Account Security & Background System Permissions Fragment.
@@ -40,6 +41,18 @@ public class AccountPermissionsFragment extends Fragment {
                     ((HudSettingsActivity) requireActivity()).navigateToFragment(new ChangePasswordFragment(), "CHANGE_PASSWORD");
                 } else {
                     Toast.makeText(requireContext(), "Mở giao diện đổi mật khẩu...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Logged-in Devices Button
+        View btnActiveDevices = view.findViewById(R.id.btnActiveDevices);
+        if (btnActiveDevices != null) {
+            btnActiveDevices.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new LoggedInDevicesFragment(), "LOGGED_IN_DEVICES");
+                } else {
+                    Toast.makeText(requireContext(), "Mở quản lý thiết bị...", Toast.LENGTH_SHORT).show();
                 }
             });
         }
