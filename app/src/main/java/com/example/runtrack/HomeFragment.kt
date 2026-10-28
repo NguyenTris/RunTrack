@@ -41,6 +41,10 @@ class HomeFragment : Fragment() {
         view.findViewById<android.view.View>(R.id.btn_open_chat)?.setOnClickListener {
             startActivity(Intent(requireContext(), com.example.runtrack.chat.ChatActivity::class.java))
         }
+
+        view.findViewById<android.view.View>(R.id.btn_search_header)?.setOnClickListener {
+            startActivity(Intent(requireContext(), com.example.runtrack.search.SearchActivity::class.java))
+        }
     }
 
     private fun setupBottomNavigation(view: View) {

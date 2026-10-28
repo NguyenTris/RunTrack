@@ -51,6 +51,10 @@ class DashboardActivity : AppCompatActivity() {
         findViewById<android.view.View>(R.id.btn_open_chat)?.setOnClickListener {
             startActivity(Intent(this, com.example.runtrack.chat.ChatActivity::class.java))
         }
+
+        findViewById<android.view.View>(R.id.btn_search_header)?.setOnClickListener {
+            startActivity(Intent(this, com.example.runtrack.search.SearchActivity::class.java))
+        }
     }
 
     private fun setupBottomNavigation() {
