@@ -35,7 +35,13 @@ public class AccountPermissionsFragment extends Fragment {
         // Change Password Button
         View btnChangePassword = view.findViewById(R.id.btnChangePassword);
         if (btnChangePassword != null) {
-            btnChangePassword.setOnClickListener(v -> Toast.makeText(requireContext(), "Mở hộp thoại đổi mật khẩu tài khoản...", Toast.LENGTH_SHORT).show());
+            btnChangePassword.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new ChangePasswordFragment(), "CHANGE_PASSWORD");
+                } else {
+                    Toast.makeText(requireContext(), "Mở giao diện đổi mật khẩu...", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         // Revoke JWT / Logout Button
