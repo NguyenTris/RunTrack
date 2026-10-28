@@ -579,6 +579,46 @@
                     android:textSize="@dimen/hud_text_caption" />
             </RelativeLayout>
 
+            <!-- BAR 10: HELP CENTER & SUPPORT FAQ -->
+            <RelativeLayout
+                android:id="@+id/barHelpCenter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hud_space_lg"
+                android:background="@drawable/hud_bg_bar_neutral"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/hud_space_md">
+
+                <TextView
+                    android:id="@+id/tvHelpTitle"
+                    style="@style/HudText.BarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="TRUNG TÂM TRỢ GIÚP &amp; HỎI ĐÁP FAQ" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="monospace"
+                    android:text="[MỞ &gt;]"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="@dimen/hud_text_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvHelpTitle"
+                    android:layout_marginTop="@dimen/hud_space_xs"
+                    android:fontFamily="monospace"
+                    android:text="HỎI ĐÁP KỸ THUẬT | EMAIL 24/7 | HOTLINE 1900 6868"
+                    android:textColor="@color/hud_text_sub"
+                    android:textSize="@dimen/hud_text_caption" />
+            </RelativeLayout>
+
             <!-- EMERGENCY LOGOUT BUTTON -->
             <Button
                 android:id="@+id/btnLogout"
