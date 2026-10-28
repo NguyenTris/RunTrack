@@ -69,4 +69,15 @@
     <string name="cd_waveform">TLS Waveform Pulse</string>
     <string name="cd_shield_check">Verified Shield Icon</string>
     <string name="cd_barcode">Barcode Pattern</string>
+    <string name="cd_back">Trở về</string>
+
+    <!-- Chat Feature Strings -->
+    <string name="chat_title">Tin nhắn</string>
+    <string name="chat_subtitle">Trò chuyện với bạn bè và nhóm chạy.</string>
+    <string name="chat_tab_all">Tất cả</string>
+    <string name="chat_tab_friends">Bạn bè</string>
+    <string name="chat_tab_groups">Nhóm</string>
+    <string name="chat_search_hint">Tìm cuộc trò chuyện...</string>
+    <string name="chat_empty_list">Không tìm thấy cuộc trò chuyện nào</string>
+    <string name="btn_open_chat">Mở Tin Nhắn</string>
 </resources>
