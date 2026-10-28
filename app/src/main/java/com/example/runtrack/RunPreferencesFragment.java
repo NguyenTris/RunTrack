@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.example.runtrack.settings.GpsAccuracyFragment;
 import com.example.runtrack.settings.MapStyleFragment;
+import com.example.runtrack.settings.UnitsFragment;
 
 /**
  * [SCR-02] Run Preferences & Audio Cues Fragment.
@@ -53,6 +54,18 @@ public class RunPreferencesFragment extends Fragment {
                     ((HudSettingsActivity) requireActivity()).navigateToFragment(new MapStyleFragment(), "MAP_STYLE");
                 } else {
                     Toast.makeText(requireContext(), "Mở thiết lập kiểu bản đồ...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Units Settings Submenu
+        View btnUnitsSettings = view.findViewById(R.id.btnUnitsSettings);
+        if (btnUnitsSettings != null) {
+            btnUnitsSettings.setOnClickListener(v -> {
+                if (requireActivity() instanceof HudSettingsActivity) {
+                    ((HudSettingsActivity) requireActivity()).navigateToFragment(new UnitsFragment(), "UNITS_SETTINGS");
+                } else {
+                    Toast.makeText(requireContext(), "Mở thiết lập hệ đơn vị...", Toast.LENGTH_SHORT).show();
                 }
             });
         }

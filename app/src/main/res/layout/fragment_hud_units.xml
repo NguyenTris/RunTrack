@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [SCR-UNIT-01] HỆ ĐƠN VỊ & ĐO LƯỜNG (UNITS & MEASUREMENTS) -->
+<!-- Aerospace Kinetic HUD Architecture -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hud_canvas">
+
+    <!-- PRE-HEADER TELEMETRY STRIP (Fixed Top) -->
+    <LinearLayout
+        android:id="@+id/telemetryStrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hud_telemetry_strip_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/hud_space_md"
+        android:paddingEnd="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:text="&lt; TÙY CHỌN"
+            android:textColor="@color/hud_primary"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.1"
+            android:text="RT / UNIT-01"
+            android:textColor="@color/hud_text_dim"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- HEADER BLOCK -->
+    <LinearLayout
+        android:id="@+id/headerBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/telemetryStrip"
+        android:background="@color/hud_surface"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/hud_space_md"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:text="Hệ đơn vị &amp; Đo lường"
+            android:textColor="@color/hud_text_primary"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif"
+            android:text="Chuẩn hóa đơn vị đo cự ly, tốc độ Pace, cao độ và nhiệt độ thời tiết."
+            android:textColor="@color/hud_text_dim"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- FIXED BOTTOM SAVE BUTTON -->
+    <LinearLayout
+        android:id="@+id/bottomActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/hud_surface_dark"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/hud_space_md">
+
+        <TextView
+            android:id="@+id/btnSaveUnits"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/hud_bg_bar_orange"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:text="LƯU HỆ ĐƠN VỊ"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- SCROLLABLE BODY CONTENT -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomActionBar"
+        android:layout_below="@id/headerBlock"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/hud_space_md"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- SECTION 1: SYSTEM UNITS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ HỆ ĐO LƯỜNG TỔNG THỂ (SYSTEM MEASUREMENT)"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- OPTION METRIC (DEFAULT) -->
+            <RelativeLayout
+                android:id="@+id/card_unit_metric"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_metric_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="●"
+                    android:textColor="@color/kinetic_orange"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_metric_indicator"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="HỆ MÉT / METRIC (KM, M, KG, °C)"
+                            android:textColor="@color/hud_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_badge_dark"
+                            android:fontFamily="monospace"
+                            android:paddingHorizontal="6dp"
+                            android:text="TIÊU CHUẨN VN"
+                            android:textColor="@color/hud_primary"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Kilômét (km), Mét (m), Vận tốc phút/km, Cân nặng kilôgam và Nhiệt độ Celsius (°C)."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- OPTION IMPERIAL -->
+            <RelativeLayout
+                android:id="@+id/card_unit_imperial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_imperial_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_imperial_indicator"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="HỆ ANH-MỸ / IMPERIAL (MI, FT, LBS, °F)"
+                            android:textColor="@color/hud_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Dặm (Miles), Feet (ft), Vận tốc phút/dặm, Cân nặng Pounds và Nhiệt độ Fahrenheit (°F)."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- SECTION 2: PACE FORMAT -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ ĐỊNH DẠNG TỐC ĐỘ CHẠY (PACE &amp; SPEED DISPLAY)"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- PACE OPTION 1: MIN/KM -->
+            <RelativeLayout
+                android:id="@+id/card_pace_minkm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_pace_minkm_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="●"
+                    android:textColor="@color/kinetic_orange"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_pace_minkm_indicator"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="PHÚT TRÊN KILÔMÉT (min/km)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="monospace"
+                        android:text="Ví dụ: 05'24&quot; /km — Tiêu chuẩn của các giải chạy Road &amp; Trail."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- PACE OPTION 2: MIN/MILE -->
+            <RelativeLayout
+                android:id="@+id/card_pace_minmi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_pace_minmi_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_pace_minmi_indicator"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="PHÚT TRÊN DẶM (min/mi)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="monospace"
+                        android:text="Ví dụ: 08'41&quot; /mi — Tiêu chuẩn chạy bộ phổ biến tại Mỹ và Vương Quốc Anh."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- PACE OPTION 3: SPEED (KM/H) -->
+            <RelativeLayout
+                android:id="@+id/card_pace_kmh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_notif_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/radio_pace_kmh_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="○"
+                    android:textColor="@color/hud_text_dim"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/radio_pace_kmh_indicator"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="VẬN TỐC TỨC THỜI (km/h hoặc mph)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="monospace"
+                        android:text="Ví dụ: 11.2 km/h — Phù hợp khi đạp xe kết hợp hoặc chạy trên máy tập (treadmill)."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- SECTION 3: DETAILED UNIT TOGGLES -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="■ ĐƠN VỊ ĐỘ CAO, NHIỆT ĐỘ &amp; CÂN NẶNG"
+                android:textColor="@color/hud_primary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- TOGGLE 1: ELEVATION UNIT -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Độ cao &amp; Leo dốc tính theo Mét (m)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Bật để hiển thị Elevation Gain theo Mét (m), tắt để chuyển sang Feet (ft)."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_elevation_meters"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <!-- TOGGLE 2: TEMPERATURE UNIT -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Nhiệt độ thời tiết (°C)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Bật để hiển thị độ C (Celsius), tắt để hiển thị độ F (Fahrenheit)."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_temperature_celsius"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <!-- TOGGLE 3: WEIGHT UNIT -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_notif_card"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Cân nặng tính theo Kilôgam (kg)"
+                        android:textColor="@color/hud_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Tính toán lượng calo tiêu thụ và chỉ số thể chất theo kg (hoặc lbs khi tắt)."
+                        android:textColor="@color/hud_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_weight_kg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
