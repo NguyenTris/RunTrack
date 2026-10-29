@@ -39,7 +39,7 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Connect quick access cards to Profile, HUD Settings, and Chat
+        // Connect quick access cards to Profile, HUD Settings, Chat, Search, and Club
         findViewById<android.view.View>(R.id.card_profile)?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
@@ -51,6 +51,17 @@ class DashboardActivity : AppCompatActivity() {
         findViewById<android.view.View>(R.id.btn_open_chat)?.setOnClickListener {
             startActivity(Intent(this, com.example.runtrack.chat.ChatActivity::class.java))
         }
+
+        findViewById<android.view.View>(R.id.btn_search_header)?.setOnClickListener {
+            startActivity(Intent(this, com.example.runtrack.search.SearchActivity::class.java))
+        }
+
+        val openClubListener = android.view.View.OnClickListener {
+            startActivity(Intent(this, com.example.runtrack.club.ClubActivity::class.java))
+        }
+        findViewById<android.view.View>(R.id.card_my_club)?.setOnClickListener(openClubListener)
+        findViewById<android.view.View>(R.id.tv_my_club_detail)?.setOnClickListener(openClubListener)
+        findViewById<android.view.View>(R.id.btn_enter_my_club)?.setOnClickListener(openClubListener)
     }
 
     private fun setupBottomNavigation() {
