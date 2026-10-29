@@ -101,6 +101,24 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Search Activity -->
+        <activity
+            android:name=".search.SearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Search Detail Activity -->
+        <activity
+            android:name=".search.SearchDetailActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Club Management Activity -->
+        <activity
+            android:name=".club.ClubActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- HUD Settings & Peripherals Host Activity -->
         <activity
             android:name=".HudSettingsActivity"

@@ -551,6 +551,165 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- CARD: My Club Card (CÂU LẠC BỘ CỦA TÔI) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_my_club"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="6dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_split"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card_weekly_goal"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="14dp">
+
+                    <!-- Header Icon & Title -->
+                    <ImageView
+                        android:id="@+id/iv_my_club_header_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="Club Icon"
+                        android:src="@drawable/ic_group_chat"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_my_club_header_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tv_my_club_header_title"
+                        app:tint="@color/kinetic_orange" />
+
+                    <TextView
+                        android:id="@+id/tv_my_club_header_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="CÂU LẠC BỘ CỦA TÔI"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/iv_my_club_header_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_my_club_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="CHI TIẾT ›"
+                        android:textColor="#F4C073"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_my_club_header_title"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tv_my_club_header_title" />
+
+                    <View
+                        android:id="@+id/my_club_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@color/card_stroke"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_my_club_header_title" />
+
+                    <!-- Content Area -->
+                    <FrameLayout
+                        android:id="@+id/frame_my_club_avatar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="12dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/my_club_divider">
+
+                        <ImageView
+                            android:id="@+id/iv_my_club_avatar"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_chat_avatar_group"
+                            android:contentDescription="Club Avatar"
+                            android:padding="11dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_group_chat" />
+
+                    </FrameLayout>
+
+                    <!-- Name & Subtitle & Upcoming Event -->
+                    <TextView
+                        android:id="@+id/tv_my_club_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Sunrise Runners"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/btn_enter_my_club"
+                        app:layout_constraintStart_toEndOf="@+id/frame_my_club_avatar"
+                        app:layout_constraintTop_toTopOf="@+id/frame_my_club_avatar" />
+
+                    <TextView
+                        android:id="@+id/tv_my_club_sub"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="1,420 thành viên • Hà Nội"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toStartOf="@+id/btn_enter_my_club"
+                        app:layout_constraintStart_toEndOf="@+id/frame_my_club_avatar"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_my_club_name" />
+
+                    <TextView
+                        android:id="@+id/tv_my_club_event"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Sự kiện sắp tới: Chạy Chủ Nhật 5:00 AM"
+                        android:textColor="#F4C073"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/btn_enter_my_club"
+                        app:layout_constraintStart_toEndOf="@+id/frame_my_club_avatar"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_my_club_sub" />
+
+                    <!-- Enter Club Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_enter_my_club"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="Vào CLB"
+                        android:textColor="#121212"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="#F4C073"
+                        app:cornerRadius="18dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_my_club_event"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tv_my_club_name" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- CARD 5: Last Run Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_last_run"
