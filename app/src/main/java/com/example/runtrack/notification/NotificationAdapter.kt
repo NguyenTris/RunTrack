@@ -58,6 +58,7 @@ class NotificationAdapter(
         if (position in items.indices) {
             items.removeAt(position)
             notifyItemRemoved(position)
+            notifyItemRangeChanged(position, items.size - position)
         }
     }
 
@@ -115,12 +116,22 @@ class NotificationAdapter(
                 if (item.primaryActionText == "CHẤP NHẬN") {
                     btnPrimary.setBackgroundResource(R.drawable.hud_bg_bar_orange)
                     btnPrimary.setTextColor(itemView.context.getColor(R.color.white))
-                    btnPrimary.setOnClickListener { onAcceptClick(item, bindingAdapterPosition) }
+                    btnPrimary.setOnClickListener {
+                        val pos = bindingAdapterPosition
+                        if (pos != RecyclerView.NO_POSITION && pos in items.indices) {
+                            onAcceptClick(items[pos], pos)
+                        }
+                    }
 
                     if (item.secondaryActionText != null) {
                         btnSecondary.visibility = View.VISIBLE
                         btnSecondary.text = item.secondaryActionText
-                        btnSecondary.setOnClickListener { onRejectClick(item, bindingAdapterPosition) }
+                        btnSecondary.setOnClickListener {
+                            val pos = bindingAdapterPosition
+                            if (pos != RecyclerView.NO_POSITION && pos in items.indices) {
+                                onRejectClick(items[pos], pos)
+                            }
+                        }
                     } else {
                         btnSecondary.visibility = View.GONE
                     }
@@ -128,14 +139,22 @@ class NotificationAdapter(
                     // System actions or Kudos ("XEM THIẾT BỊ", "CẬP NHẬT", "CHÚC MỪNG", "XEM CHI TIẾT")
                     btnPrimary.setBackgroundResource(R.drawable.hud_bg_bar_cyan)
                     btnPrimary.setTextColor(itemView.context.getColor(R.color.hud_canvas))
-                    btnPrimary.setOnClickListener { onPrimaryActionClick(item, bindingAdapterPosition) }
+                    btnPrimary.setOnClickListener {
+                        val pos = bindingAdapterPosition
+                        if (pos != RecyclerView.NO_POSITION && pos in items.indices) {
+                            onPrimaryActionClick(items[pos], pos)
+                        }
+                    }
 
                     if (item.secondaryActionText != null) {
                         btnSecondary.visibility = View.VISIBLE
                         btnSecondary.text = item.secondaryActionText
                         btnSecondary.setOnClickListener {
-                            onSecondaryActionClick?.invoke(item, bindingAdapterPosition)
-                                ?: onRejectClick(item, bindingAdapterPosition)
+                            val pos = bindingAdapterPosition
+                            if (pos != RecyclerView.NO_POSITION && pos in items.indices) {
+                                onSecondaryActionClick?.invoke(items[pos], pos)
+                                    ?: onRejectClick(items[pos], pos)
+                            }
                         }
                     } else {
                         btnSecondary.visibility = View.GONE

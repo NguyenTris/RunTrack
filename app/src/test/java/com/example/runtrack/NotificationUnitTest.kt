@@ -138,4 +138,21 @@ class NotificationUnitTest {
         assertEquals("2 MỤC", header.badgeCount)
         assertNull(header.primaryActionText)
     }
+
+    @Test
+    fun testConsecutiveNotificationItemRemoval() {
+        val list = mutableListOf(
+            NotificationItem(id = "1", type = NotificationType.FRIEND_REQUEST, category = NotificationCategory.FRIENDS, title = "Item 1"),
+            NotificationItem(id = "2", type = NotificationType.FRIEND_REQUEST, category = NotificationCategory.FRIENDS, title = "Item 2"),
+            NotificationItem(id = "3", type = NotificationType.FRIEND_REQUEST, category = NotificationCategory.FRIENDS, title = "Item 3")
+        )
+
+        list.removeAt(1)
+        assertEquals(2, list.size)
+        assertEquals("3", list[1].id)
+
+        list.removeAt(0)
+        assertEquals(1, list.size)
+        assertEquals("3", list[0].id)
+    }
 }
