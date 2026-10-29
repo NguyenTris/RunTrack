@@ -29,6 +29,7 @@ class LoggedInDevicesAdapter(
         if (position in devices.indices) {
             devices.removeAt(position)
             notifyItemRemoved(position)
+            notifyItemRangeChanged(position, devices.size - position)
         }
     }
 
@@ -59,7 +60,10 @@ class LoggedInDevicesAdapter(
             }
 
             btnLogout.setOnClickListener {
-                onLogoutClick(device, bindingAdapterPosition)
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION && pos in devices.indices) {
+                    onLogoutClick(devices[pos], pos)
+                }
             }
         }
     }

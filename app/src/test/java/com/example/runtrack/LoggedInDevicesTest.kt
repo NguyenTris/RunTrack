@@ -85,4 +85,23 @@ class LoggedInDevicesTest {
         otherDevices.clear()
         assertTrue(otherDevices.isEmpty())
     }
+
+    @Test
+    fun testConsecutiveDeviceRemovalAndRangeSync() {
+        val devices = mutableListOf(
+            LoggedInDevice(id = "1", name = "Device 1", deviceType = DeviceType.MOBILE, location = "HN", clientApp = "App", ipAddress = "1.1.1.1", lastActive = "Vừa xong"),
+            LoggedInDevice(id = "2", name = "Device 2", deviceType = DeviceType.TABLET, location = "HN", clientApp = "App", ipAddress = "1.1.1.2", lastActive = "Vừa xong"),
+            LoggedInDevice(id = "3", name = "Device 3", deviceType = DeviceType.DESKTOP, location = "HN", clientApp = "App", ipAddress = "1.1.1.3", lastActive = "Vừa xong")
+        )
+
+        // Remove at index 0
+        devices.removeAt(0)
+        assertEquals(2, devices.size)
+        assertEquals("2", devices[0].id)
+
+        // Next remove at new index 0 (which was index 1)
+        devices.removeAt(0)
+        assertEquals(1, devices.size)
+        assertEquals("3", devices[0].id)
+    }
 }

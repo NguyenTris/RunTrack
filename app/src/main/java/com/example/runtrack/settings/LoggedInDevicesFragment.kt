@@ -77,8 +77,7 @@ class LoggedInDevicesFragment : Fragment() {
         adapter = LoggedInDevicesAdapter(
             devices = otherDevices,
             onLogoutClick = { device, pos ->
-                otherDevices.removeAt(pos)
-                adapter.notifyItemRemoved(pos)
+                adapter.removeDeviceAt(pos)
                 Toast.makeText(requireContext(), "Đã đăng xuất khỏi ${device.name}", Toast.LENGTH_SHORT).show()
                 checkEmptyState()
             }
