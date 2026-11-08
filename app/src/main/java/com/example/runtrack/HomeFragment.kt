@@ -41,6 +41,17 @@ class HomeFragment : Fragment() {
         view.findViewById<android.view.View>(R.id.btn_open_chat)?.setOnClickListener {
             startActivity(Intent(requireContext(), com.example.runtrack.chat.ChatActivity::class.java))
         }
+
+        view.findViewById<android.view.View>(R.id.btn_search_header)?.setOnClickListener {
+            startActivity(Intent(requireContext(), com.example.runtrack.search.SearchActivity::class.java))
+        }
+
+        val openClubListener = View.OnClickListener {
+            startActivity(Intent(requireContext(), com.example.runtrack.club.ClubActivity::class.java))
+        }
+        view.findViewById<android.view.View>(R.id.card_my_club)?.setOnClickListener(openClubListener)
+        view.findViewById<android.view.View>(R.id.tv_my_club_detail)?.setOnClickListener(openClubListener)
+        view.findViewById<android.view.View>(R.id.btn_enter_my_club)?.setOnClickListener(openClubListener)
     }
 
     private fun setupBottomNavigation(view: View) {
