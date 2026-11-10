@@ -55,7 +55,23 @@ class ClubResponse(BaseModel):
     description: str
     member_count: int
     is_joined: bool
+# --- BỔ SUNG Body ---
+class UserProfileUpdate(BaseModel):
+    full_name: Optional[str] = None
+    height: Optional[float] = None  # Chiều cao (cm hoặc m)
+    weight: Optional[float] = None  # Cân nặng (kg)
+    weekly_goal_km: Optional[float] = None  # Mục tiêu chạy tuần (km)
 
+class HomeStatsResponse(BaseModel):
+    total_distance_km: float
+    weekly_goal_km: float
+    completion_percentage: int
+
+class ActivityItem(BaseModel):
+    id: int
+    distance_km: float
+    duration_minutes: int
+    run_date: datetime
 # ==========================================
 # 2. AUTHENTICATION APIs
 # ==========================================
@@ -87,6 +103,76 @@ async def forgot_password(data: ForgotPassword):
 # ==========================================
 # 3. USER & TRACKING APIs
 # ==========================================
+# ==========================================
+# 3.1. BỔ SUNG: CẬP NHẬT HỒ SƠ (PUT /user/profile)
+# ==========================================
+@app.put("/user/profile", response_model=UserProfileResponse)
+async def update_user_profile(data: UserProfileUpdate, authorization: str = Header(None)):
+    """
+    API cập nhật thông tin cá nhân và mục tiêu chạy bộ của người dùng.
+    """
+    # TODO: Thay thế đoạn này bằng câu lệnh SQL UPDATE vào bảng 'profiles' trên Database VPS
+    # Ví dụ: UPDATE profiles SET full_name = :full_name, height = :height, ... WHERE user_id = :user_id
+    
+    # Đoạn code mô phỏng trả về dữ liệu sau khi update thành công:
+    last_workout = datetime.now() - timedelta(hours=10)
+    return UserProfileResponse(
+        full_name=data.full_name or "Nguyễn Võ Minh Trí",
+        last_workout_time=last_workout,
+        recovery_completed=True,
+        recovery_hours_remaining=0.0,
+        weekly_progress=WeeklyProgress(
+            monday=True, tuesday=True, wednesday=False, 
+            thursday=True, friday=False, saturday=False, sunday=False
+        ),
+        progress_bar_percentage=57
+    )
+
+
+# ==========================================
+# 3.2. BỔ SUNG: THỐNG KÊ TRANG CHỦ (GET /dashboard/home-stats)
+# ==========================================
+@app.get("/dashboard/home-stats", response_model=HomeStatsResponse)
+async def get_home_stats(authorization: str = Header(None)):
+    """
+    API trả về tổng số km đã chạy trong tuần và mục tiêu tuần của người dùng.
+    """
+    # TODO: Viết SQL query tính tổng distance_km từ bảng 'run_activities' trong tuần hiện tại
+    # và lấy 'weekly_goal_km' từ bảng 'profiles'.
+    # Ví dụ SQL: SELECT SUM(distance_km) FROM run_activities WHERE user_id = :user_id AND ...
+    
+    # Mock data mẫu:
+    total_km = 18.5  # Tổng km đã chạy tuần này
+    goal_km = 30.0   # Mục tiêu tuần
+    percentage = int((total_km / goal_km) * 100) if goal_km > 0 else 0
+
+    return HomeStatsResponse(
+        total_distance_km=total_km,
+        weekly_goal_km=goal_km,
+        completion_percentage=percentage
+    )
+
+
+# ==========================================
+# 3.3. BỔ SUNG: DANH SÁCH HOẠT ĐỘNG GẦN ĐÂY (GET /dashboard/recent-activities)
+# ==========================================
+@app.get("/dashboard/recent-activities", response_model=list[ActivityItem])
+async def get_recent_activities(limit: int = 5, authorization: str = Header(None)):
+    """
+    API lấy danh sách các buổi chạy gần đây nhất của người dùng.
+    """
+    # TODO: Viết SQL query từ bảng 'run_activities'
+    # Ví dụ SQL: SELECT id, distance_km, duration_minutes, run_date FROM run_activities 
+    #            WHERE user_id = :user_id ORDER BY run_date DESC LIMIT :limit
+    
+    # Mock data mẫu:
+    mock_activities = [
+        ActivityItem(id=1, distance_km=5.2, duration_minutes=28, run_date=datetime.now() - timedelta(days=1)),
+        ActivityItem(id=2, distance_km=4.0, duration_minutes=22, run_date=datetime.now() - timedelta(days=3)),
+        ActivityItem(id=3, distance_km=6.5, duration_minutes=35, run_date=datetime.now() - timedelta(days=5)),
+    ]
+    
+    return mock_activities[:limit]
 @app.get("/user/profile", response_model=UserProfileResponse)
 async def get_user_profile(authorization: str = Header(None)):
     # Mock data: Lấy thông tin user từ Database
