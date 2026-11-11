@@ -1,12 +1,17 @@
+import asyncio
+import os
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
+import httpx
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from models import ActivityDB, UserDB, UserProfileDB
 from schemas import (
     ActivityItem,
     UserProfileResponse,
+    WeatherResponse,
     WeeklyActivitiesResponse,
     WeeklyActivityDay,
     WeeklyProgress,
@@ -183,4 +188,65 @@ def build_weekly_activities_response(user_id: int, db: Session) -> WeeklyActivit
         week_end=week_end_date,
         total_distance_km=round(total_distance, 2),
         days=days,
+    )
+
+
+def calculate_us_aqi_pm25(pm25: float) -> int:
+    """Tính chỉ số US AQI chuẩn EPA từ nồng độ PM2.5 (ug/m3)."""
+    breakpoints = [
+        (0.0, 12.0, 0, 50),
+        (12.1, 35.4, 51, 100),
+        (35.5, 55.4, 101, 150),
+        (55.5, 150.4, 151, 200),
+        (150.5, 250.4, 201, 300),
+        (250.5, 500.4, 301, 500),
+    ]
+    for c_low, c_high, i_low, i_high in breakpoints:
+        if c_low <= pm25 <= c_high:
+            return round(((i_high - i_low) / (c_high - c_low)) * (pm25 - c_low) + i_low)
+    return 300 if pm25 > 500.4 else 0
+
+
+async def fetch_weather_and_aqi(lat: float, lon: float) -> WeatherResponse:
+    """Gọi song song OpenWeatherMap Weather & Air Pollution, trả về đủ 7 trường cho Android."""
+    api_key = os.getenv("OPENWEATHER_API_KEY", "").strip()
+    if not api_key:
+        raise HTTPException(status_code=503, detail="Chưa cấu hình OPENWEATHER_API_KEY trên máy chủ")
+    weather_url = (
+        f"https://api.openweathermap.org/data/2.5/weather"
+        f"?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=vi"
+    )
+    pollution_url = (
+        f"https://api.openweathermap.org/data/2.5/air_pollution"
+        f"?lat={lat}&lon={lon}&appid={api_key}"
+    )
+
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        weather_res, pollution_res = await asyncio.gather(
+            client.get(weather_url),
+            client.get(pollution_url),
+            return_exceptions=True,
+        )
+
+    if isinstance(weather_res, Exception) or weather_res.status_code != 200:
+        raise HTTPException(status_code=502, detail="Không thể tải dữ liệu thời tiết từ OpenWeatherMap")
+
+    weather_data = weather_res.json()
+    weather_info = (weather_data.get("weather") or [{}])[0]
+    main_info = weather_data.get("main", {})
+
+    aqi = 32
+    if not isinstance(pollution_res, Exception) and pollution_res.status_code == 200:
+        p_list = pollution_res.json().get("list") or [{}]
+        pm25 = p_list[0].get("components", {}).get("pm2_5", 7.8)
+        aqi = calculate_us_aqi_pm25(float(pm25))
+
+    return WeatherResponse(
+        city=weather_data.get("name") or "Hà Nội",
+        temperature=round(float(main_info.get("temp", 24.0)), 1),
+        humidity=int(main_info.get("humidity", 68)),
+        condition=weather_info.get("description") or "Mây thưa",
+        weather_main=weather_info.get("main") or "Clouds",
+        icon=weather_info.get("icon") or "02d",
+        aqi=aqi,
     )

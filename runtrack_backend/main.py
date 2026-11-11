@@ -2,8 +2,8 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import List, Optional
 
-import httpx
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from auth import (
@@ -29,12 +29,14 @@ from schemas import (
     UserProfileResponse,
     UserProfileUpdate,
     UserRegister,
+    WeatherResponse,
     WeeklyActivitiesResponse,
 )
 from services import (
     build_user_profile_response,
     build_weekly_activities_response,
     ensure_utc,
+    fetch_weather_and_aqi,
     get_week_activities,
     to_activity_item,
 )
@@ -229,86 +231,60 @@ async def get_weekly_activities(
     return build_weekly_activities_response(current_user.id, db)
 
 
-def calculate_us_aqi_pm25(pm25: float) -> int:
-    """Tính chỉ số US AQI chuẩn EPA từ nồng độ PM2.5 (ug/m3)."""
-    breakpoints = [
-        (0.0, 12.0, 0, 50),
-        (12.1, 35.4, 51, 100),
-        (35.5, 55.4, 101, 150),
-        (55.5, 150.4, 151, 200),
-        (150.5, 250.4, 201, 300),
-        (250.5, 500.4, 301, 500),
-    ]
-    for c_low, c_high, i_low, i_high in breakpoints:
-        if c_low <= pm25 <= c_high:
-            return round(((i_high - i_low) / (c_high - c_low)) * (pm25 - c_low) + i_low)
-    return 300 if pm25 > 500.4 else 0
-
-
-@app.get("/weather")
+@app.get("/weather", response_model=WeatherResponse)
 async def get_weather(lat: float, lon: float):
-    api_key = "4a537541384c5250c53db97422d7a283"
-    weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=vi"
-    pollution_url = f"https://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={api_key}"
-
-    async with httpx.AsyncClient(timeout=5.0) as client:
-        weather_res = await client.get(weather_url)
-        if weather_res.status_code != 200:
-            raise HTTPException(status_code=400, detail="Không thể tải dữ liệu thời tiết")
-
-        weather_data = weather_res.json()
-        aqi = 32
-        try:
-            pollution_res = await client.get(pollution_url)
-            if pollution_res.status_code == 200:
-                p_data = pollution_res.json()
-                pm25 = p_data.get("list", [{}])[0].get("components", {}).get("pm2_5", 7.8)
-                aqi = calculate_us_aqi_pm25(pm25)
-        except Exception:
-            pass
-
-        return {
-            "city": weather_data.get("name", "Hà Nội"),
-            "temperature": round(weather_data["main"]["temp"], 1),
-            "humidity": weather_data["main"]["humidity"],
-            "condition": weather_data["weather"][0]["description"],
-            "weather_main": weather_data["weather"][0]["main"],
-            "icon": weather_data["weather"][0]["icon"],
-            "aqi": aqi,
-        }
+    return await fetch_weather_and_aqi(lat, lon)
 
 
 @app.get("/search/friends", response_model=List[FriendResponse])
 async def search_friends(
     q: str = "",
-    page: int = 1,
-    limit: int = 10,
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=10, ge=1, le=50),
     current_user: UserDB = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    mock_db = [
-        {"user_id": 101, "full_name": "Đức Huy", "avatar_url": "https://example.com/a.jpg", "mutual_friends": 12, "friend_status": "friends"},
-        {"user_id": 102, "full_name": "Ngọc Mai", "avatar_url": "https://example.com/b.jpg", "mutual_friends": 5, "friend_status": "none"},
-        {"user_id": 103, "full_name": "Hoàng Nam", "avatar_url": "https://example.com/c.jpg", "mutual_friends": 8, "friend_status": "pending"},
+    query = (
+        db.query(UserDB, UserProfileDB)
+        .outerjoin(UserProfileDB, UserDB.id == UserProfileDB.user_id)
+        .filter(UserDB.id != current_user.id)
+    )
+    keyword = q.strip()
+    if keyword:
+        pattern = f"%{keyword}%"
+        query = query.filter(
+            or_(
+                UserProfileDB.full_name.ilike(pattern),
+                UserDB.email.ilike(pattern),
+            )
+        )
+
+    rows = query.order_by(UserDB.id.asc()).offset((page - 1) * limit).limit(limit).all()
+    return [
+        FriendResponse(
+            user_id=user.id,
+            full_name=(profile.full_name if profile and profile.full_name else user.email.split("@")[0]),
+            avatar_url=(profile.avatar_url if profile and profile.avatar_url else "https://example.com/default-avatar.jpg"),
+            mutual_friends=0,
+            friend_status="none",
+        )
+        for user, profile in rows
     ]
-    results = [user for user in mock_db if q.lower() in user["full_name"].lower()]
-    start = (page - 1) * limit
-    end = start + limit
-    return [FriendResponse(**user) for user in results[start:end]]
 
 
 @app.get("/search/clubs", response_model=List[ClubResponse])
 async def search_clubs(
     q: str = "",
-    page: int = 1,
-    limit: int = 10,
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=10, ge=1, le=50),
     current_user: UserDB = Depends(get_current_user),
 ):
-    mock_db = [
+    clubs_catalog = [
         {"club_id": 1, "name": "RunTrack Ho Chi Minh", "description": "Cộng đồng chạy bộ lớn nhất HCM.", "member_count": 1250, "is_joined": True},
         {"club_id": 2, "name": "Sunrise Runners", "description": "Tập trung chạy dài vào sáng Chủ Nhật hàng tuần.", "member_count": 430, "is_joined": False},
         {"club_id": 3, "name": "UIT Runners", "description": "Club dành cho sinh viên và cựu sinh viên UIT.", "member_count": 890, "is_joined": False},
     ]
-    results = [club for club in mock_db if q.lower() in club["name"].lower()]
+    keyword = q.strip().lower()
+    results = [club for club in clubs_catalog if keyword in club["name"].lower()]
     start = (page - 1) * limit
-    end = start + limit
-    return [ClubResponse(**club) for club in results[start:end]]
+    return [ClubResponse(**club) for club in results[start:start + limit]]
