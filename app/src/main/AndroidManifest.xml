@@ -158,6 +158,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Weekly Goal Detail Activity -->
+        <activity
+            android:name=".WeeklyGoalDetailActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- HUD Notifications Center Activity -->
         <activity
             android:name=".NotificationCenterActivity"

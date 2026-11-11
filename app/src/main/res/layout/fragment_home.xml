@@ -563,7 +563,7 @@
 
                     <TextView
                         android:id="@+id/tv_goal_title"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="Mục Tiêu Tuần Này"
@@ -572,6 +572,22 @@
                         android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@+id/iv_goal_icon"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_edit_weekly_goal"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginStart="8dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:contentDescription="Sửa mục tiêu tuần"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_pencil"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_goal_title"
+                        app:layout_constraintStart_toEndOf="@+id/tv_goal_title"
+                        app:layout_constraintTop_toTopOf="@+id/tv_goal_title"
+                        app:tint="@color/electric_cyan" />
 
                     <TextView
                         android:id="@+id/tv_cycle_tag"
@@ -604,6 +620,7 @@
                             app:trackThickness="8dp" />
 
                         <TextView
+                            android:id="@+id/tv_circle_percent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -654,7 +671,7 @@
                         app:trackCornerRadius="3dp"
                         app:trackThickness="6dp" />
 
-                    <!-- Remaining & Streak Info -->
+                    <!-- Remaining Info -->
                     <TextView
                         android:id="@+id/tv_remaining_km"
                         android:layout_width="wrap_content"
@@ -667,31 +684,19 @@
                         app:layout_constraintStart_toEndOf="@+id/frame_circular_progress"
                         app:layout_constraintTop_toBottomOf="@+id/progress_linear_km" />
 
-                    <TextView
-                        android:id="@+id/tv_streak_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:drawableEnd="@drawable/ic_flame"
-                        android:drawablePadding="2dp"
-                        android:text="Chuỗi 5 ngày "
-                        android:textColor="@color/kinetic_orange"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/progress_linear_km" />
-
                     <!-- 7 Days of Week Row -->
                     <LinearLayout
                         android:id="@+id/layout_days_row"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
+                        android:baselineAligned="false"
                         android:orientation="horizontal"
                         app:layout_constraintTop_toBottomOf="@+id/frame_circular_progress">
 
                         <!-- T2 -->
                         <LinearLayout
+                            android:id="@+id/layout_day_home_t2"
                             android:layout_width="0dp"
                             android:layout_height="44dp"
                             android:layout_marginEnd="3dp"
@@ -707,15 +712,29 @@
                                 android:textColor="@color/text_secondary"
                                 android:textSize="10sp" />
 
+                            <TextView
+                                android:id="@+id/tv_home_day_status_t2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
                             <ImageView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:contentDescription="Done"
-                                android:src="@drawable/ic_check" />
+                                android:id="@+id/iv_home_day_icon_t2"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginTop="2dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
                         </LinearLayout>
 
                         <!-- T3 -->
                         <LinearLayout
+                            android:id="@+id/layout_day_home_t3"
                             android:layout_width="0dp"
                             android:layout_height="44dp"
                             android:layout_marginHorizontal="3dp"
@@ -731,15 +750,29 @@
                                 android:textColor="@color/text_secondary"
                                 android:textSize="10sp" />
 
+                            <TextView
+                                android:id="@+id/tv_home_day_status_t3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
                             <ImageView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:contentDescription="Done"
-                                android:src="@drawable/ic_check" />
+                                android:id="@+id/iv_home_day_icon_t3"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginTop="2dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
                         </LinearLayout>
 
                         <!-- T4 -->
                         <LinearLayout
+                            android:id="@+id/layout_day_home_t4"
                             android:layout_width="0dp"
                             android:layout_height="44dp"
                             android:layout_marginHorizontal="3dp"
@@ -755,15 +788,29 @@
                                 android:textColor="@color/text_secondary"
                                 android:textSize="10sp" />
 
+                            <TextView
+                                android:id="@+id/tv_home_day_status_t4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
                             <ImageView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:contentDescription="Done"
-                                android:src="@drawable/ic_check" />
+                                android:id="@+id/iv_home_day_icon_t4"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginTop="2dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
                         </LinearLayout>
 
                         <!-- T5 -->
                         <LinearLayout
+                            android:id="@+id/layout_day_home_t5"
                             android:layout_width="0dp"
                             android:layout_height="44dp"
                             android:layout_marginHorizontal="3dp"
@@ -779,20 +826,34 @@
                                 android:textColor="@color/text_secondary"
                                 android:textSize="10sp" />
 
+                            <TextView
+                                android:id="@+id/tv_home_day_status_t5"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
                             <ImageView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:contentDescription="Done"
-                                android:src="@drawable/ic_check" />
+                                android:id="@+id/iv_home_day_icon_t5"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginTop="2dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
                         </LinearLayout>
 
-                        <!-- T6 (Active Today) -->
+                        <!-- T6 -->
                         <LinearLayout
+                            android:id="@+id/layout_day_home_t6"
                             android:layout_width="0dp"
                             android:layout_height="44dp"
                             android:layout_marginHorizontal="3dp"
                             android:layout_weight="1"
-                            android:background="@drawable/bg_day_active"
+                            android:background="@drawable/bg_day_inactive"
                             android:gravity="center"
                             android:orientation="vertical">
 
@@ -800,19 +861,32 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="T6"
-                                android:textColor="@color/tab_active_text"
-                                android:textSize="10sp"
-                                android:textStyle="bold" />
+                                android:textColor="@color/text_secondary"
+                                android:textSize="10sp" />
+
+                            <TextView
+                                android:id="@+id/tv_home_day_status_t6"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
 
                             <ImageView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:contentDescription="Today"
-                                android:src="@drawable/ic_target" />
+                                android:id="@+id/iv_home_day_icon_t6"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginTop="2dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
                         </LinearLayout>
 
                         <!-- T7 -->
                         <LinearLayout
+                            android:id="@+id/layout_day_home_t7"
                             android:layout_width="0dp"
                             android:layout_height="44dp"
                             android:layout_marginHorizontal="3dp"
@@ -829,15 +903,28 @@
                                 android:textSize="10sp" />
 
                             <TextView
+                                android:id="@+id/tv_home_day_status_t7"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textColor="@color/text_tertiary"
-                                android:textSize="12sp" />
+                                android:layout_marginTop="2dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
+                            <ImageView
+                                android:id="@+id/iv_home_day_icon_t7"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginTop="2dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
                         </LinearLayout>
 
                         <!-- CN -->
                         <LinearLayout
+                            android:id="@+id/layout_day_home_cn"
                             android:layout_width="0dp"
                             android:layout_height="44dp"
                             android:layout_marginStart="3dp"
@@ -854,11 +941,23 @@
                                 android:textSize="10sp" />
 
                             <TextView
+                                android:id="@+id/tv_home_day_status_cn"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textColor="@color/text_tertiary"
-                                android:textSize="12sp" />
+                                android:layout_marginTop="2dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
+                            <ImageView
+                                android:id="@+id/iv_home_day_icon_cn"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginTop="2dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
                         </LinearLayout>
 
                     </LinearLayout>

@@ -6,6 +6,8 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Query
 
 data class LoginRequest(
     val email: String,
@@ -54,6 +56,27 @@ data class UserProfileDto(
     val progress_bar_percentage: Int = 0
 )
 
+typealias UserProfileResponse = UserProfileDto
+
+data class UserProfileUpdate(
+    val weekly_goal_km: Double?
+)
+
+data class HomeStatsResponse(
+    val total_distance_km: Float,
+    val weekly_goal_km: Float,
+    val completion_percentage: Int,
+    val active_days: List<Int>? = null
+)
+
+data class ActivityItem(
+    val id: String,
+    val title: String = "Buổi chạy bộ",
+    val distance_km: Float,
+    val duration_minutes: Int,
+    val run_date: String
+)
+
 interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
@@ -65,4 +88,17 @@ interface ApiService {
     suspend fun getUserProfile(
         @Header("Authorization") authorization: String? = null
     ): Response<UserProfileDto>
+
+    @PUT("user/profile")
+    suspend fun updateUserProfile(
+        @Body body: UserProfileUpdate
+    ): Response<UserProfileResponse>
+
+    @GET("dashboard/home-stats")
+    suspend fun getHomeStats(): Response<HomeStatsResponse>
+
+    @GET("dashboard/recent-activities")
+    suspend fun getRecentActivities(
+        @Query("limit") limit: Int = 5
+    ): Response<List<ActivityItem>>
 }

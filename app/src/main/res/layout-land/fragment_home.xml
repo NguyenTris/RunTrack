@@ -276,7 +276,7 @@
 
                     <TextView
                         android:id="@+id/tv_goal_title"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="Mục Tiêu Tuần Này"
@@ -285,6 +285,22 @@
                         android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@+id/iv_goal_icon"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_edit_weekly_goal"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginStart="8dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:contentDescription="Sửa mục tiêu tuần"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_pencil"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_goal_title"
+                        app:layout_constraintStart_toEndOf="@+id/tv_goal_title"
+                        app:layout_constraintTop_toTopOf="@+id/tv_goal_title"
+                        app:tint="@color/electric_cyan" />
 
                     <TextView
                         android:id="@+id/tv_cycle_tag"
@@ -316,6 +332,7 @@
                             app:trackThickness="7dp" />
 
                         <TextView
+                            android:id="@+id/tv_circle_percent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"

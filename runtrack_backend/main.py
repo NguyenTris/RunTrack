@@ -167,10 +167,21 @@ async def get_home_stats(
     _, weekly_activities = get_week_activities(current_user.id, db)
     total_km = round(sum(float(act.distance_km) for act in weekly_activities), 2)
     percentage = int((total_km / goal_km) * 100) if goal_km > 0 else 0
+
+    active_days = []
+    for act in weekly_activities:
+        if act.start_time:
+            run_dt = ensure_utc(act.start_time).astimezone(VN_TZ)
+            iso_wd = run_dt.isoweekday()
+            mapped_day = iso_wd + 1 if iso_wd <= 7 else 2
+            if mapped_day not in active_days:
+                active_days.append(mapped_day)
+
     return HomeStatsResponse(
         total_distance_km=total_km,
         weekly_goal_km=goal_km,
         completion_percentage=percentage,
+        active_days=active_days,
     )
 
 

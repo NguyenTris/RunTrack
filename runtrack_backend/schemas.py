@@ -60,6 +60,7 @@ class HomeStatsResponse(BaseModel):
     total_distance_km: float
     weekly_goal_km: float
     completion_percentage: int
+    active_days: List[int] = []
 
 
 class ActivityItem(BaseModel):
