@@ -88,19 +88,16 @@ class BleHeartRateManager(private val context: Context) {
         isScanning = true
         notifyState(ConnectionState.SCANNING, "Đang quét tìm Smartwatch...")
 
-        val filters = listOf(
-            ScanFilter.Builder().setServiceUuid(ParcelUuid(HEART_RATE_SERVICE_UUID)).build()
-        )
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
             .build()
 
         try {
-            scanner.startScan(filters, settings, scanCallback)
+            // Quét mở rộng để phát hiện mọi Smartwatch thương mại (kể cả loại không broadcast UUID 0x180D trong gói tin ban đầu)
+            scanner.startScan(null, settings, scanCallback)
         } catch (e: Exception) {
-            Log.e(TAG, "Lỗi khi bắt đầu quét có filter: ${e.message}, quét chế độ dự phòng...")
+            Log.e(TAG, "Lỗi khi bắt đầu quét có settings: ${e.message}, quét chế độ cơ bản...")
             try {
-                // Quét không filter nếu thiết bị không advertise Service UUID
                 scanner.startScan(scanCallback)
             } catch (ex: Exception) {
                 isScanning = false
@@ -131,9 +128,23 @@ class BleHeartRateManager(private val context: Context) {
     private val scanCallback = object : ScanCallback() {
         @SuppressLint("MissingPermission")
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
-            result?.device?.let { device ->
-                val deviceName = device.name ?: ""
-                Log.d(TAG, "Tìm thấy thiết bị: $deviceName - ${device.address}")
+            val device = result?.device ?: return
+            val deviceName = device.name ?: result.scanRecord?.deviceName ?: ""
+            val serviceUuids = result.scanRecord?.serviceUuids
+
+            // 1. Kiểm tra UUID Heart Rate Service (0x180D)
+            val hasHrService = serviceUuids?.any { it.uuid == HEART_RATE_SERVICE_UUID } == true
+
+            // 2. Nhận diện các dòng Smartwatch & Fitness Band thương mại
+            val nameLower = deviceName.lowercase()
+            val isSmartwatchOrBand = nameLower.isNotEmpty() && listOf(
+                "watch", "band", "hr", "heart", "garmin", "xiaomi", "mi ",
+                "polar", "amazfit", "fitbit", "galaxy", "huawei", "coros",
+                "whoop", "suunto", "wahoo", "fit", "pulse", "pace", "smart"
+            ).any { nameLower.contains(it) }
+
+            if (hasHrService || isSmartwatchOrBand) {
+                Log.d(TAG, "Tìm thấy Smartwatch phù hợp: '$deviceName' (${device.address})")
                 stopScan()
                 connectToDevice(device)
             }
