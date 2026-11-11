@@ -16,7 +16,7 @@ def test_build_database_url_variants(monkeypatch):
     monkeypatch.setenv("DB_PORT", "5432")
     monkeypatch.setenv("DB_NAME", "runtrack_db")
     url = database.build_database_url()
-    assert url == "postgresql://runtrack_admin:RunTrackSecure2026%21%40%23@db:5432/runtrack_db"
+    assert url == "postgresql+psycopg2://runtrack_admin:RunTrackSecure2026%21%40%23@db:5432/runtrack_db"
 
     monkeypatch.setenv("DATABASE_URL", "postgresql://custom:pass@host:5432/custom_db")
     assert database.build_database_url() == "postgresql://custom:pass@host:5432/custom_db"

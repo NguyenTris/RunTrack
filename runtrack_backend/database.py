@@ -16,7 +16,7 @@ def build_database_url() -> str:
         db_password = quote_plus(os.getenv("DB_PASSWORD", ""))
         db_port = os.getenv("DB_PORT", "5432")
         db_name = os.getenv("DB_NAME", "runtrack_db")
-        return f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+        return f"postgresql+psycopg2://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
     return "sqlite:///./runtrack_local.db"
 
