@@ -52,6 +52,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun performLogout() {
         // 1. Clear user session
         SessionManager.setLoggedIn(this, false)
+        SessionManager.clearAuthToken(this)
 
         // 2. Navigate to LoginActivity with cleared task backstack
         val intent = Intent(this, LoginActivity::class.java).apply {

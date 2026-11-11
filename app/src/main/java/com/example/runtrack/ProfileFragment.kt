@@ -50,6 +50,7 @@ class ProfileFragment : Fragment() {
         val context = requireContext()
         // 1. Clear user session
         SessionManager.setLoggedIn(context, false)
+        SessionManager.clearAuthToken(context)
 
         // 2. Navigate to LoginActivity with cleared task backstack
         val intent = Intent(context, LoginActivity::class.java).apply {
