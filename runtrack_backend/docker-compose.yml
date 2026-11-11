@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: runtrack_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-runtrack_db}
+      POSTGRES_USER: ${DB_USER:-runtrack_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-RunTrackSecure2026}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: runtrack_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-runtrack_db}
+      - DB_USER=${DB_USER:-runtrack_admin}
+      - DB_PASSWORD=${DB_PASSWORD:-RunTrackSecure2026}
+      - SECRET_KEY=${SECRET_KEY:-runtrack_super_secret_jwt_key_2026}
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
