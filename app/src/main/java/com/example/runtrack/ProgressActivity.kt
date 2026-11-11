@@ -31,7 +31,7 @@ class ProgressActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_progress)
 
-        val root = findViewById<View>(R.id.root_layout_progress) ?: findViewById(R.id.root_layout_progress_land)
+        val root = findViewById<View>(R.id.root_layout_progress)
         root?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it) { _, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

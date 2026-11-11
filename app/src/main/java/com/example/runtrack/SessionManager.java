@@ -14,6 +14,7 @@ public class SessionManager {
     private static final String FALLBACK_PREF_NAME = "pacepulse_session";
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private static final String KEY_USERNAME = "username";
+    private static final String KEY_TOKEN = "jwt_token";
 
     private static SharedPreferences getPreferences(Context context) {
         try {
@@ -51,6 +52,16 @@ public class SessionManager {
     public static void setUsername(Context context, String username) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
         editor.putString(KEY_USERNAME, username);
+        editor.apply();
+    }
+
+    public static String getToken(Context context) {
+        return getPreferences(context).getString(KEY_TOKEN, "");
+    }
+
+    public static void setToken(Context context, String token) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        editor.putString(KEY_TOKEN, token);
         editor.apply();
     }
 

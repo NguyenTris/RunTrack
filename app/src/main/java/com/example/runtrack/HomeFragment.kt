@@ -5,11 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
 
@@ -31,6 +36,7 @@ class HomeFragment : Fragment() {
         rvHotRoutes = view.findViewById(R.id.rv_hot_routes)
         setupHotRoutesRecyclerView()
         setupBottomNavigation(view)
+        loadHomeData(view)
 
         val frameStartBtn = view.findViewById<android.view.View>(R.id.frame_start_btn)
         frameStartBtn?.setOnClickListener {
@@ -52,6 +58,34 @@ class HomeFragment : Fragment() {
         view.findViewById<android.view.View>(R.id.card_my_club)?.setOnClickListener(openClubListener)
         view.findViewById<android.view.View>(R.id.tv_my_club_detail)?.setOnClickListener(openClubListener)
         view.findViewById<android.view.View>(R.id.btn_enter_my_club)?.setOnClickListener(openClubListener)
+    }
+
+    private fun loadHomeData(view: View) {
+        val token = SessionManager.getToken(requireContext())
+        if (token.isBlank()) return
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val statsResponse = withContext(Dispatchers.IO) {
+                    ApiClient.apiService.getHomeStats("Bearer $token")
+                }
+                if (statsResponse.isSuccessful && statsResponse.body() != null) {
+                    val stats = statsResponse.body()!!
+                    val tvCurrentKm = view.findViewById<TextView>(R.id.tv_current_km)
+                    tvCurrentKm?.text = stats.total_distance_km.toString()
+                }
+
+                val weatherResponse = withContext(Dispatchers.IO) {
+                    ApiClient.apiService.getWeather(21.0285, 105.8542)
+                }
+                if (weatherResponse.isSuccessful && weatherResponse.body() != null) {
+                    val weather = weatherResponse.body()!!
+                    val tvReadiness = view.findViewById<TextView>(R.id.tv_readiness_tag)
+                    tvReadiness?.text = "${weather.city}: ${weather.temperature}°C"
+                }
+            } catch (_: Exception) {
+            }
+        }
     }
 
     private fun setupBottomNavigation(view: View) {
@@ -83,7 +117,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupHotRoutesRecyclerView() {
-        // EXPLICIT HORIZONTAL LINEAR LAYOUT MANAGER
         rvHotRoutes.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,

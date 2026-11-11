@@ -7,7 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
 
@@ -21,6 +25,8 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadUserProfile(view)
 
         // Open HUD Settings & Peripherals
         val openSettingsAction = {
@@ -46,18 +52,34 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun loadUserProfile(view: View) {
+        val token = SessionManager.getToken(requireContext())
+        if (token.isBlank()) return
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.apiService.getUserProfile("Bearer $token")
+                }
+                if (response.isSuccessful && response.body() != null) {
+                    val profile = response.body()!!
+                    val tvName = view.findViewById<TextView>(R.id.tv_runner_name)
+                    tvName?.text = profile.full_name
+                }
+            } catch (e: Exception) {
+                // Non-blocking network catch
+            }
+        }
+    }
+
     private fun performLogout() {
         val context = requireContext()
-        // 1. Clear user session
-        SessionManager.setLoggedIn(context, false)
+        SessionManager.clear(context)
 
-        // 2. Navigate to LoginActivity with cleared task backstack
         val intent = Intent(context, LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         startActivity(intent)
-
-        // 3. Finish host activity
         requireActivity().finishAffinity()
     }
 }

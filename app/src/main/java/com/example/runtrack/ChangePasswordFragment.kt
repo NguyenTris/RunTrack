@@ -10,12 +10,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * [SCR-SEC-01] Change Password Screen.
- * Validates current password, new password strength, and confirmation match.
+ * Validates current password, new password strength, confirmation match, and calls API.
  */
 class ChangePasswordFragment : Fragment() {
 
@@ -146,7 +150,34 @@ class ChangePasswordFragment : Fragment() {
             return
         }
 
-        Toast.makeText(requireContext(), "Mật khẩu đã được cập nhật thành công! ✓", Toast.LENGTH_SHORT).show()
-        parentFragmentManager.popBackStack()
+        val token = SessionManager.getToken(requireContext())
+        if (token.isBlank()) {
+            Toast.makeText(requireContext(), "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val btnSave = view?.findViewById<View>(R.id.btnSavePassword)
+        btnSave?.isEnabled = false
+
+        lifecycleScope.launch {
+            try {
+                val request = PasswordChange(old_password = currentPass, new_password = newPass)
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.apiService.changePassword("Bearer $token", request)
+                }
+
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "Mật khẩu đã được cập nhật thành công! ✓", Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.popBackStack()
+                } else {
+                    val errorMsg = response.errorBody()?.string() ?: "Đổi mật khẩu thất bại"
+                    Toast.makeText(requireContext(), "Lỗi: $errorMsg", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Lỗi kết nối: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+            } finally {
+                btnSave?.isEnabled = true
+            }
+        }
     }
 }

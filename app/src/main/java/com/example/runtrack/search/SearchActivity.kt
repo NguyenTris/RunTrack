@@ -15,9 +15,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.runtrack.ApiClient
 import com.example.runtrack.R
+import com.example.runtrack.SessionManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchActivity : AppCompatActivity() {
 
@@ -35,14 +41,6 @@ class SearchActivity : AppCompatActivity() {
     private var currentQuery = ""
 
     private var searchAdapter: SearchAdapter? = null
-
-    private val mockSearchList = listOf(
-        SearchItem("f1", "Đức Huy", "128 KM tháng này • Hà Nội", SearchType.FRIEND),
-        SearchItem("f2", "Ngọc Mai", "84 KM tháng này • TP. Hồ Chí Minh", SearchType.FRIEND),
-        SearchItem("c1", "Sunrise Runners", "1,420 thành viên • Hà Nội", SearchType.CLUB),
-        SearchItem("f3", "Hoàng Nam", "156 KM tháng này • Đà Nẵng", SearchType.FRIEND),
-        SearchItem("c2", "CLB Chạy Sài Gòn", "2,850 thành viên • TP. Hồ Chí Minh", SearchType.CLUB)
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,31 +142,62 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun applyFilters() {
-        val filtered = mockSearchList.filter { item ->
-            val matchesTab = when (currentTab) {
-                SearchType.ALL -> true
-                SearchType.FRIEND -> item.type == SearchType.FRIEND
-                SearchType.CLUB -> item.type == SearchType.CLUB
+        val token = SessionManager.getToken(this)
+        if (token.isBlank()) return
+
+        lifecycleScope.launch {
+            try {
+                val results = mutableListOf<SearchItem>()
+                val bearerToken = "Bearer $token"
+
+                if (currentTab == SearchType.ALL || currentTab == SearchType.FRIEND) {
+                    val friendsResp = withContext(Dispatchers.IO) {
+                        ApiClient.apiService.searchFriends(bearerToken, currentQuery)
+                    }
+                    if (friendsResp.isSuccessful && friendsResp.body() != null) {
+                        for (f in friendsResp.body()!!) {
+                            results.add(
+                                SearchItem(
+                                    id = f.user_id.toString(),
+                                    name = f.full_name,
+                                    subtitle = "${f.mutual_friends} bạn chung • Trạng thái: ${f.friend_status}",
+                                    type = SearchType.FRIEND
+                                )
+                            )
+                        }
+                    }
+                }
+
+                if (currentTab == SearchType.ALL || currentTab == SearchType.CLUB) {
+                    val clubsResp = withContext(Dispatchers.IO) {
+                        ApiClient.apiService.searchClubs(bearerToken, currentQuery)
+                    }
+                    if (clubsResp.isSuccessful && clubsResp.body() != null) {
+                        for (c in clubsResp.body()!!) {
+                            results.add(
+                                SearchItem(
+                                    id = c.club_id.toString(),
+                                    name = c.name,
+                                    subtitle = "${c.member_count} thành viên • ${c.description}",
+                                    type = SearchType.CLUB,
+                                    isActionDone = c.is_joined
+                                )
+                            )
+                        }
+                    }
+                }
+
+                searchAdapter?.updateList(results)
+
+                if (results.isEmpty()) {
+                    tvEmpty.visibility = View.VISIBLE
+                    rvResults.visibility = View.GONE
+                } else {
+                    tvEmpty.visibility = View.GONE
+                    rvResults.visibility = View.VISIBLE
+                }
+            } catch (_: Exception) {
             }
-
-            val matchesQuery = if (currentQuery.isEmpty()) {
-                true
-            } else {
-                item.name.contains(currentQuery, ignoreCase = true) ||
-                        item.subtitle.contains(currentQuery, ignoreCase = true)
-            }
-
-            matchesTab && matchesQuery
-        }
-
-        searchAdapter?.updateList(filtered)
-
-        if (filtered.isEmpty()) {
-            tvEmpty.visibility = View.VISIBLE
-            rvResults.visibility = View.GONE
-        } else {
-            tvEmpty.visibility = View.GONE
-            rvResults.visibility = View.VISIBLE
         }
     }
 }
