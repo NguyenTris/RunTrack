@@ -147,6 +147,7 @@
 
                         <!-- Recovery Pill -->
                         <LinearLayout
+                            android:id="@+id/layout_recovery_pill"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="4dp"
@@ -156,6 +157,7 @@
                             android:padding="8dp">
 
                             <TextView
+                                android:id="@+id/tv_recovery_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:drawableStart="@drawable/ic_recovery"
@@ -166,6 +168,7 @@
                                 android:textSize="9sp" />
 
                             <TextView
+                                android:id="@+id/tv_recovery_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
@@ -177,15 +180,20 @@
 
                         <!-- HRV Pill -->
                         <LinearLayout
+                            android:id="@+id/layout_hrv_pill"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="2dp"
                             android:layout_weight="1"
                             android:background="@drawable/bg_sub_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground"
                             android:orientation="vertical"
                             android:padding="8dp">
 
                             <TextView
+                                android:id="@+id/tv_hrv_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:drawableStart="@drawable/ic_heart"
@@ -196,10 +204,11 @@
                                 android:textSize="9sp" />
 
                             <TextView
+                                android:id="@+id/tv_hrv_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="64 ms • Tốt"
+                                android:text="Chưa kết nối"
                                 android:textColor="@color/text_primary"
                                 android:textSize="11sp"
                                 android:textStyle="bold" />
@@ -207,6 +216,7 @@
 
                         <!-- Weather Pill -->
                         <LinearLayout
+                            android:id="@+id/layout_weather_pill"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
@@ -216,9 +226,10 @@
                             android:padding="8dp">
 
                             <TextView
+                                android:id="@+id/tv_weather_loc_temp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:drawableStart="@drawable/ic_weather"
+                                android:drawableStart="@drawable/ic_weather_cloud"
                                 android:drawablePadding="4dp"
                                 android:fontFamily="monospace"
                                 android:text="HÀ NỘI • 24°C"
@@ -226,6 +237,7 @@
                                 android:textSize="9sp" />
 
                             <TextView
+                                android:id="@+id/tv_weather_humidity"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
