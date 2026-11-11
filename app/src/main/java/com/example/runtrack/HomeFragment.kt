@@ -11,9 +11,17 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.runtrack.network.ApiClient
 import com.example.runtrack.network.UserProfileManager
+import com.example.runtrack.network.UserProfileUpdate
 import com.example.runtrack.network.WeatherManager
+import android.graphics.Color
+import android.widget.ImageView
+import java.util.Calendar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class HomeFragment : Fragment() {
@@ -30,6 +38,15 @@ class HomeFragment : Fragment() {
     private var tvHrvValue: TextView? = null
     private var tvWeatherLocTemp: TextView? = null
     private var tvWeatherHumidity: TextView? = null
+
+    // Weekly Goal Views
+    private var ivEditWeeklyGoal: View? = null
+    private var tvCurrentKm: TextView? = null
+    private var tvTargetKm: TextView? = null
+    private var progressWeeklyCircle: com.google.android.material.progressindicator.CircularProgressIndicator? = null
+    private var tvCirclePercent: TextView? = null
+    private var progressLinearKm: com.google.android.material.progressindicator.LinearProgressIndicator? = null
+    private var tvRemainingKm: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +66,7 @@ class HomeFragment : Fragment() {
 
         loadRecoveryAndProfile()
         loadCurrentWeather()
+        loadHomeStats()
     }
 
     private fun initViews(view: View) {
@@ -61,6 +79,14 @@ class HomeFragment : Fragment() {
         tvHrvValue = view.findViewById(R.id.tv_hrv_value)
         tvWeatherLocTemp = view.findViewById(R.id.tv_weather_loc_temp)
         tvWeatherHumidity = view.findViewById(R.id.tv_weather_humidity)
+
+        ivEditWeeklyGoal = view.findViewById(R.id.iv_edit_weekly_goal)
+        tvCurrentKm = view.findViewById(R.id.tv_current_km)
+        tvTargetKm = view.findViewById(R.id.tv_target_km)
+        progressWeeklyCircle = view.findViewById(R.id.progress_weekly_circle)
+        tvCirclePercent = view.findViewById(R.id.tv_circle_percent)
+        progressLinearKm = view.findViewById(R.id.progress_linear_km)
+        tvRemainingKm = view.findViewById(R.id.tv_remaining_km)
     }
 
     private fun setupClickListeners(view: View) {
@@ -74,7 +100,11 @@ class HomeFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.card_weekly_goal)?.setOnClickListener {
-            startActivity(Intent(requireContext(), HudSettingsActivity::class.java))
+            startActivity(Intent(requireContext(), WeeklyGoalDetailActivity::class.java))
+        }
+
+        ivEditWeeklyGoal?.setOnClickListener {
+            showEditWeeklyGoalDialog()
         }
 
         view.findViewById<View>(R.id.btn_open_chat)?.setOnClickListener {
@@ -240,5 +270,141 @@ class HomeFragment : Fragment() {
         }
 
         rvHotRoutes.adapter = hotRoutesAdapter
+    }
+
+    private fun loadHomeStats() {
+        val ctx = context ?: return
+        val v = view ?: return
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val response = ApiClient.getAuthenticatedService(ctx).getHomeStats()
+                if (response.isSuccessful && response.body() != null) {
+                    val stats = response.body()!!
+                    activity?.runOnUiThread {
+                        tvCurrentKm?.text = "%.1f".format(stats.total_distance_km)
+                        tvTargetKm?.text = "/ %.1f KM".format(stats.weekly_goal_km)
+                        progressWeeklyCircle?.progress = stats.completion_percentage
+                        tvCirclePercent?.text = "${stats.completion_percentage}%"
+                        progressLinearKm?.progress = stats.completion_percentage
+                        val remaining = Math.max(0f, stats.weekly_goal_km - stats.total_distance_km)
+                        tvRemainingKm?.text = "Còn lại: %.1f km".format(remaining)
+
+                        updateWeeklyDaysStatus(v, stats.active_days)
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("HomeFragment", "Lỗi tải home-stats: ${e.message}")
+            }
+        }
+    }
+
+    private fun updateWeeklyDaysStatus(rootView: View, activeDays: List<Int>?) {
+        val rawDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+        val todayDayOfWeek = if (rawDay == Calendar.SUNDAY) 8 else rawDay
+
+        val daysConfig = listOf(
+            2 to Triple(rootView.findViewById<View>(R.id.layout_day_home_t2), rootView.findViewById<TextView>(R.id.tv_home_day_status_t2), rootView.findViewById<ImageView>(R.id.iv_home_day_icon_t2)),
+            3 to Triple(rootView.findViewById<View>(R.id.layout_day_home_t3), rootView.findViewById<TextView>(R.id.tv_home_day_status_t3), rootView.findViewById<ImageView>(R.id.iv_home_day_icon_t3)),
+            4 to Triple(rootView.findViewById<View>(R.id.layout_day_home_t4), rootView.findViewById<TextView>(R.id.tv_home_day_status_t4), rootView.findViewById<ImageView>(R.id.iv_home_day_icon_t4)),
+            5 to Triple(rootView.findViewById<View>(R.id.layout_day_home_t5), rootView.findViewById<TextView>(R.id.tv_home_day_status_t5), rootView.findViewById<ImageView>(R.id.iv_home_day_icon_t5)),
+            6 to Triple(rootView.findViewById<View>(R.id.layout_day_home_t6), rootView.findViewById<TextView>(R.id.tv_home_day_status_t6), rootView.findViewById<ImageView>(R.id.iv_home_day_icon_t6)),
+            7 to Triple(rootView.findViewById<View>(R.id.layout_day_home_t7), rootView.findViewById<TextView>(R.id.tv_home_day_status_t7), rootView.findViewById<ImageView>(R.id.iv_home_day_icon_t7)),
+            8 to Triple(rootView.findViewById<View>(R.id.layout_day_home_cn), rootView.findViewById<TextView>(R.id.tv_home_day_status_cn), rootView.findViewById<ImageView>(R.id.iv_home_day_icon_cn))
+        )
+
+        for ((dayVal, views) in daysConfig) {
+            val container = views.first
+            val tvStatus = views.second
+            val ivIcon = views.third
+
+            val hasRun = activeDays?.contains(dayVal) == true
+            val isToday = (dayVal == todayDayOfWeek)
+
+            when {
+                hasRun -> {
+                    container?.setBackgroundColor(Color.parseColor("#FF5722")) // Cam
+                    tvStatus?.text = ""
+                    tvStatus?.visibility = View.GONE
+                    ivIcon?.visibility = View.VISIBLE
+                    ivIcon?.setColorFilter(Color.WHITE)
+                }
+                isToday -> {
+                    container?.setBackgroundColor(Color.parseColor("#004D61")) // Xanh đậm
+                    tvStatus?.text = "HÔM NAY"
+                    tvStatus?.textSize = 9f
+                    tvStatus?.setTextColor(Color.parseColor("#00E5FF"))
+                    tvStatus?.visibility = View.VISIBLE
+                    ivIcon?.visibility = View.GONE
+                }
+                else -> {
+                    container?.setBackgroundColor(Color.parseColor("#1F242D")) // Xám chìm
+                    tvStatus?.text = "—"
+                    tvStatus?.textSize = 11f
+                    tvStatus?.setTextColor(Color.parseColor("#5A6678"))
+                    tvStatus?.visibility = View.VISIBLE
+                    ivIcon?.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun showEditWeeklyGoalDialog() {
+        val ctx = context ?: return
+        val input = android.widget.EditText(ctx).apply {
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            hint = "Nhập mục tiêu km (VD: 40.0)"
+            val currentText = tvTargetKm?.text?.toString() ?: ""
+            val numericStr = currentText.replace("/", "").replace("KM", "").trim()
+            if (numericStr.isNotEmpty()) {
+                setText(numericStr)
+            }
+            setSelection(text.length)
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder(ctx)
+            .setTitle("Cập Nhật Mục Tiêu Tuần")
+            .setView(android.widget.FrameLayout(ctx).apply {
+                setPadding(50, 20, 50, 0)
+                addView(input)
+            })
+            .setPositiveButton("Lưu") { dialog, _ ->
+                val str = input.text.toString().trim()
+                val newGoal = str.toDoubleOrNull()
+                if (newGoal == null || newGoal <= 0.0) {
+                    Toast.makeText(ctx, "Vui lòng nhập số km hợp lệ lớn hơn 0", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                updateWeeklyGoalOnServer(newGoal)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Hủy") { dialog, _ ->
+                dialog.cancel()
+            }
+            .show()
+    }
+
+    private fun updateWeeklyGoalOnServer(newGoalKm: Double) {
+        val ctx = context ?: return
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val requestBody = UserProfileUpdate(weekly_goal_km = newGoalKm)
+                val response = ApiClient.getAuthenticatedService(ctx).updateUserProfile(requestBody)
+                if (response.isSuccessful) {
+                    activity?.runOnUiThread {
+                        Toast.makeText(ctx, "Cập nhật mục tiêu tuần thành công!", Toast.LENGTH_SHORT).show()
+                        loadHomeStats()
+                        loadRecoveryAndProfile()
+                    }
+                } else {
+                    activity?.runOnUiThread {
+                        Toast.makeText(ctx, "Lỗi cập nhật từ server: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                activity?.runOnUiThread {
+                    Toast.makeText(ctx, "Không thể kết nối VPS: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }

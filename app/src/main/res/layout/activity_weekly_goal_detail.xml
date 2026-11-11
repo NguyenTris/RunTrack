@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_layout_goal_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:padding="16dp">
+
+    <!-- Top Navigation Bar -->
+    <TextView
+        android:id="@+id/tv_btn_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:text="&lt; QUAY LẠI"
+        android:textColor="@color/electric_cyan"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_screen_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Chi Tiết Mục Tiêu Tuần"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_btn_home"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_btn_home"
+        app:layout_constraintTop_toTopOf="@+id/tv_btn_home" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_btn_home">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
+
+            <!-- CARD 1: Overview Progress Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_card_header"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TIẾN TRÌNH TUẦN NÀY"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Circular Progress -->
+                    <FrameLayout
+                        android:id="@+id/frame_progress_circle"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_card_header">
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:id="@+id/progress_circle_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:progress="65"
+                            app:indicatorColor="@color/electric_cyan"
+                            app:indicatorSize="96dp"
+                            app:trackColor="@color/tab_inactive_bg"
+                            app:trackThickness="10dp" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_percentage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="65%"
+                            android:textColor="@color/text_primary"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <!-- Metrics Details Right -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="@+id/frame_progress_circle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/frame_progress_circle"
+                        app:layout_constraintTop_toTopOf="@+id/frame_progress_circle">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Đã hoàn thành"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_current_km"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="32.4 KM"
+                            android:textColor="@color/electric_cyan"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_goal_km"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Mục tiêu: 50.0 KM"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_remaining_km"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Còn lại: 17.6 KM"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Linear Progress Bar -->
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/progress_linear_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="20dp"
+                        android:progress="65"
+                        app:indicatorColor="@color/electric_cyan"
+                        app:layout_constraintTop_toBottomOf="@+id/frame_progress_circle"
+                        app:trackColor="@color/tab_inactive_bg"
+                        app:trackCornerRadius="4dp"
+                        app:trackThickness="8dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CARD 2: 7 Days Status Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TRẠNG THÁI LUYỆN TẬP 7 NGÀY"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <!-- 7 Days Grid/Row -->
+                    <LinearLayout
+                        android:id="@+id/layout_weekly_days_grid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        android:weightSum="7">
+
+                        <!-- Day T2 -->
+                        <LinearLayout
+                            android:id="@+id/layout_day_t2"
+                            android:layout_width="0dp"
+                            android:layout_height="64dp"
+                            android:layout_marginEnd="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_day_inactive"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_day_title_t2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="T2"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+                            <TextView
+                                android:id="@+id/tv_day_status_t2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                            <ImageView
+                                android:id="@+id/iv_day_icon_t2"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginTop="4dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
+                        </LinearLayout>
+
+                        <!-- Day T3 -->
+                        <LinearLayout
+                            android:id="@+id/layout_day_t3"
+                            android:layout_width="0dp"
+                            android:layout_height="64dp"
+                            android:layout_marginEnd="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_day_inactive"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_day_title_t3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="T3"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+                            <TextView
+                                android:id="@+id/tv_day_status_t3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                            <ImageView
+                                android:id="@+id/iv_day_icon_t3"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginTop="4dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
+                        </LinearLayout>
+
+                        <!-- Day T4 -->
+                        <LinearLayout
+                            android:id="@+id/layout_day_t4"
+                            android:layout_width="0dp"
+                            android:layout_height="64dp"
+                            android:layout_marginEnd="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_day_inactive"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_day_title_t4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="T4"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+                            <TextView
+                                android:id="@+id/tv_day_status_t4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                            <ImageView
+                                android:id="@+id/iv_day_icon_t4"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginTop="4dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
+                        </LinearLayout>
+
+                        <!-- Day T5 -->
+                        <LinearLayout
+                            android:id="@+id/layout_day_t5"
+                            android:layout_width="0dp"
+                            android:layout_height="64dp"
+                            android:layout_marginEnd="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_day_inactive"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_day_title_t5"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="T5"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+                            <TextView
+                                android:id="@+id/tv_day_status_t5"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                            <ImageView
+                                android:id="@+id/iv_day_icon_t5"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginTop="4dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
+                        </LinearLayout>
+
+                        <!-- Day T6 -->
+                        <LinearLayout
+                            android:id="@+id/layout_day_t6"
+                            android:layout_width="0dp"
+                            android:layout_height="64dp"
+                            android:layout_marginEnd="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_day_inactive"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_day_title_t6"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="T6"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+                            <TextView
+                                android:id="@+id/tv_day_status_t6"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                            <ImageView
+                                android:id="@+id/iv_day_icon_t6"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginTop="4dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
+                        </LinearLayout>
+
+                        <!-- Day T7 -->
+                        <LinearLayout
+                            android:id="@+id/layout_day_t7"
+                            android:layout_width="0dp"
+                            android:layout_height="64dp"
+                            android:layout_marginEnd="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_day_inactive"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_day_title_t7"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="T7"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+                            <TextView
+                                android:id="@+id/tv_day_status_t7"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                            <ImageView
+                                android:id="@+id/iv_day_icon_t7"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginTop="4dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
+                        </LinearLayout>
+
+                        <!-- Day CN -->
+                        <LinearLayout
+                            android:id="@+id/layout_day_cn"
+                            android:layout_width="0dp"
+                            android:layout_height="64dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_day_inactive"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_day_title_cn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="CN"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+                            <TextView
+                                android:id="@+id/tv_day_status_cn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="—"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                            <ImageView
+                                android:id="@+id/iv_day_icon_cn"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginTop="4dp"
+                                android:contentDescription="Status"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_check"
+                                app:tint="@color/white" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Edit Goal Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_edit_weekly_goal_action"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:backgroundTint="@color/electric_cyan"
+                android:text="CHỈNH SỬA MỤC TIÊU TUẦN"
+                android:textColor="@color/bg_dark"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
