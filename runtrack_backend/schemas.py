@@ -35,6 +35,9 @@ class WeeklyProgress(BaseModel):
 
 class UserProfileResponse(BaseModel):
     full_name: str
+    height: Optional[float] = None
+    weight: Optional[float] = None
+    weekly_goal_km: float = 40.0
     last_workout_time: Optional[str] = None
     recovery_completed: bool
     recovery_hours_remaining: float

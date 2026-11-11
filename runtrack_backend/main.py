@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List, Optional
 
 import httpx
@@ -28,8 +28,8 @@ from schemas import (
     UserProfileResponse,
     UserProfileUpdate,
     UserRegister,
-    WeeklyProgress,
 )
+from services import build_user_profile_response
 
 
 @asynccontextmanager
@@ -118,29 +118,7 @@ async def get_user_profile(
     db: Session = Depends(get_db),
 ):
     profile = db.query(UserProfileDB).filter(UserProfileDB.user_id == current_user.id).first()
-    full_name = profile.full_name if profile and profile.full_name else "Runner"
-    last_workout = datetime.now() - timedelta(hours=22.1)
-    weekly_data = {
-        "monday": True,
-        "tuesday": True,
-        "wednesday": False,
-        "thursday": True,
-        "friday": False,
-        "saturday": False,
-        "sunday": False,
-    }
-    return UserProfileResponse(
-        full_name=full_name,
-        last_workout_time=last_workout.isoformat(),
-        recovery_completed=False,
-        recovery_hours_remaining=1.9,
-        recovery_percentage=92,
-        recovery_status_color="green",
-        recovery_status_label="SẴN SÀNG",
-        recovery_display_text="Tối ưu (24h)",
-        weekly_progress=WeeklyProgress(**weekly_data),
-        progress_bar_percentage=42,
-    )
+    return build_user_profile_response(current_user, profile, db)
 
 
 @app.put("/user/profile", response_model=UserProfileResponse)
@@ -165,27 +143,7 @@ async def update_user_profile(
     db.commit()
     db.refresh(profile)
 
-    weekly_data = {
-        "monday": True,
-        "tuesday": True,
-        "wednesday": False,
-        "thursday": True,
-        "friday": False,
-        "saturday": False,
-        "sunday": False,
-    }
-    return UserProfileResponse(
-        full_name=profile.full_name or "Runner",
-        last_workout_time=datetime.now().isoformat(),
-        recovery_completed=True,
-        recovery_hours_remaining=0.0,
-        recovery_percentage=100,
-        recovery_status_color="green",
-        recovery_status_label="SẴN SÀNG",
-        recovery_display_text="Tối ưu (24h)",
-        weekly_progress=WeeklyProgress(**weekly_data),
-        progress_bar_percentage=42,
-    )
+    return build_user_profile_response(current_user, profile, db)
 
 
 @app.get("/dashboard/home-stats", response_model=HomeStatsResponse)
