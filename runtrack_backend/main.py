@@ -39,6 +39,10 @@ class UserProfileResponse(BaseModel):
     last_workout_time: Optional[datetime]
     recovery_completed: bool
     recovery_hours_remaining: float
+    recovery_percentage: int
+    recovery_status_color: str # "green", "yellow", "red"
+    recovery_status_label: str # "SẴN SÀNG", "TRUNG BÌNH", "CẦN NGHỈ"
+    recovery_display_text: str # "Tối ưu (24h)" hoặc "Còn Xh nữa"
     weekly_progress: WeeklyProgress
     progress_bar_percentage: int
 
@@ -175,17 +179,33 @@ async def get_recent_activities(limit: int = 5, authorization: str = Header(None
     return mock_activities[:limit]
 @app.get("/user/profile", response_model=UserProfileResponse)
 async def get_user_profile(authorization: str = Header(None)):
-    # Mock data: Lấy thông tin user từ Database
-    last_workout = datetime.now() - timedelta(hours=10) # Lần chạy cuối cách đây 10 tiếng
+    # Mock data: Lấy thông tin user từ Database (buổi chạy trước cách đây 22.1 tiếng để đạt 92% readiness)
+    last_workout = datetime.now() - timedelta(hours=22.1)
     
-    # --- XỬ LÝ LOGIC PHỤC HỒI (24 GIỜ) ---
+    # --- XỬ LÝ LOGIC PHỤC HỒI (24 GIỜ LÀ 100%) ---
     time_since_last_workout = datetime.now() - last_workout
     hours_passed = time_since_last_workout.total_seconds() / 3600
     recovery_hours_remaining = max(0.0, 24.0 - hours_passed)
     recovery_completed = recovery_hours_remaining <= 0
 
+    # Tính phần trăm phục hồi: 24 giờ = 100%
+    recovery_percentage = min(100, int((hours_passed / 24.0) * 100))
+
+    # Đánh giá màu sắc & trạng thái
+    if recovery_percentage > 85:
+        recovery_status_color = "green"
+        recovery_status_label = "SẴN SÀNG"
+        recovery_display_text = "Tối ưu (24h)"
+    elif recovery_percentage > 60:
+        recovery_status_color = "yellow"
+        recovery_status_label = "TRUNG BÌNH"
+        recovery_display_text = f"Còn {recovery_hours_remaining:.1f}h ({recovery_percentage}%)"
+    else:
+        recovery_status_color = "red"
+        recovery_status_label = "CẦN NGHỈ"
+        recovery_display_text = f"Còn {recovery_hours_remaining:.1f}h ({recovery_percentage}%)"
+
     # --- XỬ LÝ LOGIC TIẾN TRÌNH TUẦN (7 NGÀY) ---
-    # True = Ngày đó có hoàn thành nhiệm vụ (được tick)
     weekly_data = {
         "monday": True,
         "tuesday": True,
@@ -201,36 +221,75 @@ async def get_user_profile(authorization: str = Header(None)):
     progress_percentage = int((days_completed / 7) * 100)
 
     return UserProfileResponse(
-        full_name="Nguyễn Võ Minh Trí",
+        full_name="Hùng Runner",
         last_workout_time=last_workout,
         recovery_completed=recovery_completed,
         recovery_hours_remaining=round(recovery_hours_remaining, 1),
+        recovery_percentage=recovery_percentage,
+        recovery_status_color=recovery_status_color,
+        recovery_status_label=recovery_status_label,
+        recovery_display_text=recovery_display_text,
         weekly_progress=WeeklyProgress(**weekly_data),
         progress_bar_percentage=progress_percentage
     )
 
 # ==========================================
-# 4. EXTERNAL APIs
+# 4. EXTERNAL APIs (WEATHER & AIR POLLUTION)
 # ==========================================
+def calculate_us_aqi_pm25(pm25: float) -> int:
+    """
+    Tính chỉ số US AQI chuẩn EPA từ nồng độ PM2.5 (ug/m3)
+    """
+    breakpoints = [
+        (0.0, 12.0, 0, 50),
+        (12.1, 35.4, 51, 100),
+        (35.5, 55.4, 101, 150),
+        (55.5, 150.4, 151, 200),
+        (150.5, 250.4, 201, 300),
+        (250.5, 500.4, 301, 500)
+    ]
+    for c_low, c_high, i_low, i_high in breakpoints:
+        if c_low <= pm25 <= c_high:
+            return round(((i_high - i_low) / (c_high - c_low)) * (pm25 - c_low) + i_low)
+    return 300 if pm25 > 500.4 else 0
+
 @app.get("/weather")
 async def get_weather(lat: float, lon: float):
     """
-    Tích hợp OpenWeatherMap API để lấy thời tiết realtime tại vị trí chạy
+    Tích hợp OpenWeatherMap API: Current Weather & Air Pollution AQI
     """
     api_key = "4a537541384c5250c53db97422d7a283"
-    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=vi"
+    weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=vi"
+    pollution_url = f"https://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={api_key}"
     
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            return {
-                "temperature": round(data["main"]["temp"], 1),
-                "condition": data["weather"][0]["description"],
-                "icon": data["weather"][0]["icon"],
-                "city": data["name"]
-            }
-        raise HTTPException(status_code=400, detail="Không thể tải dữ liệu thời tiết")
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        # Gọi song song weather và air pollution
+        weather_res = await client.get(weather_url)
+        if weather_res.status_code != 200:
+            raise HTTPException(status_code=400, detail="Không thể tải dữ liệu thời tiết")
+        
+        weather_data = weather_res.json()
+        
+        # Lấy AQI thực tế từ API Air Pollution nếu có
+        aqi = 32 # Default fallback nếu API air pollution gặp sự cố
+        try:
+            pollution_res = await client.get(pollution_url)
+            if pollution_res.status_code == 200:
+                p_data = pollution_res.json()
+                pm25 = p_data.get("list", [{}])[0].get("components", {}).get("pm2_5", 7.8)
+                aqi = calculate_us_aqi_pm25(pm25)
+        except Exception:
+            pass
+
+        return {
+            "city": weather_data.get("name", "Hà Nội"),
+            "temperature": round(weather_data["main"]["temp"], 1),
+            "humidity": weather_data["main"]["humidity"],
+            "condition": weather_data["weather"][0]["description"],
+            "weather_main": weather_data["weather"][0]["main"], # "Clear", "Rain", "Clouds"
+            "icon": weather_data["weather"][0]["icon"],
+            "aqi": aqi
+        }
 
         # ==========================================
 # 5. SEARCH APIs (FRIENDS & CLUBS)
