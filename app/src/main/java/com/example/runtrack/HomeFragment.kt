@@ -126,9 +126,29 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadCurrentWeather() {
+        var lat = 21.0285 // Mặc định Hà Nội
+        var lon = 105.8542
+
+        // Thử lấy vị trí GPS thực tế nếu đã cấp quyền
+        try {
+            val ctx = context
+            if (ctx != null && (ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.ACCESS_COARSE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED)) {
+                val locationManager = ctx.getSystemService(android.content.Context.LOCATION_SERVICE) as? android.location.LocationManager
+                val lastKnown = locationManager?.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER)
+                    ?: locationManager?.getLastKnownLocation(android.location.LocationManager.NETWORK_PROVIDER)
+                lastKnown?.let {
+                    lat = it.latitude
+                    lon = it.longitude
+                }
+            }
+        } catch (_: Exception) {
+            // Giữ tọa độ mặc định
+        }
+
         WeatherManager.fetchWeather(
-            lat = 21.0285,
-            lon = 105.8542,
+            lat = lat,
+            lon = lon,
             onSuccess = { info ->
                 activity?.runOnUiThread {
                     val formattedCity = info.city.uppercase()

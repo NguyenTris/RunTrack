@@ -109,6 +109,7 @@ class LoginActivity : AppCompatActivity() {
                     // Save session & navigate
                     SessionManager.setLoggedIn(this@LoginActivity, true)
                     SessionManager.setUsername(this@LoginActivity, email)
+                    SessionManager.saveAuthToken(this@LoginActivity, token)
 
                     val intent = Intent(this@LoginActivity, AuthSuccessActivity::class.java)
                     startActivity(intent)

@@ -14,6 +14,7 @@ public class SessionManager {
     private static final String FALLBACK_PREF_NAME = "pacepulse_session";
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private static final String KEY_USERNAME = "username";
+    private static final String KEY_AUTH_TOKEN = "auth_token";
 
     private static SharedPreferences getPreferences(Context context) {
         try {
@@ -41,6 +42,25 @@ public class SessionManager {
     public static void setLoggedIn(Context context, boolean isLoggedIn) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
         editor.putBoolean(KEY_IS_LOGGED_IN, isLoggedIn);
+        if (!isLoggedIn) {
+            editor.remove(KEY_AUTH_TOKEN);
+        }
+        editor.apply();
+    }
+
+    public static String getAuthToken(Context context) {
+        return getPreferences(context).getString(KEY_AUTH_TOKEN, null);
+    }
+
+    public static void saveAuthToken(Context context, String token) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        editor.putString(KEY_AUTH_TOKEN, token);
+        editor.apply();
+    }
+
+    public static void clearAuthToken(Context context) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        editor.remove(KEY_AUTH_TOKEN);
         editor.apply();
     }
 

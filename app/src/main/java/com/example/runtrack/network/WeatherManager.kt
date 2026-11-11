@@ -19,8 +19,9 @@ data class WeatherInfo(
 
 /**
  * Xử lý tải dữ liệu Thời tiết & Chỉ số AQI với cơ chế gọi kép:
- * 1. Ưu tiên gọi VPS Azure / Backend RunTrack
- * 2. Tự động Fallback trực tiếp sang OpenWeatherMap nếu Backend không phản hồi
+ * 1. Ưu tiên gọi trực tiếp OpenWeatherMap API (Weather + Air Pollution AQI)
+ * 2. Tự động Fallback sang Server VPS Azure nếu OpenWeatherMap không phản hồi
+ * 3. Fallback dữ liệu ngoại tuyến dự phòng
  */
 object WeatherManager {
     private const val TAG = "WeatherManager"
@@ -33,36 +34,12 @@ object WeatherManager {
     ) {
         Thread {
             // ========================================================
-            // BƯỚC 1: Ưu tiên gọi Server Backend RunTrack (Azure VPS)
-            // ========================================================
-            val backendUrl = ApiConfig.getWeatherUrl(lat, lon)
-            try {
-                Log.d(TAG, "Đang kết nối Backend: $backendUrl")
-                val backendData = httpGet(backendUrl, timeoutMs = 3000)
-                if (backendData != null) {
-                    val json = JSONObject(backendData)
-                    val info = WeatherInfo(
-                        city = json.optString("city", "Hà Nội"),
-                        temperature = json.optDouble("temperature", 24.0),
-                        humidity = json.optInt("humidity", 68),
-                        condition = json.optString("condition", "Mây rải rác"),
-                        weatherMain = json.optString("weather_main", "Clouds"),
-                        aqi = json.optInt("aqi", 32)
-                    )
-                    Log.d(TAG, "Backend phản hồi thành công: $info")
-                    onSuccess(info)
-                    return@Thread
-                }
-            } catch (e: Exception) {
-                Log.w(TAG, "Backend không phản hồi (${e.message}). Chuyển sang Fallback trực tiếp OpenWeatherMap...")
-            }
-
-            // ========================================================
-            // BƯỚC 2: Fallback trực tiếp sang OpenWeatherMap API
+            // BƯỚC 1: Ưu tiên gọi trực tiếp OpenWeatherMap API
             // ========================================================
             try {
+                Log.d(TAG, "Ưu tiên gọi trực tiếp OpenWeatherMap (lat=$lat, lon=$lon)...")
                 val owmWeatherUrl = ApiConfig.getOwmDirectWeatherUrl(lat, lon)
-                val owmDataStr = httpGet(owmWeatherUrl, timeoutMs = 6000)
+                val owmDataStr = httpGet(owmWeatherUrl, timeoutMs = 4000)
                 if (owmDataStr != null) {
                     val owmJson = JSONObject(owmDataStr)
                     val cityName = owmJson.optString("name", "Hà Nội")
@@ -79,7 +56,7 @@ object WeatherManager {
                     var aqi = 32
                     try {
                         val airUrl = ApiConfig.getOwmDirectAirPollutionUrl(lat, lon)
-                        val airDataStr = httpGet(airUrl, timeoutMs = 4000)
+                        val airDataStr = httpGet(airUrl, timeoutMs = 3000)
                         if (airDataStr != null) {
                             val airJson = JSONObject(airDataStr)
                             val listArr = airJson.optJSONArray("list")
@@ -91,7 +68,7 @@ object WeatherManager {
                             }
                         }
                     } catch (ex: Exception) {
-                        Log.e(TAG, "Lỗi lấy Air Pollution: ${ex.message}")
+                        Log.w(TAG, "Lỗi lấy OWM Air Pollution: ${ex.message}")
                     }
 
                     val info = WeatherInfo(
@@ -102,12 +79,37 @@ object WeatherManager {
                         weatherMain = weatherMain,
                         aqi = aqi
                     )
-                    Log.d(TAG, "OpenWeatherMap Fallback thành công: $info")
+                    Log.d(TAG, "OpenWeatherMap trực tiếp thành công: $info")
                     onSuccess(info)
                     return@Thread
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "OpenWeatherMap Fallback thất bại: ${e.message}")
+                Log.w(TAG, "OpenWeatherMap không phản hồi (${e.message}). Chuyển sang Fallback Server Azure VPS...")
+            }
+
+            // ========================================================
+            // BƯỚC 2: Fallback sang Server Backend RunTrack (Azure VPS)
+            // ========================================================
+            val backendUrl = ApiConfig.getWeatherUrl(lat, lon)
+            try {
+                Log.d(TAG, "Đang kết nối Fallback Backend VPS: $backendUrl")
+                val backendData = httpGet(backendUrl, timeoutMs = 4000)
+                if (backendData != null) {
+                    val json = JSONObject(backendData)
+                    val info = WeatherInfo(
+                        city = json.optString("city", "Hà Nội"),
+                        temperature = json.optDouble("temperature", 24.0),
+                        humidity = json.optInt("humidity", 68),
+                        condition = json.optString("condition", "Mây rải rác"),
+                        weatherMain = json.optString("weather_main", "Clouds"),
+                        aqi = json.optInt("aqi", 32)
+                    )
+                    Log.d(TAG, "Backend Azure VPS Fallback thành công: $info")
+                    onSuccess(info)
+                    return@Thread
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Backend Azure VPS Fallback thất bại: ${e.message}")
             }
 
             // ========================================================
