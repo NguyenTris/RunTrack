@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 
 import httpx
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from auth import (
@@ -16,8 +16,9 @@ from auth import (
     verify_password,
 )
 from database import Base, engine, get_db
-from models import UserDB, UserProfileDB
+from models import ActivityDB, UserDB, UserProfileDB
 from schemas import (
+    ActivityCreate,
     ActivityItem,
     ClubResponse,
     ForgotPassword,
@@ -28,8 +29,15 @@ from schemas import (
     UserProfileResponse,
     UserProfileUpdate,
     UserRegister,
+    WeeklyActivitiesResponse,
 )
-from services import build_user_profile_response
+from services import (
+    build_user_profile_response,
+    build_weekly_activities_response,
+    ensure_utc,
+    get_week_activities,
+    to_activity_item,
+)
 
 
 @asynccontextmanager
@@ -147,9 +155,15 @@ async def update_user_profile(
 
 
 @app.get("/dashboard/home-stats", response_model=HomeStatsResponse)
-async def get_home_stats(current_user: UserDB = Depends(get_current_user)):
-    total_km = 18.5
-    goal_km = 30.0
+async def get_home_stats(
+    current_user: UserDB = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    profile = db.query(UserProfileDB).filter(UserProfileDB.user_id == current_user.id).first()
+    goal_km = float(profile.weekly_goal_km) if profile and profile.weekly_goal_km else 40.0
+
+    _, weekly_activities = get_week_activities(current_user.id, db)
+    total_km = round(sum(float(act.distance_km) for act in weekly_activities), 2)
     percentage = int((total_km / goal_km) * 100) if goal_km > 0 else 0
     return HomeStatsResponse(
         total_distance_km=total_km,
@@ -160,15 +174,59 @@ async def get_home_stats(current_user: UserDB = Depends(get_current_user)):
 
 @app.get("/dashboard/recent-activities", response_model=List[ActivityItem])
 async def get_recent_activities(
-    limit: int = 5,
+    limit: int = Query(default=5, ge=1, le=50),
     current_user: UserDB = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    mock_activities = [
-        ActivityItem(id="1", distance_km=5.2, duration_minutes=28, run_date=datetime.now().isoformat()),
-        ActivityItem(id="2", distance_km=4.0, duration_minutes=22, run_date=datetime.now().isoformat()),
-        ActivityItem(id="3", distance_km=6.5, duration_minutes=35, run_date=datetime.now().isoformat()),
-    ]
-    return mock_activities[:limit]
+    activities = (
+        db.query(ActivityDB)
+        .filter(ActivityDB.user_id == current_user.id)
+        .order_by(ActivityDB.start_time.desc())
+        .limit(limit)
+        .all()
+    )
+    return [to_activity_item(act) for act in activities]
+
+
+@app.post("/activities", response_model=ActivityItem, status_code=status.HTTP_201_CREATED)
+async def create_activity(
+    data: ActivityCreate,
+    current_user: UserDB = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    avg_pace = (
+        data.avg_pace_seconds
+        if data.avg_pace_seconds is not None
+        else int(data.duration_seconds / data.distance_km)
+    )
+    calories = (
+        data.calories_burned
+        if data.calories_burned is not None
+        else int(data.distance_km * 65)
+    )
+    start_time_utc = ensure_utc(data.start_time) if data.start_time else datetime.now(timezone.utc)
+
+    activity = ActivityDB(
+        user_id=current_user.id,
+        title=data.title,
+        distance_km=data.distance_km,
+        duration_seconds=data.duration_seconds,
+        avg_pace_seconds=avg_pace,
+        calories_burned=calories,
+        start_time=start_time_utc,
+    )
+    db.add(activity)
+    db.commit()
+    db.refresh(activity)
+    return to_activity_item(activity)
+
+
+@app.get("/activities/weekly", response_model=WeeklyActivitiesResponse)
+async def get_weekly_activities(
+    current_user: UserDB = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return build_weekly_activities_response(current_user.id, db)
 
 
 def calculate_us_aqi_pm25(pm25: float) -> int:

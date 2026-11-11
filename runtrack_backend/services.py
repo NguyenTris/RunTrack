@@ -4,7 +4,13 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from models import ActivityDB, UserDB, UserProfileDB
-from schemas import UserProfileResponse, WeeklyProgress
+from schemas import (
+    ActivityItem,
+    UserProfileResponse,
+    WeeklyActivitiesResponse,
+    WeeklyActivityDay,
+    WeeklyProgress,
+)
 
 VN_TZ = timezone(timedelta(hours=7))
 DAY_KEYS = (
@@ -76,6 +82,33 @@ def compute_recovery_metrics(
     }
 
 
+def get_week_activities(user_id: int, db: Session) -> tuple[datetime, list[ActivityDB]]:
+    """Lấy toàn bộ buổi chạy trong tuần hiện tại của user theo múi giờ VN."""
+    week_start_vn, week_start_utc, week_end_utc = get_current_week_bounds()
+    activities = (
+        db.query(ActivityDB)
+        .filter(
+            ActivityDB.user_id == user_id,
+            ActivityDB.start_time >= week_start_utc,
+            ActivityDB.start_time < week_end_utc,
+        )
+        .all()
+    )
+    return week_start_vn, activities
+
+
+def to_activity_item(act: ActivityDB) -> ActivityItem:
+    """Chuyển bản ghi ORM ActivityDB sang schema ActivityItem trả về API."""
+    run_dt = ensure_utc(act.start_time).astimezone(VN_TZ) if act.start_time else datetime.now(VN_TZ)
+    return ActivityItem(
+        id=str(act.id),
+        title=act.title or "Buổi chạy bộ",
+        distance_km=round(float(act.distance_km), 2),
+        duration_minutes=int(act.duration_seconds // 60) if act.duration_seconds else 0,
+        run_date=run_dt.isoformat(),
+    )
+
+
 def build_user_profile_response(
     user: UserDB,
     profile: Optional[UserProfileDB],
@@ -91,16 +124,7 @@ def build_user_profile_response(
     last_workout_utc = ensure_utc(latest_activity.start_time) if latest_activity and latest_activity.start_time else None
     recovery = compute_recovery_metrics(last_workout_utc)
 
-    _, week_start_utc, week_end_utc = get_current_week_bounds()
-    weekly_activities = (
-        db.query(ActivityDB)
-        .filter(
-            ActivityDB.user_id == user.id,
-            ActivityDB.start_time >= week_start_utc,
-            ActivityDB.start_time < week_end_utc,
-        )
-        .all()
-    )
+    _, weekly_activities = get_week_activities(user.id, db)
 
     weekly_flags = {day: False for day in DAY_KEYS}
     for act in weekly_activities:
@@ -119,4 +143,44 @@ def build_user_profile_response(
         weekly_progress=WeeklyProgress(**weekly_flags),
         progress_bar_percentage=progress_percentage,
         **recovery,
+    )
+
+
+def build_weekly_activities_response(user_id: int, db: Session) -> WeeklyActivitiesResponse:
+    """Tổng hợp chi tiết từng ngày (T2..CN) trong tuần hiện tại cho biểu đồ tuần."""
+    week_start_vn, weekly_activities = get_week_activities(user_id, db)
+    per_day = [
+        {"distance_km": 0.0, "duration_seconds": 0, "completed": False}
+        for _ in range(7)
+    ]
+
+    for act in weekly_activities:
+        if act.start_time:
+            day_idx = ensure_utc(act.start_time).astimezone(VN_TZ).weekday()
+            per_day[day_idx]["distance_km"] += float(act.distance_km)
+            per_day[day_idx]["duration_seconds"] += int(act.duration_seconds or 0)
+            per_day[day_idx]["completed"] = True
+
+    days = []
+    total_distance = 0.0
+    for idx, day_key in enumerate(DAY_KEYS):
+        day_date = (week_start_vn + timedelta(days=idx)).date().isoformat()
+        dist = round(per_day[idx]["distance_km"], 2)
+        total_distance += dist
+        days.append(
+            WeeklyActivityDay(
+                day=day_key,
+                date=day_date,
+                distance_km=dist,
+                duration_minutes=int(per_day[idx]["duration_seconds"] // 60),
+                completed=per_day[idx]["completed"],
+            )
+        )
+
+    week_end_date = (week_start_vn + timedelta(days=6)).date().isoformat()
+    return WeeklyActivitiesResponse(
+        week_start=week_start_vn.date().isoformat(),
+        week_end=week_end_date,
+        total_distance_km=round(total_distance, 2),
+        days=days,
     )
