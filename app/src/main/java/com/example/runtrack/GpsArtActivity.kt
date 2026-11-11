@@ -23,7 +23,7 @@ class GpsArtActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.fragment_gps_art)
 
-        val root = findViewById<android.view.View>(R.id.root_layout_gps_art) ?: findViewById(R.id.root_layout_gps_art_land)
+        val root = findViewById<android.view.View>(R.id.root_layout_gps_art)
         root?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it) { _, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

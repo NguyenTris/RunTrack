@@ -26,7 +26,7 @@ class RunSummaryActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_run_summary)
 
-        val root = findViewById<View>(R.id.root_layout_run_summary) ?: findViewById(R.id.root_layout_run_summary_land)
+        val root = findViewById<View>(R.id.root_layout_run_summary)
         root?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it) { _, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_layout_register_land"
+    android:id="@+id/root_layout_register"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dark"
@@ -224,7 +224,7 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_username"
+                    android:id="@+id/etFullName"
                     android:layout_width="match_parent"
                     android:layout_height="44dp"
                     android:fontFamily="monospace"
@@ -263,7 +263,7 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_email"
+                    android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="44dp"
                     android:fontFamily="monospace"
@@ -304,7 +304,7 @@
                     app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_password"
+                        android:id="@+id/etPassword"
                         android:layout_width="match_parent"
                         android:layout_height="44dp"
                         android:fontFamily="monospace"
@@ -420,7 +420,7 @@
 
             <!-- Buttons -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_register"
+                android:id="@+id/btnRegister"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="14dp"

@@ -273,7 +273,7 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_username"
+                    android:id="@+id/etFullName"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:fontFamily="monospace"
@@ -312,7 +312,7 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_email"
+                    android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:fontFamily="monospace"
@@ -353,7 +353,7 @@
                     app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_password"
+                        android:id="@+id/etPassword"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:fontFamily="monospace"
@@ -470,7 +470,7 @@
 
             <!-- Action Button -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_register"
+                android:id="@+id/btnRegister"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
