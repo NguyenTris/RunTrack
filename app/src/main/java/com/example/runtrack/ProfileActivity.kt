@@ -16,7 +16,7 @@ class ProfileActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.fragment_profile)
 
-        val root = findViewById<android.view.View>(R.id.root_layout_profile) ?: findViewById(R.id.root_layout_profile_land)
+        val root = findViewById<android.view.View>(R.id.root_layout_profile)
         root?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it) { _, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

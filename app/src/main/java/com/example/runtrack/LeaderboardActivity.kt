@@ -35,7 +35,7 @@ class LeaderboardActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.fragment_leaderboard)
 
-        val root = findViewById<android.view.View>(R.id.root_layout_leaderboard) ?: findViewById(R.id.root_layout_leaderboard_land)
+        val root = findViewById<android.view.View>(R.id.root_layout_leaderboard)
         root?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it) { _, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

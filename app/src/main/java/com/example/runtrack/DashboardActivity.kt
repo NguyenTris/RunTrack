@@ -60,7 +60,7 @@ class DashboardActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.fragment_home)
 
-        val root = findViewById<View>(R.id.root_layout) ?: findViewById(R.id.root_layout_land)
+        val root = findViewById<View>(R.id.root_layout)
         root?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it) { _, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

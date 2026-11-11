@@ -21,7 +21,7 @@ class TrackingActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_tracking)
 
-        val root = findViewById<View>(R.id.root_layout_tracking) ?: findViewById(R.id.root_layout_tracking_land)
+        val root = findViewById<View>(R.id.root_layout_tracking)
         root?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it) { _, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
