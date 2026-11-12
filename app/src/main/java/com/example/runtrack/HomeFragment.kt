@@ -15,6 +15,7 @@ import com.example.runtrack.network.ApiClient
 import com.example.runtrack.network.UserProfileManager
 import com.example.runtrack.network.UserProfileUpdate
 import com.example.runtrack.network.WeatherManager
+import com.example.runtrack.SessionManager
 import android.graphics.Color
 import android.widget.ImageView
 import java.util.Calendar
@@ -47,6 +48,37 @@ class HomeFragment : Fragment() {
     private var tvCirclePercent: TextView? = null
     private var progressLinearKm: com.google.android.material.progressindicator.LinearProgressIndicator? = null
     private var tvRemainingKm: TextView? = null
+
+    private val locationPermissionLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted = permissions.values.any { it }
+        val ctx = context ?: return@registerForActivityResult
+        if (granted) {
+            Toast.makeText(ctx, "Đã cấp quyền vị trí. Đang tải thời tiết thực tế...", Toast.LENGTH_SHORT).show()
+            loadCurrentWeather()
+        } else {
+            Toast.makeText(ctx, "Chưa cấp quyền vị trí. Vui lòng cấp quyền GPS trong Cài đặt.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun checkAndRequestLocationPermissions() {
+        val ctx = context ?: return
+        val hasFine = ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val hasCoarse = ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.ACCESS_COARSE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+        if (hasFine || hasCoarse) {
+            Toast.makeText(ctx, "Đã có quyền vị trí GPS. Đang tải thời tiết...", Toast.LENGTH_SHORT).show()
+            loadCurrentWeather()
+        } else {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -122,6 +154,17 @@ class HomeFragment : Fragment() {
         view.findViewById<View>(R.id.tv_my_club_detail)?.setOnClickListener(openClubListener)
         view.findViewById<View>(R.id.btn_enter_my_club)?.setOnClickListener(openClubListener)
 
+        val openRunSummaryListener = View.OnClickListener {
+            startActivity(Intent(requireContext(), RunSummaryActivity::class.java))
+        }
+        view.findViewById<View>(R.id.layout_recovery_pill)?.setOnClickListener(openRunSummaryListener)
+        tvScorePercent?.setOnClickListener(openRunSummaryListener)
+        tvScoreLabel?.setOnClickListener(openRunSummaryListener)
+
+        view.findViewById<View>(R.id.layout_weather_pill)?.setOnClickListener {
+            checkAndRequestLocationPermissions()
+        }
+
         layoutHrvPill?.setOnClickListener {
             val activity = requireActivity()
             if (activity is DashboardActivity) {
@@ -137,7 +180,10 @@ class HomeFragment : Fragment() {
         context?.let { ctx ->
             UserProfileManager.loadProfileAndRecovery(ctx) { profile ->
                 activity?.runOnUiThread {
-                    tvUserName?.text = "Chào ${profile.fullName} 👋"
+                    val rawName = if (profile.fullName.isNotBlank()) profile.fullName else com.example.runtrack.SessionManager.getUsername(ctx)
+                    val cleanName = if (rawName.contains("@")) rawName.substringBefore("@") else rawName
+                    tvUserName?.text = "Chào $cleanName 👋"
+
                     tvScorePercent?.text = "${profile.recoveryPercentage}%"
                     tvScoreLabel?.text = profile.recoveryLabel
                     tvRecoveryValue?.text = profile.displayText

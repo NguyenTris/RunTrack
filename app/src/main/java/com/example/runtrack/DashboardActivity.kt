@@ -24,6 +24,7 @@ import com.example.runtrack.network.ApiClient
 import com.example.runtrack.network.UserProfileManager
 import com.example.runtrack.network.UserProfileUpdate
 import com.example.runtrack.network.WeatherManager
+import com.example.runtrack.SessionManager
 import android.graphics.Color
 import android.widget.ImageView
 import java.util.Calendar
@@ -69,6 +70,19 @@ class DashboardActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, "Cần cấp quyền Bluetooth để kết nối Smartwatch", Toast.LENGTH_SHORT).show()
             tvHrvValue?.text = "Thiếu quyền BLE"
+        }
+    }
+
+    // Permission Launcher cho GPS Vị Trí / Thời Tiết
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted = permissions.values.any { it }
+        if (granted) {
+            Toast.makeText(this, "Đã cấp quyền vị trí. Đang tải thời tiết thực tế...", Toast.LENGTH_SHORT).show()
+            loadCurrentWeather()
+        } else {
+            Toast.makeText(this, "Chưa cấp quyền vị trí. Vui lòng bật GPS/Vị trí trong Cài đặt thiết bị.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -153,6 +167,19 @@ class DashboardActivity : AppCompatActivity() {
         findViewById<View>(R.id.tv_my_club_detail)?.setOnClickListener(openClubListener)
         findViewById<View>(R.id.btn_enter_my_club)?.setOnClickListener(openClubListener)
 
+        // Bắt sự kiện chạm vào ô Phục hồi để xem chi tiết buổi chạy hôm trước
+        val openRunSummaryListener = View.OnClickListener {
+            startActivity(Intent(this, RunSummaryActivity::class.java))
+        }
+        findViewById<View>(R.id.layout_recovery_pill)?.setOnClickListener(openRunSummaryListener)
+        tvScorePercent?.setOnClickListener(openRunSummaryListener)
+        tvScoreLabel?.setOnClickListener(openRunSummaryListener)
+
+        // Bắt sự kiện chạm vào ô Thời tiết để kiểm tra/yêu cầu cấp quyền vị trí GPS
+        findViewById<View>(R.id.layout_weather_pill)?.setOnClickListener {
+            checkAndRequestLocationPermissions()
+        }
+
         // Bắt sự kiện chạm vào ô HRV để quét Smartwatch
         layoutHrvPill?.setOnClickListener {
             checkAndRequestBlePermissions()
@@ -172,7 +199,10 @@ class DashboardActivity : AppCompatActivity() {
     private fun loadRecoveryAndProfile() {
         UserProfileManager.loadProfileAndRecovery(this) { profile ->
             runOnUiThread {
-                tvUserName?.text = "Chào ${profile.fullName} 👋"
+                val rawName = if (profile.fullName.isNotBlank()) profile.fullName else com.example.runtrack.SessionManager.getUsername(this)
+                val cleanName = if (rawName.contains("@")) rawName.substringBefore("@") else rawName
+                tvUserName?.text = "Chào $cleanName 👋"
+
                 tvScorePercent?.text = "${profile.recoveryPercentage}%"
                 tvScoreLabel?.text = profile.recoveryLabel
                 tvRecoveryValue?.text = profile.displayText
@@ -309,6 +339,24 @@ class DashboardActivity : AppCompatActivity() {
                 }
             }
         )
+    }
+
+    private fun checkAndRequestLocationPermissions() {
+        val hasFine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val hasCoarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+        if (hasFine || hasCoarse) {
+            Toast.makeText(this, "Đã có quyền vị trí. Đang tải thời tiết thực tế...", Toast.LENGTH_SHORT).show()
+            loadCurrentWeather()
+        } else {
+            Toast.makeText(this, "Yêu cầu cấp quyền vị trí vị trí thực tế...", Toast.LENGTH_SHORT).show()
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
     }
 
     override fun onDestroy() {

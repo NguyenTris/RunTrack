@@ -87,10 +87,14 @@ object UserProfileManager {
             // 2. Tính toán cục bộ dựa trên dữ liệu buổi chạy trước nếu VPS chưa phản hồi
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             val nowMillis = System.currentTimeMillis()
-            val defaultLastWorkout = nowMillis - (22.1 * 3600 * 1000).toLong()
-            val lastWorkoutTime = prefs.getLong(KEY_LAST_WORKOUT_TIME, defaultLastWorkout)
+            val lastWorkoutTime = prefs.getLong(KEY_LAST_WORKOUT_TIME, 0L)
 
-            val hoursPassed = (nowMillis - lastWorkoutTime).toDouble() / (3600 * 1000)
+            val hoursPassed = if (lastWorkoutTime > 0L) {
+                (nowMillis - lastWorkoutTime).toDouble() / (3600 * 1000)
+            } else {
+                25.0 // Chưa từng chạy buổi nào -> lớn hơn 24h -> 100%
+            }
+
             val recoveryPercentage = Math.min(100, Math.round((hoursPassed / 24.0) * 100).toInt())
             val remainingHours = Math.max(0.0, 24.0 - hoursPassed)
 
@@ -105,7 +109,7 @@ object UserProfileManager {
                 else -> "CẦN NGHỈ"
             }
             val displayText = when {
-                recoveryPercentage > 85 -> "Tối ưu (24h)"
+                recoveryPercentage >= 100 -> "Tối ưu (24h)"
                 else -> "Còn %.1fh (%d%%)".format(remainingHours, recoveryPercentage)
             }
 
