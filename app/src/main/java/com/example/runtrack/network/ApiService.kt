@@ -5,6 +5,7 @@ import com.example.runtrack.network.model.auth.LoginResponse
 import com.example.runtrack.network.model.auth.RegisterRequest
 import com.example.runtrack.network.model.dashboard.ActivityItem
 import com.example.runtrack.network.model.dashboard.HomeStatsResponse
+import com.example.runtrack.network.model.dashboard.WeeklyActivitiesResponse
 import com.example.runtrack.network.model.user.UserProfileDto
 import com.example.runtrack.network.model.user.UserProfileResponse
 import com.example.runtrack.network.model.user.UserProfileUpdate
@@ -41,4 +42,7 @@ interface ApiService {
     suspend fun getRecentActivities(
         @Query("limit") limit: Int = 5
     ): Response<List<ActivityItem>>
+
+    @GET("activities/weekly")
+    suspend fun getWeeklyActivities(): Response<WeeklyActivitiesResponse>
 }
