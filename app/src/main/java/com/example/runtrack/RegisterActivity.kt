@@ -20,7 +20,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.runtrack.databinding.ActivityRegisterBinding
 import com.example.runtrack.network.ApiClient
-import com.example.runtrack.network.RegisterRequest
+import com.example.runtrack.network.model.auth.RegisterRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
