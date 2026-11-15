@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.model.dashboard.WeeklyActivitiesResponse
 import com.example.runtrack.network.model.user.UserProfileUpdate
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -33,6 +34,8 @@ class WeeklyGoalDetailActivity : AppCompatActivity() {
     private var progressCircleDetail: CircularProgressIndicator? = null
     private var progressLinearDetail: LinearProgressIndicator? = null
 
+    private var weeklyActivitiesResponse: WeeklyActivitiesResponse? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,6 +53,7 @@ class WeeklyGoalDetailActivity : AppCompatActivity() {
         initViews()
         setupClickListeners()
         loadHomeStats()
+        loadWeeklyActivitiesDetails()
     }
 
     private fun initViews() {
@@ -71,6 +75,57 @@ class WeeklyGoalDetailActivity : AppCompatActivity() {
         btnEditAction?.setOnClickListener {
             showEditWeeklyGoalDialog()
         }
+
+        val dayViews = listOf(
+            2 to ("Thứ Hai (T2)" to findViewById<View>(R.id.layout_day_t2)),
+            3 to ("Thứ Ba (T3)" to findViewById<View>(R.id.layout_day_t3)),
+            4 to ("Thứ Tư (T4)" to findViewById<View>(R.id.layout_day_t4)),
+            5 to ("Thứ Năm (T5)" to findViewById<View>(R.id.layout_day_t5)),
+            6 to ("Thứ Sáu (T6)" to findViewById<View>(R.id.layout_day_t6)),
+            7 to ("Thứ Bảy (T7)" to findViewById<View>(R.id.layout_day_t7)),
+            8 to ("Chủ Nhật (CN)" to findViewById<View>(R.id.layout_day_cn))
+        )
+
+        for ((dayVal, pair) in dayViews) {
+            val dayName = pair.first
+            val view = pair.second
+            view?.setOnClickListener {
+                showDayDetailDialog(dayVal, dayName)
+            }
+        }
+    }
+
+    private fun loadWeeklyActivitiesDetails() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val response = ApiClient.getAuthenticatedService(this@WeeklyGoalDetailActivity).getWeeklyActivities()
+                if (response.isSuccessful && response.body() != null) {
+                    weeklyActivitiesResponse = response.body()
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("WeeklyGoalDetail", "Lỗi tải weekly activities: ${e.message}")
+            }
+        }
+    }
+
+    private fun showDayDetailDialog(dayVal: Int, dayName: String) {
+        val daysList = weeklyActivitiesResponse?.days
+        val dayIndex = dayVal - 2
+        val dayItem = daysList?.getOrNull(dayIndex)
+
+        val message = if (dayItem != null && dayItem.completed && dayItem.distance_km > 0) {
+            "Ngày: ${dayItem.date}\nQuãng đường: %.2f KM\nThời gian: %d phút\nTrạng thái: Hoàn thành buổi chạy 🎉".format(dayItem.distance_km, dayItem.duration_minutes)
+        } else if (dayItem != null && dayItem.date.isNotBlank()) {
+            "Ngày: ${dayItem.date}\nTrạng thái: Chưa có hoạt động chạy bộ"
+        } else {
+            "Trạng thái: Chưa có hoạt động chạy bộ cho ngày này"
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(dayName)
+            .setMessage(message)
+            .setPositiveButton("Đóng") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 
     private fun loadHomeStats() {
@@ -99,9 +154,6 @@ class WeeklyGoalDetailActivity : AppCompatActivity() {
 
     private fun updateWeeklyDaysStatus(activeDays: List<Int>?) {
         val rawDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-        // Calendar.SUNDAY = 1 -> mapped to 8
-        // Calendar.MONDAY = 2 -> mapped to 2
-        // ...
         val todayDayOfWeek = if (rawDay == Calendar.SUNDAY) 8 else rawDay
 
         val daysConfig = listOf(
@@ -124,14 +176,14 @@ class WeeklyGoalDetailActivity : AppCompatActivity() {
 
             when {
                 hasRun -> {
-                    container?.setBackgroundColor(Color.parseColor("#FF5722")) // Cam khi có chạy
+                    container?.setBackgroundColor(Color.parseColor("#FF5722"))
                     tvStatus?.text = ""
                     tvStatus?.visibility = View.GONE
                     ivIcon?.visibility = View.VISIBLE
                     ivIcon?.setColorFilter(Color.WHITE)
                 }
                 isToday -> {
-                    container?.setBackgroundColor(Color.parseColor("#005B94")) // Xanh đậm khi hôm nay chưa chạy
+                    container?.setBackgroundColor(Color.parseColor("#005B94"))
                     tvStatus?.text = "HÔM NAY"
                     tvStatus?.textSize = 9f
                     tvStatus?.setTextColor(Color.parseColor("#00E5FF"))
@@ -139,7 +191,7 @@ class WeeklyGoalDetailActivity : AppCompatActivity() {
                     ivIcon?.visibility = View.GONE
                 }
                 else -> {
-                    container?.setBackgroundColor(Color.parseColor("#1F242D")) // Xám chìm
+                    container?.setBackgroundColor(Color.parseColor("#1F242D"))
                     tvStatus?.text = "—"
                     tvStatus?.textSize = 14f
                     tvStatus?.setTextColor(Color.parseColor("#5A6678"))
@@ -193,6 +245,7 @@ class WeeklyGoalDetailActivity : AppCompatActivity() {
                     runOnUiThread {
                         Toast.makeText(this@WeeklyGoalDetailActivity, "Cập nhật mục tiêu tuần thành công!", Toast.LENGTH_SHORT).show()
                         loadHomeStats()
+                        loadWeeklyActivitiesDetails()
                     }
                 } else {
                     runOnUiThread {
