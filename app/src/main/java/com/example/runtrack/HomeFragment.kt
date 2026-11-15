@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.runtrack.network.ApiClient
 import com.example.runtrack.network.UserProfileManager
-import com.example.runtrack.network.UserProfileUpdate
+import com.example.runtrack.network.model.user.UserProfileUpdate
 import com.example.runtrack.network.WeatherManager
 import android.graphics.Color
 import android.widget.ImageView

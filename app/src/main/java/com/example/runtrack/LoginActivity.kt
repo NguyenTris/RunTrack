@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.runtrack.databinding.ActivityLoginBinding
 import com.example.runtrack.network.ApiClient
-import com.example.runtrack.network.LoginRequest
+import com.example.runtrack.network.model.auth.LoginRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
