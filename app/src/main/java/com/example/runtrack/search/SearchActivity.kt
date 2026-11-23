@@ -15,9 +15,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.runtrack.R
+import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.model.search.ClubResponse
+import com.example.runtrack.network.model.search.FriendResponse
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchActivity : AppCompatActivity() {
 
@@ -33,16 +43,9 @@ class SearchActivity : AppCompatActivity() {
 
     private var currentTab = SearchType.ALL
     private var currentQuery = ""
-
+    private var searchJob: Job? = null
     private var searchAdapter: SearchAdapter? = null
-
-    private val mockSearchList = listOf(
-        SearchItem("f1", "Đức Huy", "128 KM tháng này • Hà Nội", SearchType.FRIEND),
-        SearchItem("f2", "Ngọc Mai", "84 KM tháng này • TP. Hồ Chí Minh", SearchType.FRIEND),
-        SearchItem("c1", "Sunrise Runners", "1,420 thành viên • Hà Nội", SearchType.CLUB),
-        SearchItem("f3", "Hoàng Nam", "156 KM tháng này • Đà Nẵng", SearchType.FRIEND),
-        SearchItem("c2", "CLB Chạy Sài Gòn", "2,850 thành viên • TP. Hồ Chí Minh", SearchType.CLUB)
-    )
+    private val searchResults = mutableListOf<SearchItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +92,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 currentQuery = s?.toString()?.trim().orEmpty()
                 btnClear.visibility = if (currentQuery.isNotEmpty()) View.VISIBLE else View.GONE
-                applyFilters()
+                scheduleSearch(debounceMs = 300L)
             }
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -99,27 +102,76 @@ class SearchActivity : AppCompatActivity() {
         rvResults.layoutManager = LinearLayoutManager(this)
         searchAdapter = SearchAdapter(
             searchList = emptyList(),
-            onItemClick = { item ->
-                val intent = Intent(this, SearchDetailActivity::class.java).apply {
-                    putExtra("EXTRA_ITEM_ID", item.id)
-                    putExtra("EXTRA_ITEM_NAME", item.name)
-                    putExtra("EXTRA_ITEM_SUBTITLE", item.subtitle)
-                    putExtra("EXTRA_ITEM_TYPE", item.type.name)
-                }
-                startActivity(intent)
-            },
-            onActionClick = { item ->
-                item.isActionDone = !item.isActionDone
-                val msg = if (item.isActionDone) {
-                    if (item.type == SearchType.CLUB) "Đã tham gia ${item.name}" else "Đã gửi lời mời kết bạn đến ${item.name}"
-                } else {
-                    if (item.type == SearchType.CLUB) "Đã rời ${item.name}" else "Đã hủy lời mời kết bạn"
-                }
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-                applyFilters()
-            }
+            onItemClick = { item -> openSearchDetail(item) },
+            onActionClick = { item -> handleActionClick(item) }
         )
         rvResults.adapter = searchAdapter
+    }
+
+    private fun openSearchDetail(item: SearchItem) {
+        val intent = Intent(this, SearchDetailActivity::class.java).apply {
+            putExtra("EXTRA_ITEM_ID", item.id)
+            putExtra("EXTRA_ITEM_NAME", item.name)
+            putExtra("EXTRA_ITEM_SUBTITLE", item.subtitle)
+            putExtra("EXTRA_ITEM_TYPE", item.type.name)
+        }
+        startActivity(intent)
+    }
+
+    private fun handleActionClick(item: SearchItem) {
+        if (item.type == SearchType.CLUB) {
+            val clubId = item.id.toIntOrNull() ?: return
+            toggleClubMembership(clubId)
+            return
+        }
+
+        item.isActionDone = !item.isActionDone
+        val msg = if (item.isActionDone) {
+            "Đã gửi lời mời kết bạn đến ${item.name}"
+        } else {
+            "Đã hủy lời mời kết bạn"
+        }
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        renderResults()
+    }
+
+    private fun toggleClubMembership(clubId: Int) {
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(this@SearchActivity).toggleJoinClub(clubId)
+                }
+                val updated = response.body()
+                if (response.isSuccessful && updated != null) {
+                    applyClubUpdate(updated)
+                } else {
+                    Toast.makeText(
+                        this@SearchActivity,
+                        "Không thể cập nhật trạng thái CLB (${response.code()})",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } catch (_: Exception) {
+                Toast.makeText(
+                    this@SearchActivity,
+                    "Lỗi mạng. Không thể cập nhật trạng thái CLB.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun applyClubUpdate(club: ClubResponse) {
+        val updatedItem = mapClubToSearchItem(club)
+        val index = searchResults.indexOfFirst {
+            it.type == SearchType.CLUB && it.id == updatedItem.id
+        }
+        if (index >= 0) {
+            searchResults[index] = updatedItem
+        }
+        renderResults()
+        val msg = if (club.is_joined) "Đã tham gia ${club.name}" else "Đã rời ${club.name}"
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
     private fun updateTabSelection(type: SearchType) {
@@ -131,39 +183,99 @@ class SearchActivity : AppCompatActivity() {
             SearchType.CLUB -> "RunTrack - Tìm kiếm - CLB"
         }
 
-        btnTabAll.background = ContextCompat.getDrawable(this, if (type == SearchType.ALL) R.drawable.bg_search_tab_selected else R.drawable.bg_search_tab_unselected)
-        btnTabAll.setTextColor(if (type == SearchType.ALL) Color.parseColor("#121212") else Color.parseColor("#8A8A8A"))
+        styleTabButton(btnTabAll, type == SearchType.ALL)
+        styleTabButton(btnTabFriends, type == SearchType.FRIEND)
+        styleTabButton(btnTabClubs, type == SearchType.CLUB)
 
-        btnTabFriends.background = ContextCompat.getDrawable(this, if (type == SearchType.FRIEND) R.drawable.bg_search_tab_selected else R.drawable.bg_search_tab_unselected)
-        btnTabFriends.setTextColor(if (type == SearchType.FRIEND) Color.parseColor("#121212") else Color.parseColor("#8A8A8A"))
-
-        btnTabClubs.background = ContextCompat.getDrawable(this, if (type == SearchType.CLUB) R.drawable.bg_search_tab_selected else R.drawable.bg_search_tab_unselected)
-        btnTabClubs.setTextColor(if (type == SearchType.CLUB) Color.parseColor("#121212") else Color.parseColor("#8A8A8A"))
-
-        applyFilters()
+        scheduleSearch(debounceMs = 0L)
     }
 
-    private fun applyFilters() {
-        val filtered = mockSearchList.filter { item ->
-            val matchesTab = when (currentTab) {
-                SearchType.ALL -> true
-                SearchType.FRIEND -> item.type == SearchType.FRIEND
-                SearchType.CLUB -> item.type == SearchType.CLUB
-            }
+    private fun styleTabButton(button: TextView, selected: Boolean) {
+        val bgRes = if (selected) R.drawable.bg_search_tab_selected else R.drawable.bg_search_tab_unselected
+        button.background = ContextCompat.getDrawable(this, bgRes)
+        button.setTextColor(if (selected) Color.parseColor("#121212") else Color.parseColor("#8A8A8A"))
+    }
 
-            val matchesQuery = if (currentQuery.isEmpty()) {
-                true
-            } else {
-                item.name.contains(currentQuery, ignoreCase = true) ||
-                        item.subtitle.contains(currentQuery, ignoreCase = true)
+    private fun scheduleSearch(debounceMs: Long) {
+        searchJob?.cancel()
+        searchJob = lifecycleScope.launch {
+            if (debounceMs > 0L) {
+                delay(debounceMs)
             }
+            fetchSearchResults()
+        }
+    }
 
-            matchesTab && matchesQuery
+    private suspend fun fetchSearchResults() {
+        val query = currentQuery
+        val tab = currentTab
+        try {
+            val items = withContext(Dispatchers.IO) { loadRemoteItems(query, tab) }
+            searchResults.clear()
+            searchResults.addAll(items)
+            renderResults(emptyMessage = "Không tìm thấy kết quả phù hợp")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            searchResults.clear()
+            renderResults(emptyMessage = "Không thể kết nối máy chủ. Vui lòng thử lại.")
+        }
+    }
+
+    private suspend fun loadRemoteItems(query: String, tab: SearchType): List<SearchItem> {
+        val service = ApiClient.getAuthenticatedService(this@SearchActivity)
+        val combined = mutableListOf<SearchItem>()
+
+        if (tab == SearchType.ALL || tab == SearchType.FRIEND) {
+            val friendRes = service.searchFriends(q = query)
+            if (!friendRes.isSuccessful) {
+                throw IllegalStateException("Friends search failed: ${friendRes.code()}")
+            }
+            friendRes.body().orEmpty().mapTo(combined) { mapFriendToSearchItem(it) }
         }
 
-        searchAdapter?.updateList(filtered)
+        if (tab == SearchType.ALL || tab == SearchType.CLUB) {
+            val clubRes = service.searchClubs(q = query)
+            if (!clubRes.isSuccessful) {
+                throw IllegalStateException("Clubs search failed: ${clubRes.code()}")
+            }
+            clubRes.body().orEmpty().mapTo(combined) { mapClubToSearchItem(it) }
+        }
 
-        if (filtered.isEmpty()) {
+        return combined
+    }
+
+    private fun mapFriendToSearchItem(friend: FriendResponse): SearchItem {
+        val subtitle = "${friend.mutual_friends} bạn chung"
+        return SearchItem(
+            id = "friend_${friend.user_id}",
+            name = friend.full_name,
+            subtitle = subtitle,
+            type = SearchType.FRIEND,
+            isActionDone = friend.friend_status != "none"
+        )
+    }
+
+    private fun mapClubToSearchItem(club: ClubResponse): SearchItem {
+        val desc = club.description.trim()
+        val subtitle = if (desc.isNotEmpty()) {
+            "${club.member_count} thành viên • $desc"
+        } else {
+            "${club.member_count} thành viên"
+        }
+        return SearchItem(
+            id = club.club_id.toString(),
+            name = club.name,
+            subtitle = subtitle,
+            type = SearchType.CLUB,
+            isActionDone = club.is_joined
+        )
+    }
+
+    private fun renderResults(emptyMessage: String = "Không tìm thấy kết quả phù hợp") {
+        searchAdapter?.updateList(searchResults.toList())
+        if (searchResults.isEmpty()) {
+            tvEmpty.text = emptyMessage
             tvEmpty.visibility = View.VISIBLE
             rvResults.visibility = View.GONE
         } else {

@@ -20,3 +20,12 @@ data class RegisterResponse(
     val message: String,
     val user: String
 )
+
+data class MessageResponse(
+    val message: String
+)
+
+data class ChangePasswordRequest(
+    val old_password: String,
+    val new_password: String
+)
