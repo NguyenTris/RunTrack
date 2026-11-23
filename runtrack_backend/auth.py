@@ -103,3 +103,10 @@ def get_current_user(
     if not user:
         raise HTTPException(status_code=401, detail="Tài khoản không tồn tại hoặc đã bị xóa")
     return user
+
+
+def require_admin(current_user: UserDB = Depends(get_current_user)) -> UserDB:
+    """Dependency xác thực người dùng hiện tại có quyền quản trị viên."""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Yêu cầu quyền quản trị viên")
+    return current_user
