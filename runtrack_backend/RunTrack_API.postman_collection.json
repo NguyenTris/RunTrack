@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "a9b1c2d3-e4f5-4678-9012-runtrack2026v2",
-    "name": "RunTrack Backend API (Full SQL & Auth)",
-    "description": "Bộ sưu tập Postman chuẩn kiểm thử toàn bộ 14 API endpoints của RunTrack Backend trên Azure VPS (http://20.6.128.94:8000).",
+    "name": "RunTrack Backend API (Full SQL, Clubs & Admin)",
+    "description": "Bộ sưu tập Postman chuẩn kiểm thử toàn bộ 28 API endpoints của RunTrack Backend (Auth, Profile, Dashboard, Activities, Weather, Search, Clubs, Admin CRUD) trên Azure VPS (http://20.6.128.94:8000).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -24,6 +24,41 @@
     {
       "key": "test_password",
       "value": "RunTrackPass123",
+      "type": "string"
+    },
+    {
+      "key": "admin_email",
+      "value": "admin@runtrack.app",
+      "type": "string"
+    },
+    {
+      "key": "admin_password",
+      "value": "Admin@123",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "club_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "admin_user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_activity_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_club_id",
+      "value": "",
       "type": "string"
     }
   ],
@@ -473,9 +508,13 @@
                   "pm.test('Status code is 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
+                  "var list = pm.response.json();",
                   "pm.test('Response is an array', function () {",
-                  "    pm.expect(pm.response.json()).to.be.an('array');",
-                  "});"
+                  "    pm.expect(list).to.be.an('array');",
+                  "});",
+                  "if (list.length > 0 && list[0].club_id) {",
+                  "    pm.collectionVariables.set('club_id', String(list[0].club_id));",
+                  "}"
                 ],
                 "type": "text/javascript"
               }
@@ -493,6 +532,518 @@
                 { "key": "page", "value": "1" },
                 { "key": "limit", "value": "10" }
               ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Clubs",
+      "item": [
+        {
+          "name": "Toggle Join Club",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Has club_id, member_count and is_joined', function () {",
+                  "    pm.expect(json).to.have.property('club_id');",
+                  "    pm.expect(json).to.have.property('member_count');",
+                  "    pm.expect(json).to.have.property('is_joined');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/clubs/{{club_id}}/toggle-join",
+              "host": ["{{base_url}}"],
+              "path": ["clubs", "{{club_id}}", "toggle-join"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Admin",
+      "item": [
+        {
+          "name": "Admin Login (Auto-save Admin Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Has admin JWT access_token', function () {",
+                  "    pm.expect(json.access_token).to.be.a('string').and.not.empty;",
+                  "});",
+                  "if (json.access_token) {",
+                  "    pm.collectionVariables.set('admin_token', json.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Admin Stats",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Has overview stats and 7-day daily_stats', function () {",
+                  "    ['total_users', 'total_activities', 'total_distance_km', 'total_calories', 'total_clubs', 'top_runners'].forEach(function (k) {",
+                  "        pm.expect(json).to.have.property(k);",
+                  "    });",
+                  "    pm.expect(json.daily_stats).to.be.an('array').with.lengthOf(7);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/stats",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "stats"]
+            }
+          }
+        },
+        {
+          "name": "List Admin Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/users?q=&page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users"],
+              "query": [
+                { "key": "q", "value": "" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Admin User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Created user has id and role', function () {",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json.role).to.eql('user');",
+                  "});",
+                  "if (json.id) {",
+                  "    pm.collectionVariables.set('admin_user_id', String(json.id));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"postman.created@runtrack.app\",\n  \"password\": \"Runner@123\",\n  \"full_name\": \"Postman Managed Runner\",\n  \"role\": \"user\",\n  \"weekly_goal_km\": 42.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/users",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users"]
+            }
+          }
+        },
+        {
+          "name": "Update Admin User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('User fields updated', function () {",
+                  "    pm.expect(json.full_name).to.eql('Postman Updated Runner');",
+                  "    pm.expect(json.weekly_goal_km).to.eql(55);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Postman Updated Runner\",\n  \"role\": \"user\",\n  \"weekly_goal_km\": 55.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/users/{{admin_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users", "{{admin_user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "List Admin Activities",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/activities?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "activities"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Admin Activity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Created activity has id and distance_km', function () {",
+                  "    pm.expect(json.id).to.be.a('string').and.not.empty;",
+                  "    pm.expect(json.distance_km).to.eql(7.5);",
+                  "});",
+                  "if (json.id) {",
+                  "    pm.collectionVariables.set('admin_activity_id', json.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{admin_user_id}},\n  \"title\": \"Admin Seed Run\",\n  \"distance_km\": 7.5,\n  \"duration_seconds\": 2400\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/activities",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "activities"]
+            }
+          }
+        },
+        {
+          "name": "Update Admin Activity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Activity updated', function () {",
+                  "    pm.expect(json.title).to.eql('Admin Updated Run');",
+                  "    pm.expect(json.distance_km).to.eql(8.0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Admin Updated Run\",\n  \"distance_km\": 8.0,\n  \"duration_seconds\": 2500\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/activities/{{admin_activity_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "activities", "{{admin_activity_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Admin Activity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/activities/{{admin_activity_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "activities", "{{admin_activity_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Admin User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/users/{{admin_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users", "{{admin_user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "List Admin Clubs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/clubs?q=&page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "clubs"],
+              "query": [
+                { "key": "q", "value": "" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Admin Club",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Created club has club_id', function () {",
+                  "    pm.expect(json).to.have.property('club_id');",
+                  "    pm.expect(json.name).to.eql('Postman Trail Club');",
+                  "});",
+                  "if (json.club_id) {",
+                  "    pm.collectionVariables.set('admin_club_id', String(json.club_id));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Trail Club\",\n  \"description\": \"CLB chạy bộ kiểm thử tự động\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/clubs",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "clubs"]
+            }
+          }
+        },
+        {
+          "name": "Update Admin Club",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Club updated', function () {",
+                  "    pm.expect(json.name).to.eql('Postman Trail Club Pro');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Trail Club Pro\",\n  \"description\": \"Mô tả đã cập nhật\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/clubs/{{admin_club_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "clubs", "{{admin_club_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Admin Club",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/clubs/{{admin_club_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "clubs", "{{admin_club_id}}"]
             }
           }
         }
