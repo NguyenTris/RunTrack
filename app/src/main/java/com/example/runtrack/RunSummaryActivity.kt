@@ -13,7 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 
+import java.util.Locale
+
 class RunSummaryActivity : AppCompatActivity() {
+
+    companion object {
+        const val EXTRA_DISTANCE_KM = "EXTRA_DISTANCE_KM"
+        const val EXTRA_DURATION_SECONDS = "EXTRA_DURATION_SECONDS"
+        const val EXTRA_ACTIVITY_SAVED = "EXTRA_ACTIVITY_SAVED"
+    }
 
     private lateinit var rvLapSplits: RecyclerView
     private lateinit var lapSplitsAdapter: LapSplitsAdapter
@@ -36,6 +44,26 @@ class RunSummaryActivity : AppCompatActivity() {
         }
 
         initViews()
+        showSyncStatusFromIntent()
+    }
+
+    private fun showSyncStatusFromIntent() {
+        if (!intent.hasExtra(EXTRA_ACTIVITY_SAVED)) return
+
+        val isSaved = intent.getBooleanExtra(EXTRA_ACTIVITY_SAVED, false)
+        val distanceKm = intent.getDoubleExtra(EXTRA_DISTANCE_KM, 0.0)
+        val durationSec = intent.getIntExtra(EXTRA_DURATION_SECONDS, 0)
+        val minutes = durationSec / 60
+        val seconds = durationSec % 60
+        val durationFormatted = String.format(Locale.US, "%02d:%02d", minutes, seconds)
+        val distanceFormatted = String.format(Locale.US, "%.2f", distanceKm)
+
+        val message = if (isSaved) {
+            "Đã đồng bộ buổi chạy ($distanceFormatted km • $durationFormatted) lên hệ thống!"
+        } else {
+            "Buổi chạy ($distanceFormatted km • $durationFormatted) đã lưu tạm trên thiết bị."
+        }
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     private fun initViews() {
