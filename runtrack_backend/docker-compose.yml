@@ -26,6 +26,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-RunTrackSecure2026}
       - SECRET_KEY=${SECRET_KEY:-runtrack_super_secret_jwt_key_2026}
       - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY:-}
+      - AUTO_SEED_DEMO=${AUTO_SEED_DEMO:-true}
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
     depends_on:
       - db
 

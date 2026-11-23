@@ -18,8 +18,9 @@ from auth import (
     revoke_token,
     verify_password,
 )
-from database import Base, engine, get_db
+from database import Base, SessionLocal, engine, get_db
 from models import ActivityDB, ClubDB, ClubMemberDB, UserDB, UserProfileDB
+from seed import seed_database
 from schemas import (
     ActivityCreate,
     ActivityItem,
@@ -51,9 +52,15 @@ from services import (
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    """Đảm bảo các bảng ORM và cột users.role sẵn sàng khi khởi động."""
+    """Đảm bảo các bảng ORM, cột users.role và dữ liệu mẫu sẵn sàng khi khởi động."""
     Base.metadata.create_all(bind=engine)
     ensure_users_role_column(engine)
+    if os.getenv("AUTO_SEED_DEMO", "false").strip().lower() == "true":
+        db = SessionLocal()
+        try:
+            seed_database(db)
+        finally:
+            db.close()
     yield
 
 
