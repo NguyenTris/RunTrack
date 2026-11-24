@@ -10,8 +10,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.model.auth.ChangePasswordRequest
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * [SCR-SEC-01] Change Password Screen.
@@ -32,6 +38,8 @@ class ChangePasswordFragment : Fragment() {
     private lateinit var tvReqCase: TextView
     private lateinit var tvReqSpecialIcon: TextView
     private lateinit var tvReqSpecial: TextView
+
+    private var btnSavePassword: View? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,8 +94,8 @@ class ChangePasswordFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Save password action
-        view.findViewById<View>(R.id.btnSavePassword)?.setOnClickListener {
+        btnSavePassword = view.findViewById(R.id.btnSavePassword)
+        btnSavePassword?.setOnClickListener {
             handleSavePassword()
         }
     }
@@ -146,7 +154,64 @@ class ChangePasswordFragment : Fragment() {
             return
         }
 
-        Toast.makeText(requireContext(), "Mật khẩu đã được cập nhật thành công! ✓", Toast.LENGTH_SHORT).show()
-        parentFragmentManager.popBackStack()
+        submitPasswordChange(currentPass, newPass)
+    }
+
+    private fun submitPasswordChange(currentPass: String, newPass: String) {
+        val ctx = context ?: return
+        btnSavePassword?.isEnabled = false
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(ctx)
+                        .changePassword(ChangePasswordRequest(currentPass, newPass))
+                }
+                if (!isAdded) return@launch
+                handlePasswordChangeResponse(response.isSuccessful, response.code())
+            } catch (_: Exception) {
+                if (isAdded) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Không thể kết nối máy chủ. Vui lòng thử lại.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } finally {
+                if (isAdded) {
+                    btnSavePassword?.isEnabled = true
+                }
+            }
+        }
+    }
+
+    private fun handlePasswordChangeResponse(isSuccessful: Boolean, statusCode: Int) {
+        when {
+            isSuccessful -> {
+                Toast.makeText(
+                    requireContext(),
+                    "Mật khẩu đã được cập nhật thành công! ✓",
+                    Toast.LENGTH_SHORT
+                ).show()
+                parentFragmentManager.popBackStack()
+            }
+            statusCode == 400 -> {
+                tilCurrentPassword.error = "Mật khẩu hiện tại không đúng"
+            }
+            statusCode == 401 -> {
+                Toast.makeText(
+                    requireContext(),
+                    "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else -> {
+                Toast.makeText(
+                    requireContext(),
+                    "Đổi mật khẩu thất bại (Mã lỗi: $statusCode)",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 }

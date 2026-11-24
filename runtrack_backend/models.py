@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Text, Uuid
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
 from database import Base
 
 
@@ -12,6 +12,7 @@ class UserDB(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
+    role = Column(String(20), nullable=False, default="user")
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
 
 
@@ -56,3 +57,26 @@ class TokenBlacklistDB(Base):
     token = Column(Text, unique=True, index=True, nullable=False)
     expires_at = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+
+
+class ClubDB(Base):
+    """Bảng câu lạc bộ chạy bộ."""
+
+    __tablename__ = "clubs"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name = Column(String(120), unique=True, index=True, nullable=False)
+    description = Column(Text, nullable=False, default="")
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+
+
+class ClubMemberDB(Base):
+    """Bảng thành viên tham gia câu lạc bộ."""
+
+    __tablename__ = "club_members"
+    __table_args__ = (UniqueConstraint("club_id", "user_id", name="uq_club_member"),)
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    club_id = Column(Integer, ForeignKey("clubs.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    joined_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))

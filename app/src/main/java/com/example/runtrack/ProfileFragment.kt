@@ -7,7 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.example.runtrack.network.ApiClient
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
 
@@ -33,13 +38,12 @@ class ProfileFragment : Fragment() {
         view.findViewById<View>(R.id.layout_devices_container)?.setOnClickListener { openSettingsAction() }
         view.findViewById<View>(R.id.card_hr_zones)?.setOnClickListener { openSettingsAction() }
 
-        // Logout Button Handler
         val btnLogout = view.findViewById<MaterialButton>(R.id.btnLogout)
         btnLogout?.setOnClickListener {
+            btnLogout.isEnabled = false
             performLogout()
         }
 
-        // Home Navigation Handler
         val tvBtnHome = view.findViewById<TextView>(R.id.tv_btn_home)
         tvBtnHome?.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -47,18 +51,26 @@ class ProfileFragment : Fragment() {
     }
 
     private fun performLogout() {
-        val context = requireContext()
-        // 1. Clear user session
-        SessionManager.setLoggedIn(context, false)
-        SessionManager.clearAuthToken(context)
+        val appContext = requireContext().applicationContext
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(appContext).logout()
+                }
+            } catch (_: Exception) {
+                // Luôn xóa phiên đăng nhập cục bộ kể cả khi ngoại tuyến
+            } finally {
+                SessionManager.setLoggedIn(appContext, false)
+                SessionManager.clearAuthToken(appContext)
 
-        // 2. Navigate to LoginActivity with cleared task backstack
-        val intent = Intent(context, LoginActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                if (isAdded) {
+                    val intent = Intent(requireContext(), LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+                    startActivity(intent)
+                    requireActivity().finishAffinity()
+                }
+            }
         }
-        startActivity(intent)
-
-        // 3. Finish host activity
-        requireActivity().finishAffinity()
     }
 }

@@ -1,0 +1,23 @@
+# RunTrack — Thông Tin Dự Án & Tài Khoản Tái Lập (Reproducibility)
+
+## 1. Kho Mã Nguồn (GitHub Repository)
+- Repository: https://github.com/NguyenTris/RunTrack
+- Nhánh chính (Production): master
+- Nhánh cập nhật API, Web-Admin & Reproducibility: chore/reproducibility (từ refactor/check-api)
+
+## 2. Địa Chỉ Dịch Vụ
+- Azure VPS Backend API: http://20.6.128.94:8000
+- Swagger UI (VPS): http://20.6.128.94:8000/docs
+- Local Backend API: http://127.0.0.1:8000
+- Local Swagger UI: http://127.0.0.1:8000/docs
+- Local Web-Admin (Docker): http://localhost:3000
+- Local Web-Admin (Vite Dev): http://127.0.0.1:5173
+
+## 3. Tài Khoản Demo (Tự động tạo bởi seed.py / AUTO_SEED_DEMO=true)
+- Quản trị viên (Web-Admin & Admin APIs):
+  - Email: admin@runtrack.app
+  - Mật khẩu: Admin@123
+- Người dùng mẫu (Android App & kiểm thử phân quyền 403 trên Web-Admin):
+  - runner1@runtrack.app / Runner@123
+  - runner2@runtrack.app / Runner@123
+  - runner3@runtrack.app / Runner@123

@@ -15,6 +15,14 @@ data class ActivityItem(
     val run_date: String
 )
 
+data class ActivityCreateRequest(
+    val title: String = "Buổi chạy RunTrack",
+    val distance_km: Double,
+    val duration_seconds: Int,
+    val avg_pace_seconds: Int? = null,
+    val calories_burned: Int? = null
+)
+
 data class WeeklyActivityDay(
     val day: String,
     val date: String,

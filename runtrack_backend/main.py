@@ -1,11 +1,14 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+import os
 from typing import List, Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
+from admin_routes import router as admin_router
 from auth import (
     create_access_token,
     decode_token_payload,
@@ -15,8 +18,9 @@ from auth import (
     revoke_token,
     verify_password,
 )
-from database import Base, engine, get_db
-from models import ActivityDB, UserDB, UserProfileDB
+from database import Base, SessionLocal, engine, get_db
+from models import ActivityDB, ClubDB, ClubMemberDB, UserDB, UserProfileDB
+from seed import seed_database
 from schemas import (
     ActivityCreate,
     ActivityItem,
@@ -33,8 +37,12 @@ from schemas import (
     WeeklyActivitiesResponse,
 )
 from services import (
+    VN_TZ,
+    build_club_response,
     build_user_profile_response,
     build_weekly_activities_response,
+    ensure_default_clubs,
+    ensure_users_role_column,
     ensure_utc,
     fetch_weather_and_aqi,
     get_week_activities,
@@ -44,12 +52,30 @@ from services import (
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    """Đảm bảo các bảng ORM (bao gồm token_blacklist) sẵn sàng khi khởi động."""
+    """Đảm bảo các bảng ORM, cột users.role và dữ liệu mẫu sẵn sàng khi khởi động."""
     Base.metadata.create_all(bind=engine)
+    ensure_users_role_column(engine)
+    if os.getenv("AUTO_SEED_DEMO", "false").strip().lower() == "true":
+        db = SessionLocal()
+        try:
+            seed_database(db)
+        finally:
+            db.close()
     yield
 
 
 app = FastAPI(title="RunTrack Backend API (SQL Schema)", lifespan=lifespan)
+
+_raw_origins = os.getenv("CORS_ORIGINS", "*").strip()
+_cors_origins = ["*"] if _raw_origins == "*" else [o.strip() for o in _raw_origins.split(",") if o.strip()]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_cors_origins,
+    allow_credentials=_cors_origins != ["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.include_router(admin_router)
 
 
 # ==========================================
@@ -289,13 +315,35 @@ async def search_clubs(
     page: int = Query(default=1, ge=1),
     limit: int = Query(default=10, ge=1, le=50),
     current_user: UserDB = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    clubs_catalog = [
-        {"club_id": 1, "name": "RunTrack Ho Chi Minh", "description": "Cộng đồng chạy bộ lớn nhất HCM.", "member_count": 1250, "is_joined": True},
-        {"club_id": 2, "name": "Sunrise Runners", "description": "Tập trung chạy dài vào sáng Chủ Nhật hàng tuần.", "member_count": 430, "is_joined": False},
-        {"club_id": 3, "name": "UIT Runners", "description": "Club dành cho sinh viên và cựu sinh viên UIT.", "member_count": 890, "is_joined": False},
-    ]
-    keyword = q.strip().lower()
-    results = [club for club in clubs_catalog if keyword in club["name"].lower()]
-    start = (page - 1) * limit
-    return [ClubResponse(**club) for club in results[start:start + limit]]
+    if db.query(ClubDB).count() == 0:
+        ensure_default_clubs(db)
+    query = db.query(ClubDB)
+    keyword = q.strip()
+    if keyword:
+        query = query.filter(ClubDB.name.ilike(f"%{keyword}%"))
+    clubs = query.order_by(ClubDB.id.asc()).offset((page - 1) * limit).limit(limit).all()
+    return [build_club_response(club, db, current_user.id) for club in clubs]
+
+
+@app.post("/clubs/{club_id}/toggle-join", response_model=ClubResponse)
+async def toggle_join_club(
+    club_id: int,
+    current_user: UserDB = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    club = db.query(ClubDB).filter(ClubDB.id == club_id).first()
+    if not club:
+        raise HTTPException(status_code=404, detail="Không tìm thấy câu lạc bộ")
+    membership = (
+        db.query(ClubMemberDB)
+        .filter(ClubMemberDB.club_id == club_id, ClubMemberDB.user_id == current_user.id)
+        .first()
+    )
+    if membership:
+        db.delete(membership)
+    else:
+        db.add(ClubMemberDB(club_id=club_id, user_id=current_user.id))
+    db.commit()
+    return build_club_response(club, db, current_user.id)

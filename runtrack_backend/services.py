@@ -5,11 +5,13 @@ from typing import Optional
 
 import httpx
 from fastapi import HTTPException
+from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
-from models import ActivityDB, UserDB, UserProfileDB
+from models import ActivityDB, ClubDB, ClubMemberDB, UserDB, UserProfileDB
 from schemas import (
     ActivityItem,
+    ClubResponse,
     UserProfileResponse,
     WeatherResponse,
     WeeklyActivitiesResponse,
@@ -18,6 +20,11 @@ from schemas import (
 )
 
 VN_TZ = timezone(timedelta(hours=7))
+DEFAULT_CLUBS = (
+    ("RunTrack Ho Chi Minh", "Cộng đồng chạy bộ lớn nhất HCM."),
+    ("Sunrise Runners", "Tập trung chạy dài vào sáng Chủ Nhật hàng tuần."),
+    ("UIT Runners", "Club dành cho sinh viên và cựu sinh viên UIT."),
+)
 DAY_KEYS = (
     "monday",
     "tuesday",
@@ -250,3 +257,47 @@ async def fetch_weather_and_aqi(lat: float, lon: float) -> WeatherResponse:
         icon=weather_info.get("icon") or "02d",
         aqi=aqi,
     )
+
+
+def ensure_default_clubs(db: Session) -> list[ClubDB]:
+    """Khởi tạo 3 câu lạc bộ mặc định nếu chưa tồn tại trong cơ sở dữ liệu."""
+    created = False
+    for name, description in DEFAULT_CLUBS:
+        if not db.query(ClubDB).filter(ClubDB.name == name).first():
+            db.add(ClubDB(name=name, description=description))
+            created = True
+    if created:
+        db.commit()
+    return db.query(ClubDB).order_by(ClubDB.id.asc()).all()
+
+
+def build_club_response(club: ClubDB, db: Session, user_id: Optional[int] = None) -> ClubResponse:
+    """Chuyển bản ghi ClubDB sang ClubResponse kèm số lượng thành viên và trạng thái tham gia."""
+    member_count = db.query(ClubMemberDB).filter(ClubMemberDB.club_id == club.id).count()
+    is_joined = False
+    if user_id is not None:
+        is_joined = (
+            db.query(ClubMemberDB)
+            .filter(ClubMemberDB.club_id == club.id, ClubMemberDB.user_id == user_id)
+            .first()
+            is not None
+        )
+    return ClubResponse(
+        club_id=club.id,
+        name=club.name,
+        description=club.description or "",
+        member_count=member_count,
+        is_joined=is_joined,
+    )
+
+
+def ensure_users_role_column(db_engine) -> None:
+    """Bổ sung cột users.role an toàn cho DB cũ (hỗ trợ cả PostgreSQL và SQLite)."""
+    inspector = inspect(db_engine)
+    if not inspector.has_table("users"):
+        return
+    columns = {col["name"] for col in inspector.get_columns("users")}
+    if "role" in columns:
+        return
+    with db_engine.begin() as conn:
+        conn.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'user'"))

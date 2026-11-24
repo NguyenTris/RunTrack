@@ -16,24 +16,21 @@ def _auth_headers(client, email="dash@runtrack.vn", full_name="Dash Runner"):
     return {"Authorization": f"Bearer {token}"}
 
 
-def test_create_activity_recent_and_weekly_stats(client, db_session):
-    headers = _auth_headers(client)
+def _seed_week_and_old_activities(client, db_session, headers):
     client.put("/user/profile", headers=headers, json={"weekly_goal_km": 20.0})
-
-    # Thêm 1 buổi chạy từ tuần trước (không được cộng vào home-stats tuần này)
     user = db_session.query(UserDB).filter_by(email="dash@runtrack.vn").first()
     week_start_vn, week_start_utc, _ = get_current_week_bounds()
-    old_run = ActivityDB(
-        user_id=user.id,
-        title="Old Week Run",
-        distance_km=15.0,
-        duration_seconds=4500,
-        start_time=week_start_utc - timedelta(days=2),
+    db_session.add(
+        ActivityDB(
+            user_id=user.id,
+            title="Old Week Run",
+            distance_km=15.0,
+            duration_seconds=4500,
+            start_time=week_start_utc - timedelta(days=2),
+        )
     )
-    db_session.add(old_run)
     db_session.commit()
 
-    # Tạo 2 buổi chạy trong tuần hiện tại qua POST /activities
     r1 = client.post(
         "/activities",
         headers=headers,
@@ -44,10 +41,6 @@ def test_create_activity_recent_and_weekly_stats(client, db_session):
             "start_time": (week_start_vn + timedelta(hours=6)).isoformat(),
         },
     )
-    assert r1.status_code == 201
-    assert r1.json()["title"] == "Chạy sáng Thứ 2"
-    assert r1.json()["duration_minutes"] == 30
-
     r2 = client.post(
         "/activities",
         headers=headers,
@@ -58,22 +51,33 @@ def test_create_activity_recent_and_weekly_stats(client, db_session):
             "start_time": (week_start_vn + timedelta(hours=17)).isoformat(),
         },
     )
+    return r1, r2
+
+
+def test_create_activity_and_home_stats(client, db_session):
+    headers = _auth_headers(client)
+    r1, r2 = _seed_week_and_old_activities(client, db_session, headers)
+    assert r1.status_code == 201
+    assert r1.json()["title"] == "Chạy sáng Thứ 2"
+    assert r1.json()["duration_minutes"] == 30
     assert r2.status_code == 201
 
-    # Home stats chỉ cộng 5.5 + 4.5 = 10.0 km (bỏ qua 15.0 km tuần trước)
     stats = client.get("/dashboard/home-stats", headers=headers)
     assert stats.status_code == 200
     assert stats.json()["total_distance_km"] == 10.0
     assert stats.json()["weekly_goal_km"] == 20.0
     assert stats.json()["completion_percentage"] == 50
 
-    # Recent activities trả đủ cả 3 (mới nhất trước), tôn trọng limit
+
+def test_recent_and_weekly_activities(client, db_session):
+    headers = _auth_headers(client)
+    _seed_week_and_old_activities(client, db_session, headers)
+
     recent = client.get("/dashboard/recent-activities?limit=2", headers=headers)
     assert recent.status_code == 200
     assert len(recent.json()) == 2
     assert isinstance(recent.json()[0]["id"], str)
 
-    # Weekly activities trả đủ 7 ngày T2..CN với monday = 10.0 km
     weekly = client.get("/activities/weekly", headers=headers)
     assert weekly.status_code == 200
     wdata = weekly.json()

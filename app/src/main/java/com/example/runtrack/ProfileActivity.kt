@@ -7,7 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.example.runtrack.network.ApiClient
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -36,13 +41,12 @@ class ProfileActivity : AppCompatActivity() {
         findViewById<android.view.View>(R.id.layout_devices_container)?.setOnClickListener { openSettingsAction() }
         findViewById<android.view.View>(R.id.card_hr_zones)?.setOnClickListener { openSettingsAction() }
 
-        // Logout Button Handler
         val btnLogout = findViewById<MaterialButton>(R.id.btnLogout)
         btnLogout?.setOnClickListener {
+            btnLogout.isEnabled = false
             performLogout()
         }
 
-        // Back / Home Handler
         val tvBtnHome = findViewById<TextView>(R.id.tv_btn_home)
         tvBtnHome?.setOnClickListener {
             finish()
@@ -50,17 +54,23 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun performLogout() {
-        // 1. Clear user session
-        SessionManager.setLoggedIn(this, false)
-        SessionManager.clearAuthToken(this)
+        lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(this@ProfileActivity).logout()
+                }
+            } catch (_: Exception) {
+                // Luôn xóa phiên đăng nhập cục bộ kể cả khi ngoại tuyến
+            } finally {
+                SessionManager.setLoggedIn(this@ProfileActivity, false)
+                SessionManager.clearAuthToken(this@ProfileActivity)
 
-        // 2. Navigate to LoginActivity with cleared task backstack
-        val intent = Intent(this, LoginActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                val intent = Intent(this@ProfileActivity, LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(intent)
+                finishAffinity()
+            }
         }
-        startActivity(intent)
-
-        // 3. Finish activity and clear backstack
-        finishAffinity()
     }
 }
