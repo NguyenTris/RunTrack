@@ -7,10 +7,11 @@ plugins {
 val localProps = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) {
-        file.inputStream().use { load(it) }
+        val content = file.readText(Charsets.UTF_8).removePrefix("\uFEFF")
+        load(content.reader())
     }
 }
-val mapsApiKey: String = localProps.getProperty("MAPS_API_KEY", "")
+val mapsApiKey: String = localProps.getProperty("MAPS_API_KEY", "").trim()
 
 android {
     namespace = "com.example.runtrack"
