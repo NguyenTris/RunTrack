@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 from datetime import datetime, timedelta, timezone
 from typing import Optional
@@ -12,6 +13,7 @@ from models import ActivityDB, ClubDB, ClubMemberDB, UserDB, UserProfileDB
 from schemas import (
     ActivityItem,
     ClubResponse,
+    RoutePoint,
     UserProfileResponse,
     WeatherResponse,
     WeeklyActivitiesResponse,
@@ -25,15 +27,7 @@ DEFAULT_CLUBS = (
     ("Sunrise Runners", "Tập trung chạy dài vào sáng Chủ Nhật hàng tuần."),
     ("UIT Runners", "Club dành cho sinh viên và cựu sinh viên UIT."),
 )
-DAY_KEYS = (
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-)
+DAY_KEYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
 
 
 def ensure_utc(dt: datetime) -> datetime:
@@ -109,15 +103,50 @@ def get_week_activities(user_id: int, db: Session) -> tuple[datetime, list[Activ
     return week_start_vn, activities
 
 
+def parse_route_points(raw: Optional[str]) -> list[dict]:
+    """Giải mã JSON tọa độ lộ trình thành danh sách dict {lat, lng} an toàn."""
+    if not raw:
+        return []
+    try:
+        parsed = json.loads(raw)
+    except (ValueError, TypeError):
+        return []
+    if not isinstance(parsed, list):
+        return []
+    result: list[dict] = []
+    for item in parsed:
+        if isinstance(item, dict) and "lat" in item and "lng" in item:
+            try:
+                result.append({"lat": float(item["lat"]), "lng": float(item["lng"])})
+            except (TypeError, ValueError):
+                continue
+    return result
+
+
+def serialize_route_points(points) -> Optional[str]:
+    """Chuyển danh sách RoutePoint/dict thành chuỗi JSON để lưu vào DB."""
+    if not points:
+        return None
+    normalized = []
+    for pt in points:
+        if hasattr(pt, "lat") and hasattr(pt, "lng"):
+            normalized.append({"lat": float(pt.lat), "lng": float(pt.lng)})
+        elif isinstance(pt, dict) and "lat" in pt and "lng" in pt:
+            normalized.append({"lat": float(pt["lat"]), "lng": float(pt["lng"])})
+    return json.dumps(normalized) if normalized else None
+
+
 def to_activity_item(act: ActivityDB) -> ActivityItem:
     """Chuyển bản ghi ORM ActivityDB sang schema ActivityItem trả về API."""
     run_dt = ensure_utc(act.start_time).astimezone(VN_TZ) if act.start_time else datetime.now(VN_TZ)
+    points = [RoutePoint(**pt) for pt in parse_route_points(getattr(act, "route_points", None))]
     return ActivityItem(
         id=str(act.id),
         title=act.title or "Buổi chạy bộ",
         distance_km=round(float(act.distance_km), 2),
         duration_minutes=int(act.duration_seconds // 60) if act.duration_seconds else 0,
         run_date=run_dt.isoformat(),
+        route_points=points,
     )
 
 
@@ -301,3 +330,15 @@ def ensure_users_role_column(db_engine) -> None:
         return
     with db_engine.begin() as conn:
         conn.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'user'"))
+
+
+def ensure_activities_route_points_column(db_engine) -> None:
+    """Bổ sung cột run_activities.route_points an toàn cho DB cũ (PostgreSQL & SQLite)."""
+    inspector = inspect(db_engine)
+    if not inspector.has_table("run_activities"):
+        return
+    columns = {col["name"] for col in inspector.get_columns("run_activities")}
+    if "route_points" in columns:
+        return
+    with db_engine.begin() as conn:
+        conn.execute(text("ALTER TABLE run_activities ADD COLUMN route_points TEXT"))

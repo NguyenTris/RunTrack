@@ -1,14 +1,23 @@
 package com.example.runtrack.network
 
 import com.example.runtrack.network.model.auth.ChangePasswordRequest
+import com.example.runtrack.network.model.auth.ForgotPasswordRequest
+import com.example.runtrack.network.model.auth.ForgotPasswordResponse
 import com.example.runtrack.network.model.auth.LoginRequest
 import com.example.runtrack.network.model.auth.LoginResponse
 import com.example.runtrack.network.model.auth.MessageResponse
 import com.example.runtrack.network.model.auth.RegisterRequest
+import com.example.runtrack.network.model.auth.ResetPasswordRequest
+import com.example.runtrack.network.model.community.ClubDetailResponse
+import com.example.runtrack.network.model.community.ClubEventItemDto
+import com.example.runtrack.network.model.community.GpsArtRouteDto
 import com.example.runtrack.network.model.dashboard.ActivityCreateRequest
 import com.example.runtrack.network.model.dashboard.ActivityItem
 import com.example.runtrack.network.model.dashboard.HomeStatsResponse
 import com.example.runtrack.network.model.dashboard.WeeklyActivitiesResponse
+import com.example.runtrack.network.model.progress.LeaderboardResponse
+import com.example.runtrack.network.model.progress.MonthProgressResponse
+import com.example.runtrack.network.model.progress.YearProgressResponse
 import com.example.runtrack.network.model.search.ClubResponse
 import com.example.runtrack.network.model.search.FriendResponse
 import com.example.runtrack.network.model.user.UserProfileDto
@@ -36,6 +45,38 @@ interface ApiService {
 
     @PUT("auth/change-password")
     suspend fun changePassword(@Body request: ChangePasswordRequest): Response<MessageResponse>
+
+    @POST("auth/forgot-password")
+    suspend fun forgotPassword(@Body request: ForgotPasswordRequest): Response<ForgotPasswordResponse>
+
+    @POST("auth/reset-password")
+    suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<MessageResponse>
+
+    @GET("progress/month")
+    suspend fun getProgressMonth(
+        @Query("year") year: Int? = null,
+        @Query("month") month: Int? = null
+    ): Response<MonthProgressResponse>
+
+    @GET("progress/year")
+    suspend fun getProgressYear(
+        @Query("year") year: Int? = null
+    ): Response<YearProgressResponse>
+
+    @GET("leaderboard")
+    suspend fun getLeaderboard(
+        @Query("scope") scope: String = "global",
+        @Query("limit") limit: Int = 20
+    ): Response<LeaderboardResponse>
+
+    @GET("clubs/{club_id}/detail")
+    suspend fun getClubDetail(@Path("club_id") clubId: Int): Response<ClubDetailResponse>
+
+    @POST("clubs/events/{event_id}/toggle-register")
+    suspend fun toggleClubEventRegister(@Path("event_id") eventId: Int): Response<ClubEventItemDto>
+
+    @GET("gps-art/routes")
+    suspend fun getGpsArtRoutes(): Response<List<GpsArtRouteDto>>
 
     @GET("user/profile")
     suspend fun getUserProfile(

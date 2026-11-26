@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "a9b1c2d3-e4f5-4678-9012-runtrack2026v2",
-    "name": "RunTrack Backend API (Full SQL, Clubs & Admin)",
-    "description": "Bộ sưu tập Postman chuẩn kiểm thử toàn bộ 28 API endpoints của RunTrack Backend (Auth, Profile, Dashboard, Activities, Weather, Search, Clubs, Admin CRUD) trên Azure VPS (http://20.6.128.94:8000).",
+    "name": "RunTrack Backend API (Full SQL, Core Features & Admin)",
+    "description": "Bộ sưu tập Postman chuẩn kiểm thử toàn bộ 35 API endpoints của RunTrack Backend (Auth & Reset OTP, Profile, Dashboard, Activities GPS, Progress, Leaderboard, Weather, Search, Clubs & Events, GPS Art, Admin CRUD) trên Azure VPS (http://20.6.128.94:8000).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -44,6 +44,16 @@
     {
       "key": "club_id",
       "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "event_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "reset_otp",
+      "value": "",
       "type": "string"
     },
     {
@@ -132,7 +142,7 @@
           }
         },
         {
-          "name": "Forgot Password",
+          "name": "Forgot Password (Auto-save Demo OTP)",
           "event": [
             {
               "listen": "test",
@@ -140,7 +150,14 @@
                 "exec": [
                   "pm.test('Status code is 200', function () {",
                   "    pm.response.to.have.status(200);",
-                  "});"
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Response has message field', function () {",
+                  "    pm.expect(json).to.have.property('message');",
+                  "});",
+                  "if (json.demo_otp) {",
+                  "    pm.collectionVariables.set('reset_otp', String(json.demo_otp));",
+                  "}"
                 ],
                 "type": "text/javascript"
               }
@@ -157,6 +174,38 @@
               "raw": "{{base_url}}/auth/forgot-password",
               "host": ["{{base_url}}"],
               "path": ["auth", "forgot-password"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password (OTP)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response confirms password reset', function () {",
+                  "    pm.expect(pm.response.json()).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{test_email}}\",\n  \"otp\": \"{{reset_otp}}\",\n  \"new_password\": \"{{test_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reset-password"]
             }
           }
         },
@@ -327,7 +376,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Chạy kiểm thử Postman\",\n  \"distance_km\": 5.2,\n  \"duration_seconds\": 1680\n}"
+              "raw": "{\n  \"title\": \"Chạy kiểm thử Postman\",\n  \"distance_km\": 5.2,\n  \"duration_seconds\": 1680,\n  \"route_points\": [\n    { \"lat\": 10.7769, \"lng\": 106.7009 },\n    { \"lat\": 10.7785, \"lng\": 106.7031 }\n  ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/activities",
@@ -568,6 +617,71 @@
               "raw": "{{base_url}}/clubs/{{club_id}}/toggle-join",
               "host": ["{{base_url}}"],
               "path": ["clubs", "{{club_id}}", "toggle-join"]
+            }
+          }
+        },
+        {
+          "name": "Get Club Detail (Auto-save Event ID)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Has club members and events arrays', function () {",
+                  "    pm.expect(json).to.have.property('club_id');",
+                  "    pm.expect(json.members).to.be.an('array');",
+                  "    pm.expect(json.events).to.be.an('array');",
+                  "});",
+                  "if (json.events && json.events.length > 0 && json.events[0].event_id) {",
+                  "    pm.collectionVariables.set('event_id', String(json.events[0].event_id));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/clubs/{{club_id}}/detail",
+              "host": ["{{base_url}}"],
+              "path": ["clubs", "{{club_id}}", "detail"]
+            }
+          }
+        },
+        {
+          "name": "Toggle Register Club Event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Has event_id, registered_count and is_registered', function () {",
+                  "    pm.expect(json).to.have.property('event_id');",
+                  "    pm.expect(json).to.have.property('registered_count');",
+                  "    pm.expect(json).to.have.property('is_registered');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/clubs/events/{{event_id}}/toggle-register",
+              "host": ["{{base_url}}"],
+              "path": ["clubs", "events", "{{event_id}}", "toggle-register"]
             }
           }
         }
@@ -1044,6 +1158,147 @@
               "raw": "{{base_url}}/admin/clubs/{{admin_club_id}}",
               "host": ["{{base_url}}"],
               "path": ["admin", "clubs", "{{admin_club_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Progress & Leaderboard",
+      "item": [
+        {
+          "name": "Get Monthly Progress",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Has heatmap days and monthly records', function () {",
+                  "    pm.expect(json).to.have.property('first_weekday');",
+                  "    pm.expect(json).to.have.property('days_in_month');",
+                  "    pm.expect(json).to.have.property('total_distance_km');",
+                  "    pm.expect(json.days).to.be.an('array').with.lengthOf(json.days_in_month);",
+                  "    pm.expect(json.records).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/progress/month",
+              "host": ["{{base_url}}"],
+              "path": ["progress", "month"]
+            }
+          }
+        },
+        {
+          "name": "Get Yearly Progress",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Has 4 quarters, records and achievements', function () {",
+                  "    pm.expect(json.quarters).to.be.an('array').with.lengthOf(4);",
+                  "    pm.expect(json.records).to.be.an('array');",
+                  "    pm.expect(json.achievements).to.be.an('array').and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/progress/year",
+              "host": ["{{base_url}}"],
+              "path": ["progress", "year"]
+            }
+          }
+        },
+        {
+          "name": "Get Leaderboard",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Has scope, total_runners, current_user_rank and entries', function () {",
+                  "    pm.expect(json.scope).to.eql('global');",
+                  "    pm.expect(json).to.have.property('total_runners');",
+                  "    pm.expect(json).to.have.property('current_user_rank');",
+                  "    pm.expect(json.entries).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/leaderboard?scope=global&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["leaderboard"],
+              "query": [
+                { "key": "scope", "value": "global" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. GPS Art",
+      "item": [
+        {
+          "name": "Get GPS Art Routes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var list = pm.response.json();",
+                  "pm.test('Returns non-empty GPS Art routes with valid points', function () {",
+                  "    pm.expect(list).to.be.an('array').and.not.empty;",
+                  "    pm.expect(list[0]).to.have.property('points');",
+                  "    pm.expect(list[0].points).to.be.an('array').and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/gps-art/routes",
+              "host": ["{{base_url}}"],
+              "path": ["gps-art", "routes"]
             }
           }
         }

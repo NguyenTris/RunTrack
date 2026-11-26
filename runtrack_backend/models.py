@@ -46,6 +46,7 @@ class ActivityDB(Base):
     avg_pace_seconds = Column(Integer, nullable=False, default=0)
     calories_burned = Column(Integer, nullable=False, default=0)
     start_time = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    route_points = Column(Text, nullable=True)
 
 
 class TokenBlacklistDB(Base):
@@ -80,3 +81,55 @@ class ClubMemberDB(Base):
     club_id = Column(Integer, ForeignKey("clubs.id", ondelete="CASCADE"), nullable=False, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     joined_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+
+
+class ClubEventDB(Base):
+    """Bảng sự kiện chạy bộ của câu lạc bộ."""
+
+    __tablename__ = "club_events"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    club_id = Column(Integer, ForeignKey("clubs.id", ondelete="CASCADE"), nullable=False, index=True)
+    title = Column(String(150), nullable=False)
+    schedule_text = Column(String(120), nullable=False, default="")
+    location = Column(String(200), nullable=False, default="")
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+
+
+class ClubEventRegistrationDB(Base):
+    """Bảng đăng ký tham gia sự kiện câu lạc bộ."""
+
+    __tablename__ = "club_event_registrations"
+    __table_args__ = (UniqueConstraint("event_id", "user_id", name="uq_club_event_registration"),)
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    event_id = Column(Integer, ForeignKey("club_events.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    registered_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+
+
+class GpsArtRouteDB(Base):
+    """Bảng tuyến đường vẽ hình GPS Art."""
+
+    __tablename__ = "gps_art_routes"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name = Column(String(150), unique=True, index=True, nullable=False)
+    distance_km = Column(Float, nullable=False)
+    city = Column(String(100), nullable=False, default="Hà Nội")
+    icon_key = Column(String(50), nullable=False, default="star")
+    points_json = Column(Text, nullable=False, default="[]")
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+
+
+class PasswordResetTokenDB(Base):
+    """Bảng lưu mã OTP đặt lại mật khẩu có thời hạn."""
+
+    __tablename__ = "password_reset_tokens"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    otp_code = Column(String(10), nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    used = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))

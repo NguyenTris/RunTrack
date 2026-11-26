@@ -29,5 +29,8 @@ data class UserProfileDto(
 typealias UserProfileResponse = UserProfileDto
 
 data class UserProfileUpdate(
-    val weekly_goal_km: Double?
+    val weekly_goal_km: Double? = null,
+    val height: Double? = null,
+    val weight: Double? = null,
+    val full_name: String? = null
 )
