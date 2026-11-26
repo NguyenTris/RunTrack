@@ -80,9 +80,10 @@ class ChangePasswordFragment : Fragment() {
             parentFragmentManager.popBackStack()
         }
 
-        // Forgot password
+        // Forgot password OTP flow
         view.findViewById<View>(R.id.btnForgotPassword)?.setOnClickListener {
-            Toast.makeText(requireContext(), "Hướng dẫn đặt lại mật khẩu đã được gửi tới email của bạn.", Toast.LENGTH_SHORT).show()
+            val prefill = SessionManager.getUsername(requireContext())
+            ForgotPasswordDialogHelper.show(requireContext(), viewLifecycleOwner.lifecycleScope, prefill)
         }
 
         // Real-time strength tracker

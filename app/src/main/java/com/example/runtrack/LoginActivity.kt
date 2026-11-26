@@ -50,6 +50,12 @@ class LoginActivity : AppCompatActivity() {
             performLogin()
         }
 
+        // Forgot Password OTP flow
+        binding.tvForgotPassword.setOnClickListener {
+            val prefillEmail = binding.etEmail.text?.toString()?.trim().orEmpty()
+            ForgotPasswordDialogHelper.show(this, lifecycleScope, prefillEmail)
+        }
+
         // Navigate to Register Activity
         binding.tvRegister.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
