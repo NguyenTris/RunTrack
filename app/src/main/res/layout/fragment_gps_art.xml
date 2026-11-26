@@ -256,6 +256,11 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_map_placeholder" />
 
+                    <FrameLayout
+                        android:id="@+id/gps_art_map_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
                     <!-- Top Left Preset Badge -->
                     <TextView
                         android:layout_width="wrap_content"

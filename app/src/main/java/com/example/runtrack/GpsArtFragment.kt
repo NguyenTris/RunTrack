@@ -6,17 +6,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.model.community.GpsArtRouteDto
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class GpsArtFragment : Fragment() {
+class GpsArtFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var rvSuggestions: RecyclerView
-    private lateinit var suggestionsAdapter: ArtSuggestionsAdapter
+    private var googleMap: GoogleMap? = null
+    private var routes: List<GpsArtRouteDto> = emptyList()
+    private var selectedRoute: GpsArtRouteDto? = null
+    private val gson = Gson()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,42 +42,86 @@ class GpsArtFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViews(view)
+        attachGoogleMap()
         setupBottomNavigation(view)
+        loadGpsArtRoutes()
     }
 
     private fun initViews(view: View) {
         rvSuggestions = view.findViewById(R.id.rv_art_suggestions)
-        rvSuggestions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        rvSuggestions.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        val sampleSuggestions = listOf(
-            ArtSuggestion("1", "Khủng Long", "6.85 KM", R.drawable.ic_dinosaur),
-            ArtSuggestion("2", "Trái Tim Hồ Gươm", "5.20 KM", R.drawable.ic_heart),
-            ArtSuggestion("3", "Sét Đánh", "4.15 KM", R.drawable.ic_thunderbolt),
-            ArtSuggestion("4", "Biểu Tượng Ngôi Sao", "7.30 KM", R.drawable.ic_target)
-        )
-
-        suggestionsAdapter = ArtSuggestionsAdapter(sampleSuggestions) { item ->
-            Toast.makeText(requireContext(), "Đã chọn: ${item.name}", Toast.LENGTH_SHORT).show()
-        }
-        rvSuggestions.adapter = suggestionsAdapter
-
-        val tvBtnHome = view.findViewById<android.widget.TextView>(R.id.tv_btn_home)
-        tvBtnHome?.setOnClickListener {
+        view.findViewById<TextView>(R.id.tv_btn_home)?.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-
-        val btnClose = view.findViewById<ImageView>(R.id.btn_close_gps_art)
-        btnClose?.setOnClickListener {
+        view.findViewById<ImageView>(R.id.btn_close_gps_art)?.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-
-        val btnStart = view.findViewById<MaterialButton>(R.id.btn_start_run_art)
-        btnStart?.setOnClickListener {
-            val intent = Intent(requireContext(), TrackingActivity::class.java)
-            startActivity(intent)
+        view.findViewById<MaterialButton>(R.id.btn_start_run_art)?.setOnClickListener {
+            startTrackingWithSelectedRoute()
         }
+    }
+
+    private fun attachGoogleMap() {
+        val existing = childFragmentManager.findFragmentById(R.id.gps_art_map_container) as? SupportMapFragment
+        val mapFragment = existing ?: SupportMapFragment.newInstance().also {
+            childFragmentManager.beginTransaction()
+                .replace(R.id.gps_art_map_container, it)
+                .commit()
+        }
+        mapFragment.getMapAsync(this)
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        map.uiSettings.isZoomControlsEnabled = false
+        selectedRoute?.let { GpsArtMapHelper.drawRouteOnMap(map, it) }
+    }
+
+    private fun loadGpsArtRoutes() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val loaded = try {
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.instance.getGpsArtRoutes()
+                }
+                if (response.isSuccessful && !response.body().isNullOrEmpty()) {
+                    response.body()!!
+                } else {
+                    GpsArtMapHelper.fallbackRoutes()
+                }
+            } catch (_: Exception) {
+                GpsArtMapHelper.fallbackRoutes()
+            }
+            if (!isAdded) return@launch
+            bindRoutes(loaded)
+        }
+    }
+
+    private fun bindRoutes(loadedRoutes: List<GpsArtRouteDto>) {
+        routes = loadedRoutes
+        val suggestions = loadedRoutes.map { GpsArtMapHelper.toSuggestion(it) }
+        rvSuggestions.adapter = ArtSuggestionsAdapter(suggestions) { item ->
+            val route = routes.firstOrNull { it.id == item.id } ?: return@ArtSuggestionsAdapter
+            selectRoute(route)
+            Toast.makeText(requireContext(), "Đã chọn: ${route.name}", Toast.LENGTH_SHORT).show()
+        }
+        loadedRoutes.firstOrNull()?.let { selectRoute(it) }
+    }
+
+    private fun selectRoute(route: GpsArtRouteDto) {
+        selectedRoute = route
+        googleMap?.let { GpsArtMapHelper.drawRouteOnMap(it, route) }
+    }
+
+    private fun startTrackingWithSelectedRoute() {
+        val intent = Intent(requireContext(), TrackingActivity::class.java)
+        selectedRoute?.let { route ->
+            intent.putExtra(TrackingActivity.EXTRA_ROUTE_NAME, route.name)
+            intent.putExtra(TrackingActivity.EXTRA_ROUTE_POINTS_JSON, gson.toJson(route.points))
+        }
+        startActivity(intent)
     }
 
     private fun setupBottomNavigation(view: View) {
@@ -72,19 +130,16 @@ class GpsArtFragment : Fragment() {
         bottomNav?.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_activity -> {
-                    val intent = Intent(requireContext(), DashboardActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(requireContext(), DashboardActivity::class.java))
                     true
                 }
                 R.id.nav_tracking -> true
                 R.id.nav_leaderboard -> {
-                    val intent = Intent(requireContext(), LeaderboardActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(requireContext(), LeaderboardActivity::class.java))
                     true
                 }
                 R.id.nav_profile -> {
-                    val intent = Intent(requireContext(), ProfileActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(requireContext(), ProfileActivity::class.java))
                     true
                 }
                 else -> false

@@ -80,7 +80,11 @@ Hệ thống tự động nạp sẵn các tài khoản sau (idempotent):
 ## 3. Hướng Dẫn Chạy Ứng Dụng Android (`app/`)
 
 1. Mở thư mục gốc `RunTrack` bằng **Android Studio** và chờ Gradle Sync hoàn tất.
-2. Kiểm tra địa chỉ máy chủ Backend tại `app/src/main/java/com/example/runtrack/network/ApiConfig.kt`:
+2. Cấu hình **Google Maps API Key** (cho màn hình GPS Art & Tracking): mở file `local.properties` ở thư mục gốc (tham khảo `local.properties.example`) và thêm dòng:
+   ```properties
+   MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
+   ```
+3. Kiểm tra địa chỉ máy chủ Backend tại `app/src/main/java/com/example/runtrack/network/ApiConfig.kt`:
    * Kết nối **Azure VPS (mặc định):** `BASE_URL = "http://20.6.128.94:8000"`
    * Kết nối **Backend chạy Local trên máy tính (Android Emulator):** đổi thành `BASE_URL = "http://10.0.2.2:8000"`
 3. Chọn máy ảo Android (API 24+) hoặc thiết bị thật và nhấn **Run** (hoặc build APK debug qua lệnh `./gradlew assembleDebug`).
