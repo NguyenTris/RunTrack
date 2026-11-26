@@ -4,20 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.model.progress.YearProgressResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class ProgressYearFragment : Fragment() {
 
     private lateinit var rvQuarterStats: RecyclerView
-    private lateinit var quarterStatsAdapter: QuarterStatsAdapter
-
     private lateinit var rvYearRecords: RecyclerView
-    private lateinit var yearRecordsAdapter: MonthRecordsAdapter
-
     private lateinit var rvYearAchievements: RecyclerView
-    private lateinit var yearAchievementsAdapter: AchievementsAdapter
+
+    private val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,54 +34,105 @@ class ProgressYearFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initQuarterStatsRecyclerView(view)
-        initYearRecordsRecyclerView(view)
-        initYearAchievementsRecyclerView(view)
-    }
-
-    private fun initQuarterStatsRecyclerView(view: View) {
         rvQuarterStats = view.findViewById(R.id.rv_quarter_stats)
         rvQuarterStats.layoutManager = LinearLayoutManager(requireContext())
 
-        val sampleQuarters = listOf(
-            QuarterStat("Q1", 294f, 400f, isCurrentQuarter = false),
-            QuarterStat("Q2", 374f, 400f, isCurrentQuarter = false),
-            QuarterStat("Q3", 384f, 400f, isCurrentQuarter = false),
-            QuarterStat("Q4", 128.6f, 400f, isCurrentQuarter = true)
-        )
-
-        quarterStatsAdapter = QuarterStatsAdapter(sampleQuarters)
-        rvQuarterStats.adapter = quarterStatsAdapter
-    }
-
-    private fun initYearRecordsRecyclerView(view: View) {
         rvYearRecords = view.findViewById(R.id.rv_year_records)
         rvYearRecords.layoutManager = LinearLayoutManager(requireContext())
 
-        val sampleRecords = listOf(
-            MonthRecord("1", "5 KM nhanh nhất", "THÁNG 8 · HỒ GƯƠM", "23:48", R.drawable.ic_trophy),
-            MonthRecord("2", "10 KM nhanh nhất", "THÁNG 7 · HỒ TÂY", "49:55", R.drawable.ic_trophy),
-            MonthRecord("3", "Half Marathon", "THÁNG 5 · ECOPARK", "1:51:20", R.drawable.ic_trophy),
-            MonthRecord("4", "Tháng nhiều nhất", "THÁNG 7", "140 KM", R.drawable.ic_trophy)
-        )
+        rvYearAchievements = view.findViewById(R.id.rv_year_achievements)
+        rvYearAchievements.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        yearRecordsAdapter = MonthRecordsAdapter(sampleRecords)
-        rvYearRecords.adapter = yearRecordsAdapter
+        loadYearProgress()
     }
 
-    private fun initYearAchievementsRecyclerView(view: View) {
-        rvYearAchievements = view.findViewById(R.id.rv_year_achievements)
-        rvYearAchievements.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+    private fun loadYearProgress() {
+        val ctx = context ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(ctx).getProgressYear(year = currentYear)
+                }
+                if (!isAdded) return@launch
+                if (response.isSuccessful && response.body() != null) {
+                    bindYearData(response.body()!!)
+                } else {
+                    renderFallback("Không thể tải dữ liệu tiến độ năm")
+                }
+            } catch (_: Exception) {
+                if (isAdded) {
+                    renderFallback("Lỗi kết nối máy chủ khi tải tiến độ năm")
+                }
+            }
+        }
+    }
 
-        val sampleBadges = listOf(
-            Achievement("1", "5K < 25'", R.drawable.ic_trophy, isUnlocked = true),
-            Achievement("2", "HALF MARATHON", R.drawable.ic_route_network, isUnlocked = true),
-            Achievement("3", "CHUỖI 30 NGÀY", R.drawable.ic_thunderbolt, isUnlocked = true),
-            Achievement("4", "1,500 KM/NĂM", R.drawable.ic_lock, isUnlocked = false)
+    private fun bindYearData(data: YearProgressResponse) {
+        val quarters = data.quarters.map { q ->
+            QuarterStat(
+                quarterName = q.quarter,
+                distanceKm = q.distance_km.toFloat(),
+                maxKm = q.target_km.toFloat().coerceAtLeast(1f),
+                isCurrentQuarter = q.is_current
+            )
+        }.ifEmpty { defaultEmptyQuarters() }
+        rvQuarterStats.adapter = QuarterStatsAdapter(quarters)
+
+        val records = data.records.mapIndexed { idx, rec ->
+            MonthRecord(
+                id = rec.id.ifBlank { (idx + 1).toString() },
+                title = rec.title,
+                subtitle = rec.subtitle,
+                recordValue = rec.value,
+                iconResId = R.drawable.ic_trophy
+            )
+        }.ifEmpty {
+            listOf(
+                MonthRecord(
+                    id = "empty",
+                    title = "Chưa có kỷ lục năm ${data.year}",
+                    subtitle = "Hoàn thành buổi chạy đầu tiên để mở khóa",
+                    recordValue = "0 KM",
+                    iconResId = R.drawable.ic_trophy
+                )
+            )
+        }
+        rvYearRecords.adapter = MonthRecordsAdapter(records)
+
+        val badges = data.achievements.mapIndexed { idx, ach ->
+            Achievement(
+                id = ach.id.ifBlank { (idx + 1).toString() },
+                title = ach.title,
+                iconResId = resolveAchievementIcon(ach.icon_key, ach.is_unlocked),
+                isUnlocked = ach.is_unlocked
+            )
+        }
+        rvYearAchievements.adapter = AchievementsAdapter(badges)
+    }
+
+    private fun resolveAchievementIcon(iconKey: String, isUnlocked: Boolean): Int {
+        if (!isUnlocked) return R.drawable.ic_lock
+        return when (iconKey.lowercase()) {
+            "route", "half_marathon" -> R.drawable.ic_route_network
+            "streak", "thunder", "bolt" -> R.drawable.ic_thunderbolt
+            else -> R.drawable.ic_trophy
+        }
+    }
+
+    private fun defaultEmptyQuarters(): List<QuarterStat> {
+        val currentQ = (Calendar.getInstance().get(Calendar.MONTH) / 3) + 1
+        return (1..4).map { q ->
+            QuarterStat("Q$q", 0f, 400f, isCurrentQuarter = (q == currentQ))
+        }
+    }
+
+    private fun renderFallback(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        rvQuarterStats.adapter = QuarterStatsAdapter(defaultEmptyQuarters())
+        rvYearRecords.adapter = MonthRecordsAdapter(
+            listOf(MonthRecord("0", "Chưa có dữ liệu năm", "Vui lòng thử lại sau", "--", R.drawable.ic_trophy))
         )
-
-        yearAchievementsAdapter = AchievementsAdapter(sampleBadges)
-        rvYearAchievements.adapter = yearAchievementsAdapter
+        rvYearAchievements.adapter = AchievementsAdapter(emptyList())
     }
 }

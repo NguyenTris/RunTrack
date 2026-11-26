@@ -7,12 +7,18 @@ data class HomeStatsResponse(
     val active_days: List<Int>? = null
 )
 
+data class RoutePointDto(
+    val lat: Double,
+    val lng: Double
+)
+
 data class ActivityItem(
     val id: String,
     val title: String = "Buổi chạy bộ",
     val distance_km: Float,
     val duration_minutes: Int,
-    val run_date: String
+    val run_date: String,
+    val route_points: List<RoutePointDto>? = null
 )
 
 data class ActivityCreateRequest(
@@ -20,7 +26,8 @@ data class ActivityCreateRequest(
     val distance_km: Double,
     val duration_seconds: Int,
     val avg_pace_seconds: Int? = null,
-    val calories_burned: Int? = null
+    val calories_burned: Int? = null,
+    val route_points: List<RoutePointDto>? = null
 )
 
 data class WeeklyActivityDay(

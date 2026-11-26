@@ -29,3 +29,18 @@ data class ChangePasswordRequest(
     val old_password: String,
     val new_password: String
 )
+
+data class ForgotPasswordRequest(
+    val email: String
+)
+
+data class ForgotPasswordResponse(
+    val message: String = "",
+    val demo_otp: String? = null
+)
+
+data class ResetPasswordRequest(
+    val email: String,
+    val otp: String,
+    val new_password: String
+)

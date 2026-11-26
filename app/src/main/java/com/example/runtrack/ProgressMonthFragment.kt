@@ -6,17 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.model.progress.MonthProgressResponse
+import com.example.runtrack.network.model.progress.ProgressDayDto
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Calendar
+import java.util.Locale
 
 class ProgressMonthFragment : Fragment() {
 
     private lateinit var rvHeatmap: RecyclerView
-    private lateinit var heatmapAdapter: CalendarHeatmapAdapter
-
     private lateinit var rvMonthRecords: RecyclerView
-    private lateinit var monthRecordsAdapter: MonthRecordsAdapter
+
+    private var currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+    private var currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    private var dayDetailMap: Map<Int, ProgressDayDto> = emptyMap()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,60 +38,120 @@ class ProgressMonthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initHeatmapRecyclerView(view)
-        initRecordsRecyclerView(view)
-    }
-
-    private fun initHeatmapRecyclerView(view: View) {
         rvHeatmap = view.findViewById(R.id.rv_calendar_heatmap)
-
-        // CRITICAL: GridLayoutManager with spanCount = 7 for 7 days of the week
         rvHeatmap.layoutManager = GridLayoutManager(requireContext(), 7)
-
-        // October 2026 calendar days data (31 days) matching Figma screenshot
-        val daysList = ArrayList<CalendarDay>()
-
-        // Pad initial empty offset days
-        daysList.add(CalendarDay(0, 0)) // T2
-        daysList.add(CalendarDay(0, 0)) // T3
-        daysList.add(CalendarDay(0, 0)) // T4
-
-        // Days 1 to 31
-        val heatLevels = mapOf(
-            1 to 1, 2 to 0, 3 to 2, 4 to 3,
-            5 to 0, 6 to 2, 7 to 1, 8 to 0, 9 to 2, 10 to 3, 11 to 2,
-            12 to 0, 13 to 2, 14 to 1, 15 to 0, 16 to 3, 17 to 0, 18 to 2,
-            19 to 3, 20 to 3, 21 to 2, // 21 is selected with cyan border
-            22 to 0, 23 to 0, 24 to 0, 25 to 0,
-            26 to 0, 27 to 0, 28 to 0, 29 to 0, 30 to 0, 31 to 0
-        )
-
-        for (day in 1..31) {
-            val level = heatLevels[day] ?: 0
-            val isSelected = (day == 21)
-            daysList.add(CalendarDay(day, level, isSelected))
-        }
-
-        heatmapAdapter = CalendarHeatmapAdapter(daysList) { clickedDay ->
-            if (clickedDay.dayNumber > 0) {
-                Toast.makeText(requireContext(), "Tháng 10 - Ngày ${clickedDay.dayNumber}", Toast.LENGTH_SHORT).show()
-            }
-        }
-        rvHeatmap.adapter = heatmapAdapter
-    }
-
-    private fun initRecordsRecyclerView(view: View) {
         rvMonthRecords = view.findViewById(R.id.rv_month_records)
         rvMonthRecords.layoutManager = LinearLayoutManager(requireContext())
 
-        val sampleRecords = listOf(
-            MonthRecord("1", "5 KM nhanh nhất", "04/10 · HỒ GƯƠM", "24:12", R.drawable.ic_trophy),
-            MonthRecord("2", "10 KM nhanh nhất", "10/10 · HỒ TÂY", "51:30", R.drawable.ic_trophy),
-            MonthRecord("3", "Buổi chạy dài nhất", "04/10 · LONG RUN", "16.5 KM", R.drawable.ic_trophy)
-        )
+        loadMonthProgress()
+    }
 
-        monthRecordsAdapter = MonthRecordsAdapter(sampleRecords)
-        rvMonthRecords.adapter = monthRecordsAdapter
+    private fun loadMonthProgress() {
+        val ctx = context ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(ctx)
+                        .getProgressMonth(year = currentYear, month = currentMonth)
+                }
+                if (!isAdded) return@launch
+                if (response.isSuccessful && response.body() != null) {
+                    bindMonthData(response.body()!!)
+                } else {
+                    renderEmptyState("Không thể tải dữ liệu tiến độ tháng")
+                }
+            } catch (_: Exception) {
+                if (isAdded) {
+                    renderEmptyState("Lỗi kết nối máy chủ khi tải tiến độ tháng")
+                }
+            }
+        }
+    }
+
+    private fun bindMonthData(data: MonthProgressResponse) {
+        currentYear = data.year
+        currentMonth = data.month
+        dayDetailMap = data.days.associateBy { it.day }
+
+        val todayCal = Calendar.getInstance()
+        val isSameMonth = todayCal.get(Calendar.YEAR) == data.year &&
+            (todayCal.get(Calendar.MONTH) + 1) == data.month
+        val todayDay = if (isSameMonth) todayCal.get(Calendar.DAY_OF_MONTH) else -1
+
+        val daysList = buildCalendarDays(data.first_weekday, data.days_in_month, todayDay)
+        rvHeatmap.adapter = CalendarHeatmapAdapter(daysList) { clickedDay ->
+            showDayToast(clickedDay.dayNumber)
+        }
+
+        val records = data.records.mapIndexed { idx, rec ->
+            MonthRecord(
+                id = rec.id.ifBlank { (idx + 1).toString() },
+                title = rec.title,
+                subtitle = rec.subtitle,
+                recordValue = rec.value,
+                iconResId = R.drawable.ic_trophy
+            )
+        }.ifEmpty {
+            listOf(
+                MonthRecord(
+                    id = "empty",
+                    title = "Chưa có kỷ lục tháng $currentMonth/$currentYear",
+                    subtitle = String.format(
+                        Locale.US,
+                        "Tổng: %.1f km • %d buổi chạy",
+                        data.total_distance_km,
+                        data.total_activities
+                    ),
+                    recordValue = "0 KM",
+                    iconResId = R.drawable.ic_trophy
+                )
+            )
+        }
+        rvMonthRecords.adapter = MonthRecordsAdapter(records)
+    }
+
+    private fun buildCalendarDays(
+        firstWeekday: Int,
+        daysInMonth: Int,
+        selectedDay: Int
+    ): List<CalendarDay> {
+        val daysList = ArrayList<CalendarDay>()
+        val offset = firstWeekday.coerceIn(0, 6)
+        repeat(offset) { daysList.add(CalendarDay(0, 0)) }
+        val totalDays = daysInMonth.coerceIn(28, 31)
+        for (day in 1..totalDays) {
+            val heat = dayDetailMap[day]?.heat_level ?: 0
+            daysList.add(CalendarDay(day, heat, isSelected = (day == selectedDay)))
+        }
+        return daysList
+    }
+
+    private fun showDayToast(dayNumber: Int) {
+        if (dayNumber <= 0) return
+        val detail = dayDetailMap[dayNumber]
+        val message = if (detail != null && detail.distance_km > 0.0) {
+            String.format(
+                Locale.US,
+                "Ngày %02d/%02d: %.2f km (%d buổi)",
+                dayNumber,
+                currentMonth,
+                detail.distance_km,
+                detail.activities_count
+            )
+        } else {
+            String.format(Locale.US, "Ngày %02d/%02d: Chưa có buổi chạy", dayNumber, currentMonth)
+        }
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun renderEmptyState(errorMsg: String) {
+        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+        val fallbackDays = buildCalendarDays(0, 30, -1)
+        rvHeatmap.adapter = CalendarHeatmapAdapter(fallbackDays) { showDayToast(it.dayNumber) }
+        rvMonthRecords.adapter = MonthRecordsAdapter(
+            listOf(
+                MonthRecord("0", "Chưa có dữ liệu", "Vui lòng kiểm tra kết nối mạng", "--", R.drawable.ic_trophy)
+            )
+        )
     }
 }
