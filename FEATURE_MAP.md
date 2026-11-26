@@ -54,7 +54,30 @@ Tài liệu này là nguồn sự thật duy nhất (Contract-First) cho đội 
 - **Admin:** `admin@runtrack.app` / `Admin@123`
 - **Runners:** `runner1@runtrack.app`, `runner2@runtrack.app`, `runner3@runtrack.app` / `Runner@123`
 
-## 4. Ranh Giới Sở Hữu (Dev-Squad Disjoint Ownership)
-- `backend-dev`: `runtrack_backend/{models.py, schemas.py, auth.py, services.py, main.py, admin_routes.py, seed.py}`
-- `ui-ux-dev`: `app/src/main/java/com/example/runtrack/{network/*, ProfileActivity.kt, ProfileFragment.kt, ChangePasswordFragment.kt, search/SearchActivity.kt, TrackingActivity.kt, RunSummaryActivity.kt}`
-- `tester`: `runtrack_backend/test_*.py`, `runtrack_backend/RunTrack_API.postman_collection.json`
+## 4. Hợp Đồng API Cốt Lõi Mở Rộng (Core Features Complete)
+
+### 4.1. Auth Quên mật khẩu OTP
+| Method | Endpoint | Auth | Request | Response |
+| :--- | :--- | :---: | :--- | :--- |
+| `POST` | `/auth/forgot-password` | Public | `{email}` | `200 {message, demo_otp?}` (OTP 6 số, hạn 10 phút, trả `demo_otp` khi `DEMO_MODE=true`) |
+| `POST` | `/auth/reset-password` | Public | `{email, otp, new_password}` | `200 {message}` / `400` |
+
+### 4.2. Tiến Độ Tháng / Năm & Bảng Xếp Hạng (`progress_routes.py`)
+| Method | Endpoint | Auth | Query | Response |
+| :--- | :--- | :---: | :--- | :--- |
+| `GET` | `/progress/month` | Bearer | `?year=&month=` | `200 {year, month, first_weekday, days_in_month, total_distance_km, total_activities, total_duration_minutes, days[], records[]}` |
+| `GET` | `/progress/year` | Bearer | `?year=` | `200 {year, total_distance_km, total_activities, quarters[], records[], achievements[]}` |
+| `GET` | `/leaderboard` | Bearer | `?scope=global\|friends&limit=20` | `200 {scope, total_runners, current_user_rank, entries[]}` |
+
+### 4.3. Chi Tiết CLB, Sự Kiện & Tuyến GPS Art (`community_routes.py`)
+| Method | Endpoint | Auth | Request | Response |
+| :--- | :--- | :---: | :--- | :--- |
+| `GET` | `/clubs/{club_id}/detail` | Bearer | — | `200 {club_id, name, description, member_count, is_joined, members[], events[]}` / `404` |
+| `POST` | `/clubs/events/{event_id}/toggle-register` | Bearer | — | `200 ClubEventItem` / `404` |
+| `GET` | `/gps-art/routes` | Public | — | `200 GpsArtRouteItem[]` (`{id, name, distance_km, city, icon_key, points: [{lat, lng}]}`) |
+| `POST` | `/activities` | Bearer | bổ sung `route_points?: [{lat, lng}]` | `201 ActivityItem` (kèm `route_points`) |
+
+## 5. Ranh Giới Sở Hữu (Dev-Squad Disjoint Ownership)
+- `backend-dev`: `runtrack_backend/{models.py, schemas.py, services.py, main.py, progress_routes.py, community_routes.py, seed.py, docker-compose.yml, .env.example}`, `Others/database/runtrack_schema_and_seed.sql`
+- `ui-ux-dev`: `app/**` (bao gồm `app/build.gradle.kts`, `AndroidManifest.xml`, `local.properties.example`, `network/**`, Progress/Leaderboard/Club/Auth/Profile/GpsArt/Tracking/RunSummary)
+- `tester`: `runtrack_backend/test_*.py`, `runtrack_backend/RunTrack_API.postman_collection.json`, `Others/postman/RunTrack_API.postman_collection.json`

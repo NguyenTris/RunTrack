@@ -10,7 +10,7 @@
 BEGIN;
 
 -- =====================================================================
--- 1. KHỞI TẠO 6 BẢNG CƠ SỞ DỮ LIỆU
+-- 1. KHỞI TẠO 10 BẢNG CƠ SỞ DỮ LIỆU
 -- =====================================================================
 
 CREATE TABLE IF NOT EXISTS users (
@@ -42,8 +42,11 @@ CREATE TABLE IF NOT EXISTS run_activities (
     duration_seconds INTEGER NOT NULL,
     avg_pace_seconds INTEGER NOT NULL DEFAULT 0,
     calories_burned INTEGER NOT NULL DEFAULT 0,
-    start_time TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    start_time TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    route_points TEXT
 );
+
+ALTER TABLE run_activities ADD COLUMN IF NOT EXISTS route_points TEXT;
 
 CREATE TABLE IF NOT EXISTS token_blacklist (
     id SERIAL PRIMARY KEY,
@@ -67,9 +70,49 @@ CREATE TABLE IF NOT EXISTS club_members (
     CONSTRAINT uq_club_member UNIQUE (club_id, user_id)
 );
 
+CREATE TABLE IF NOT EXISTS club_events (
+    id SERIAL PRIMARY KEY,
+    club_id INTEGER NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+    title VARCHAR(150) NOT NULL,
+    schedule_text VARCHAR(120) NOT NULL DEFAULT '',
+    location VARCHAR(200) NOT NULL DEFAULT '',
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'UTC')
+);
+
+CREATE TABLE IF NOT EXISTS club_event_registrations (
+    id SERIAL PRIMARY KEY,
+    event_id INTEGER NOT NULL REFERENCES club_events(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    registered_at TIMESTAMP WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'UTC'),
+    CONSTRAINT uq_club_event_registration UNIQUE (event_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS gps_art_routes (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(150) NOT NULL UNIQUE,
+    distance_km DOUBLE PRECISION NOT NULL,
+    city VARCHAR(100) NOT NULL DEFAULT 'Hà Nội',
+    icon_key VARCHAR(50) NOT NULL DEFAULT 'star',
+    points_json TEXT NOT NULL DEFAULT '[]',
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'UTC')
+);
+
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    otp_code VARCHAR(10) NOT NULL,
+    expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    used INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'UTC')
+);
+
 CREATE INDEX IF NOT EXISTS ix_run_activities_user_id ON run_activities (user_id);
 CREATE INDEX IF NOT EXISTS ix_club_members_club_id ON club_members (club_id);
 CREATE INDEX IF NOT EXISTS ix_club_members_user_id ON club_members (user_id);
+CREATE INDEX IF NOT EXISTS ix_club_events_club_id ON club_events (club_id);
+CREATE INDEX IF NOT EXISTS ix_club_event_registrations_event_id ON club_event_registrations (event_id);
+CREATE INDEX IF NOT EXISTS ix_club_event_registrations_user_id ON club_event_registrations (user_id);
+CREATE INDEX IF NOT EXISTS ix_password_reset_tokens_user_id ON password_reset_tokens (user_id);
 
 -- =====================================================================
 -- 2. NẠP DỮ LIỆU MẪU (USERS, PROFILES, CLUBS, CLUB_MEMBERS, ACTIVITIES)
@@ -147,5 +190,51 @@ FROM (
 ) AS a(id, email, title, distance_km, duration_seconds, avg_pace_seconds, calories_burned, start_time)
 JOIN users u ON u.email = a.email
 ON CONFLICT (id) DO NOTHING;
+
+-- 2.6. 3 sự kiện câu lạc bộ mẫu
+INSERT INTO club_events (club_id, title, schedule_text, location)
+SELECT c.id, e.title, e.schedule_text, e.location
+FROM (
+    VALUES
+        ('RunTrack Ho Chi Minh', 'Long Run Công Viên Gia Định 10K', 'Chủ Nhật 05:30', 'Công viên Gia Định, Phú Nhuận'),
+        ('Sunrise Runners', 'Sunrise Tempo Cầu Ba Son', 'Thứ Bảy 05:15', 'Công viên Bến Bạch Đằng, Quận 1'),
+        ('UIT Runners', 'Chạy Giao Lưu Hồ Đá 5K', 'Chủ Nhật 06:00', 'Cổng chính ĐH CNTT (UIT), Thủ Đức')
+) AS e(club_name, title, schedule_text, location)
+JOIN clubs c ON c.name = e.club_name
+WHERE NOT EXISTS (
+    SELECT 1 FROM club_events ce WHERE ce.club_id = c.id AND ce.title = e.title
+);
+
+-- 2.7. 4 tuyến đường GPS Art mẫu
+INSERT INTO gps_art_routes (name, distance_km, city, icon_key, points_json) VALUES
+    (
+        'Trái Tim Hồ Gươm',
+        5.2,
+        'Hà Nội',
+        'heart',
+        '[{"lat":21.0285,"lng":105.8522},{"lat":21.0310,"lng":105.8500},{"lat":21.0322,"lng":105.8520},{"lat":21.0308,"lng":105.8542},{"lat":21.0322,"lng":105.8564},{"lat":21.0308,"lng":105.8582},{"lat":21.0276,"lng":105.8562},{"lat":21.0252,"lng":105.8542},{"lat":21.0276,"lng":105.8522},{"lat":21.0285,"lng":105.8522}]'
+    ),
+    (
+        'Khủng Long Hồ Tây',
+        8.6,
+        'Hà Nội',
+        'dino',
+        '[{"lat":21.0450,"lng":105.8180},{"lat":21.0485,"lng":105.8205},{"lat":21.0520,"lng":105.8220},{"lat":21.0510,"lng":105.8260},{"lat":21.0475,"lng":105.8285},{"lat":21.0440,"lng":105.8265},{"lat":21.0425,"lng":105.8230},{"lat":21.0450,"lng":105.8180}]'
+    ),
+    (
+        'Sét Đánh Thủ Thiêm',
+        6.4,
+        'TP.HCM',
+        'bolt',
+        '[{"lat":10.7785,"lng":106.7090},{"lat":10.7745,"lng":106.7055},{"lat":10.7740,"lng":106.7100},{"lat":10.7690,"lng":106.7065},{"lat":10.7725,"lng":106.7130},{"lat":10.7735,"lng":106.7095},{"lat":10.7785,"lng":106.7090}]'
+    ),
+    (
+        'Ngôi Sao Công Viên Gia Định',
+        4.8,
+        'TP.HCM',
+        'star',
+        '[{"lat":10.8135,"lng":106.6765},{"lat":10.8108,"lng":106.6780},{"lat":10.8105,"lng":106.6812},{"lat":10.8085,"lng":106.6788},{"lat":10.8058,"lng":106.6798},{"lat":10.8075,"lng":106.6765},{"lat":10.8058,"lng":106.6732},{"lat":10.8085,"lng":106.6742},{"lat":10.8105,"lng":106.6718},{"lat":10.8135,"lng":106.6765}]'
+    )
+ON CONFLICT (name) DO NOTHING;
 
 COMMIT;
