@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import os
+import secrets
 from typing import List, Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
@@ -18,17 +19,20 @@ from auth import (
     revoke_token,
     verify_password,
 )
+from community_routes import router as community_router
 from database import Base, SessionLocal, engine, get_db
-from models import ActivityDB, ClubDB, ClubMemberDB, UserDB, UserProfileDB
+from models import ActivityDB, PasswordResetTokenDB, UserDB, UserProfileDB
+from progress_routes import router as progress_router
 from seed import seed_database
 from schemas import (
     ActivityCreate,
     ActivityItem,
-    ClubResponse,
     ForgotPassword,
+    ForgotPasswordResponse,
     FriendResponse,
     HomeStatsResponse,
     PasswordChange,
+    ResetPasswordRequest,
     UserLogin,
     UserProfileResponse,
     UserProfileUpdate,
@@ -38,23 +42,24 @@ from schemas import (
 )
 from services import (
     VN_TZ,
-    build_club_response,
     build_user_profile_response,
     build_weekly_activities_response,
-    ensure_default_clubs,
+    ensure_activities_route_points_column,
     ensure_users_role_column,
     ensure_utc,
     fetch_weather_and_aqi,
     get_week_activities,
+    serialize_route_points,
     to_activity_item,
 )
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    """Đảm bảo các bảng ORM, cột users.role và dữ liệu mẫu sẵn sàng khi khởi động."""
+    """Đảm bảo các bảng ORM, cột migration và dữ liệu mẫu sẵn sàng khi khởi động."""
     Base.metadata.create_all(bind=engine)
     ensure_users_role_column(engine)
+    ensure_activities_route_points_column(engine)
     if os.getenv("AUTO_SEED_DEMO", "false").strip().lower() == "true":
         db = SessionLocal()
         try:
@@ -76,11 +81,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(admin_router)
+app.include_router(progress_router)
+app.include_router(community_router)
 
 
-# ==========================================
-# 1. AUTHENTICATION APIs
-# ==========================================
 @app.post("/auth/register")
 async def register(data: UserRegister, db: Session = Depends(get_db)):
     existing_user = db.query(UserDB).filter(UserDB.email == data.email).first()
@@ -140,14 +144,48 @@ async def change_password(
     return {"message": "Đổi mật khẩu thành công"}
 
 
-@app.post("/auth/forgot-password")
-async def forgot_password(data: ForgotPassword):
-    return {"message": f"Hướng dẫn đặt lại mật khẩu đã được gửi tới {data.email}"}
+@app.post("/auth/forgot-password", response_model=ForgotPasswordResponse)
+async def forgot_password(data: ForgotPassword, db: Session = Depends(get_db)):
+    user = db.query(UserDB).filter(UserDB.email == data.email).first()
+    demo_otp: Optional[str] = None
+    if user:
+        otp = f"{secrets.randbelow(1000000):06d}"
+        expires_at = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(minutes=10)
+        db.add(PasswordResetTokenDB(user_id=user.id, otp_code=otp, expires_at=expires_at, used=0))
+        db.commit()
+        if os.getenv("DEMO_MODE", "true").strip().lower() == "true":
+            demo_otp = otp
+    return ForgotPasswordResponse(
+        message=f"Hướng dẫn đặt lại mật khẩu đã được gửi tới {data.email}",
+        demo_otp=demo_otp,
+    )
 
 
-# ==========================================
-# 2. USER & TRACKING APIs (Sẽ hoàn thiện ở các bước tiếp theo)
-# ==========================================
+@app.post("/auth/reset-password")
+async def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(UserDB).filter(UserDB.email == data.email).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="Mã OTP không hợp lệ hoặc đã hết hạn")
+    now_naive = datetime.now(timezone.utc).replace(tzinfo=None)
+    token_row = (
+        db.query(PasswordResetTokenDB)
+        .filter(
+            PasswordResetTokenDB.user_id == user.id,
+            PasswordResetTokenDB.otp_code == data.otp.strip(),
+            PasswordResetTokenDB.used == 0,
+            PasswordResetTokenDB.expires_at >= now_naive,
+        )
+        .order_by(PasswordResetTokenDB.id.desc())
+        .first()
+    )
+    if not token_row:
+        raise HTTPException(status_code=400, detail="Mã OTP không hợp lệ hoặc đã hết hạn")
+    user.password_hash = get_password_hash(data.new_password)
+    token_row.used = 1
+    db.commit()
+    return {"message": "Đặt lại mật khẩu thành công"}
+
+
 @app.get("/user/profile", response_model=UserProfileResponse)
 async def get_user_profile(
     current_user: UserDB = Depends(get_current_user),
@@ -253,6 +291,7 @@ async def create_activity(
         avg_pace_seconds=avg_pace,
         calories_burned=calories,
         start_time=start_time_utc,
+        route_points=serialize_route_points(data.route_points),
     )
     db.add(activity)
     db.commit()
@@ -307,43 +346,3 @@ async def search_friends(
         )
         for user, profile in rows
     ]
-
-
-@app.get("/search/clubs", response_model=List[ClubResponse])
-async def search_clubs(
-    q: str = "",
-    page: int = Query(default=1, ge=1),
-    limit: int = Query(default=10, ge=1, le=50),
-    current_user: UserDB = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    if db.query(ClubDB).count() == 0:
-        ensure_default_clubs(db)
-    query = db.query(ClubDB)
-    keyword = q.strip()
-    if keyword:
-        query = query.filter(ClubDB.name.ilike(f"%{keyword}%"))
-    clubs = query.order_by(ClubDB.id.asc()).offset((page - 1) * limit).limit(limit).all()
-    return [build_club_response(club, db, current_user.id) for club in clubs]
-
-
-@app.post("/clubs/{club_id}/toggle-join", response_model=ClubResponse)
-async def toggle_join_club(
-    club_id: int,
-    current_user: UserDB = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    club = db.query(ClubDB).filter(ClubDB.id == club_id).first()
-    if not club:
-        raise HTTPException(status_code=404, detail="Không tìm thấy câu lạc bộ")
-    membership = (
-        db.query(ClubMemberDB)
-        .filter(ClubMemberDB.club_id == club_id, ClubMemberDB.user_id == current_user.id)
-        .first()
-    )
-    if membership:
-        db.delete(membership)
-    else:
-        db.add(ClubMemberDB(club_id=club_id, user_id=current_user.id))
-    db.commit()
-    return build_club_response(club, db, current_user.id)
