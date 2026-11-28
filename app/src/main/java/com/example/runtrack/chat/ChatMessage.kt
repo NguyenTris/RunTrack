@@ -4,5 +4,6 @@ data class ChatMessage(
     val id: String,
     val text: String,
     val time: String,
-    val isFromMe: Boolean
+    val isFromMe: Boolean,
+    val senderAvatarUrl: String? = null
 )

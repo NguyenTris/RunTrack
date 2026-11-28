@@ -11,7 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.ApiConfig
 import com.example.runtrack.network.UserProfileManager
 import com.example.runtrack.network.model.user.UserProfileUpdate
 import com.example.runtrack.network.WeatherManager
@@ -30,6 +32,7 @@ class HomeFragment : Fragment() {
     private lateinit var hotRoutesAdapter: HotRoutesAdapter
 
     // Metric views
+    private var ivAvatar: ImageView? = null
     private var tvUserName: TextView? = null
     private var tvScorePercent: TextView? = null
     private var tvScoreLabel: TextView? = null
@@ -71,6 +74,7 @@ class HomeFragment : Fragment() {
 
     private fun initViews(view: View) {
         rvHotRoutes = view.findViewById(R.id.rv_hot_routes)
+        ivAvatar = view.findViewById(R.id.iv_avatar)
         tvUserName = view.findViewById(R.id.tv_user_name)
         tvScorePercent = view.findViewById(R.id.tv_score_percent)
         tvScoreLabel = view.findViewById(R.id.tv_score_label)
@@ -134,24 +138,57 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadRecoveryAndProfile() {
-        context?.let { ctx ->
-            UserProfileManager.loadProfileAndRecovery(ctx) { profile ->
-                activity?.runOnUiThread {
-                    tvUserName?.text = "Chào ${profile.fullName} 👋"
-                    tvScorePercent?.text = "${profile.recoveryPercentage}%"
-                    tvScoreLabel?.text = profile.recoveryLabel
-                    tvRecoveryValue?.text = profile.displayText
+        val ctx = context ?: return
+        val cachedAvatar = SessionManager.getAvatarUrl(ctx)
+        displayAvatarUrl(cachedAvatar)
 
-                    val colorResId = when {
-                        profile.recoveryPercentage > 85 -> R.color.neon_green
-                        profile.recoveryPercentage > 60 -> R.color.accent_yellow
-                        else -> R.color.hr_zone_5
-                    }
-                    val color = ContextCompat.getColor(ctx, colorResId)
-                    tvScorePercent?.setTextColor(color)
-                    tvScoreLabel?.setTextColor(color)
+        UserProfileManager.loadProfileAndRecovery(ctx) { profile ->
+            activity?.runOnUiThread {
+                tvUserName?.text = "Chào ${profile.fullName} 👋"
+                tvScorePercent?.text = "${profile.recoveryPercentage}%"
+                tvScoreLabel?.text = profile.recoveryLabel
+                tvRecoveryValue?.text = profile.displayText
+
+                val colorResId = when {
+                    profile.recoveryPercentage > 85 -> R.color.neon_green
+                    profile.recoveryPercentage > 60 -> R.color.accent_yellow
+                    else -> R.color.hr_zone_5
                 }
+                val color = ContextCompat.getColor(ctx, colorResId)
+                tvScorePercent?.setTextColor(color)
+                tvScoreLabel?.setTextColor(color)
             }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val res = ApiClient.getAuthenticatedService(ctx).getCurrentUser()
+                if (res.isSuccessful && res.body() != null) {
+                    val u = res.body()!!
+                    u.avatar_url?.let {
+                        SessionManager.saveAvatarUrl(ctx, it)
+                        activity?.runOnUiThread { displayAvatarUrl(it) }
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun displayAvatarUrl(url: String?) {
+        val iv = ivAvatar ?: return
+        if (!isAdded) return
+        if (!url.isNullOrBlank()) {
+            val fullUrl = if (url.startsWith("http://") || url.startsWith("https://")) {
+                url
+            } else {
+                ApiConfig.BASE_URL.trimEnd('/') + "/" + url.trimStart('/')
+            }
+            Glide.with(this)
+                .load(fullUrl)
+                .placeholder(R.drawable.ic_nav_profile)
+                .error(R.drawable.ic_nav_profile)
+                .circleCrop()
+                .into(iv)
         }
     }
 

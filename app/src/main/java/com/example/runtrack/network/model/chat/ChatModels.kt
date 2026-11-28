@@ -13,7 +13,8 @@ data class ConversationDto(
     @SerializedName("is_group") val isGroup: Boolean = false,
     @SerializedName("category") val category: String = "friends",
     @SerializedName("receiver_id") val receiverId: Int? = null,
-    @SerializedName("club_id") val clubId: Int? = null
+    @SerializedName("club_id") val clubId: Int? = null,
+    @SerializedName("avatar_url") val avatarUrl: String? = null
 )
 
 data class ChatMessageDto(
@@ -26,7 +27,8 @@ data class ChatMessageDto(
     @SerializedName("content") val content: String,
     @SerializedName("created_at") val createdAt: String,
     @SerializedName("is_from_me") val isFromMe: Boolean,
-    @SerializedName("time") val time: String
+    @SerializedName("time") val time: String,
+    @SerializedName("sender_avatar_url") val senderAvatarUrl: String? = null
 )
 
 data class SendMessageRequest(

@@ -109,6 +109,7 @@ class ChatActivity : AppCompatActivity() {
                 putExtra("EXTRA_LAST_MSG", item.lastMessage)
                 putExtra("EXTRA_IS_GROUP", item.isGroup)
                 putExtra("EXTRA_IS_ONLINE", item.isOnline)
+                putExtra("EXTRA_AVATAR_URL", item.avatarUrl)
                 item.receiverId?.let { putExtra("EXTRA_RECEIVER_ID", it) }
                 item.clubId?.let { putExtra("EXTRA_CLUB_ID", it) }
             }
@@ -135,6 +136,7 @@ class ChatActivity : AppCompatActivity() {
                             unreadCount = dto.unreadCount,
                             isOnline = dto.isOnline,
                             isGroup = dto.isGroup,
+                            avatarUrl = dto.avatarUrl,
                             category = category,
                             receiverId = dto.receiverId,
                             clubId = dto.clubId
