@@ -1422,6 +1422,72 @@
           }
         }
       ]
+    },
+    {
+      "name": "10. Friends System",
+      "item": [
+        {
+          "name": "Get Friends Overview",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/friends",
+              "host": ["{{base_url}}"],
+              "path": ["friends"]
+            }
+          }
+        },
+        {
+          "name": "Search Friends",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/friends/search?q=",
+              "host": ["{{base_url}}"],
+              "path": ["friends", "search"],
+              "query": [{ "key": "q", "value": "" }]
+            }
+          }
+        },
+        {
+          "name": "Send Friend Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/friends/request/{{target_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["friends", "request", "{{target_user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Accept Friend Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/friends/accept/{{requester_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["friends", "accept", "{{requester_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Remove Friendship",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/friends/{{target_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["friends", "{{target_user_id}}"]
+            }
+          }
+        }
+      ]
     }
   ]
 }

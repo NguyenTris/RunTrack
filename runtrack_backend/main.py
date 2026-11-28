@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from admin_routes import router as admin_router
 from chat_routes import router as chat_router
+from friend_routes import router as friend_router
 from auth import (
     create_access_token,
     decode_token_payload,
@@ -94,6 +95,7 @@ app.include_router(admin_router)
 app.include_router(progress_router)
 app.include_router(community_router)
 app.include_router(chat_router)
+app.include_router(friend_router)
 
 
 @app.post("/auth/register")

@@ -379,3 +379,25 @@ class SendMessageRequest(BaseModel):
     club_id: Optional[int] = None
     content: str = Field(..., min_length=1)
 
+
+class FriendUserItem(BaseModel):
+    id: int
+    full_name: str
+    email: str
+    avatar_url: Optional[str] = None
+
+
+class FriendsOverviewResponse(BaseModel):
+    friends: List[FriendUserItem] = Field(default_factory=list)
+    pending_received: List[FriendUserItem] = Field(default_factory=list)
+    pending_sent: List[FriendUserItem] = Field(default_factory=list)
+
+
+class FriendSearchUserItem(BaseModel):
+    id: int
+    full_name: str
+    email: str
+    avatar_url: Optional[str] = None
+    friend_status: Literal["none", "pending_sent", "pending_received", "accepted"] = "none"
+
+
