@@ -92,3 +92,43 @@ def test_compute_recovery_metrics_boundaries():
     assert res_done["recovery_completed"] is True
     assert res_done["recovery_percentage"] == 100
     assert res_done["recovery_hours_remaining"] == 0.0
+
+
+def test_get_current_user_and_upload_avatar(client):
+    import io
+
+    headers = _register_and_login(client, email="avatar_user@runtrack.vn", full_name="Avatar Tester")
+
+    # 1. GET /users/me
+    me_res = client.get("/users/me", headers=headers)
+    assert me_res.status_code == 200
+    me_data = me_res.json()
+    assert me_data["email"] == "avatar_user@runtrack.vn"
+    assert me_data["full_name"] == "Avatar Tester"
+    assert me_data["id"] is not None
+
+    # 2. Upload avatar hợp lệ (file png)
+    file_bytes = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15c4"
+    files = {"file": ("my_avatar.png", io.BytesIO(file_bytes), "image/png")}
+    up_res = client.post("/users/me/avatar", headers=headers, files=files)
+    assert up_res.status_code == 200
+    up_data = up_res.json()
+    assert up_data["avatar_url"] is not None
+    assert up_data["avatar_url"].startswith("/uploads/avatars/")
+    assert up_data["full_name"] == "Avatar Tester"
+
+    # 3. Kiểm tra static file mount truy cập được công khai
+    static_res = client.get(up_data["avatar_url"])
+    assert static_res.status_code == 200
+    assert static_res.content == file_bytes
+
+    # 4. GET /users/me cập nhật avatar_url mới
+    me_updated = client.get("/users/me", headers=headers)
+    assert me_updated.status_code == 200
+    assert me_updated.json()["avatar_url"] == up_data["avatar_url"]
+
+    # 5. Upload file không hợp lệ -> 400 Bad Request
+    invalid_files = {"file": ("bad_script.exe", io.BytesIO(b"binary"), "application/octet-stream")}
+    bad_res = client.post("/users/me/avatar", headers=headers, files=invalid_files)
+    assert bad_res.status_code == 400
+

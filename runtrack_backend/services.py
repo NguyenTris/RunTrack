@@ -176,8 +176,13 @@ def build_user_profile_response(
     days_completed = sum(1 for done in weekly_flags.values() if done)
     progress_percentage = int((days_completed / 7) * 100)
 
+    avatar = getattr(user, "avatar_url", None) or (profile.avatar_url if profile else None)
+
     return UserProfileResponse(
-        full_name=profile.full_name if profile and profile.full_name else "Runner",
+        id=user.id,
+        email=user.email,
+        full_name=profile.full_name if profile and profile.full_name else (user.email.split("@")[0]),
+        avatar_url=avatar,
         height=float(profile.height_cm) if profile and profile.height_cm is not None else None,
         weight=float(profile.weight_kg) if profile and profile.weight_kg is not None else None,
         weekly_goal_km=float(profile.weekly_goal_km) if profile and profile.weekly_goal_km is not None else 40.0,
@@ -342,3 +347,16 @@ def ensure_activities_route_points_column(db_engine) -> None:
         return
     with db_engine.begin() as conn:
         conn.execute(text("ALTER TABLE run_activities ADD COLUMN route_points TEXT"))
+
+
+def ensure_users_avatar_url_column(db_engine) -> None:
+    """Bổ sung cột users.avatar_url an toàn cho DB cũ (PostgreSQL & SQLite)."""
+    inspector = inspect(db_engine)
+    if not inspector.has_table("users"):
+        return
+    columns = {col["name"] for col in inspector.get_columns("users")}
+    if "avatar_url" in columns:
+        return
+    with db_engine.begin() as conn:
+        conn.execute(text("ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500)"))
+
