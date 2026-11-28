@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
 from database import Base
 
 
@@ -133,3 +133,19 @@ class PasswordResetTokenDB(Base):
     expires_at = Column(DateTime, nullable=False)
     used = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+
+
+class ChatMessageDB(Base):
+    """Bảng lưu tin nhắn chat người dùng và câu lạc bộ."""
+
+    __tablename__ = "chat_messages"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    conversation_id = Column(String(100), nullable=False, index=True)
+    sender_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    receiver_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)
+    club_id = Column(Integer, ForeignKey("clubs.id", ondelete="CASCADE"), nullable=True, index=True)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+    is_read = Column(Boolean, default=False, nullable=False)
+

@@ -5,18 +5,25 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.runtrack.R
+import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.model.chat.SendMessageRequest
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChatDetailActivity : AppCompatActivity() {
 
@@ -24,6 +31,10 @@ class ChatDetailActivity : AppCompatActivity() {
     private lateinit var etInput: EditText
     private lateinit var btnSend: FloatingActionButton
     private lateinit var messageAdapter: ChatMessageAdapter
+
+    private var conversationId: String? = null
+    private var receiverId: Int? = null
+    private var clubId: Int? = null
 
     private val messages = mutableListOf<ChatMessage>()
 
@@ -41,14 +52,21 @@ class ChatDetailActivity : AppCompatActivity() {
             }
         }
 
+        conversationId = intent.getStringExtra("EXTRA_CONVERSATION_ID")
+        val rId = intent.getIntExtra("EXTRA_RECEIVER_ID", -1)
+        if (rId != -1) receiverId = rId
+        val cId = intent.getIntExtra("EXTRA_CLUB_ID", -1)
+        if (cId != -1) clubId = cId
+
         val name = intent.getStringExtra("EXTRA_CHAT_NAME") ?: "Người dùng"
-        val lastMsg = intent.getStringExtra("EXTRA_LAST_MSG") ?: ""
         val isGroup = intent.getBooleanExtra("EXTRA_IS_GROUP", false)
         val isOnline = intent.getBooleanExtra("EXTRA_IS_ONLINE", false)
 
         initHeader(name, isGroup, isOnline)
-        initMessages(lastMsg)
+        initMessagesRecyclerView()
         initInput()
+
+        startMessagePolling()
     }
 
     private fun initHeader(name: String, isGroup: Boolean, isOnline: Boolean) {
@@ -82,27 +100,7 @@ class ChatDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun initMessages(lastMsg: String) {
-        messages.add(
-            ChatMessage(
-                id = "1",
-                text = "Chào bạn! Rất vui được kết nối trên RunTrack.",
-                time = "09:00",
-                isFromMe = false
-            )
-        )
-
-        if (lastMsg.isNotEmpty()) {
-            messages.add(
-                ChatMessage(
-                    id = "2",
-                    text = lastMsg,
-                    time = "09:12",
-                    isFromMe = false
-                )
-            )
-        }
-
+    private fun initMessagesRecyclerView() {
         rvMessages = findViewById(R.id.rv_detail_messages)
         val layoutManager = LinearLayoutManager(this)
         layoutManager.stackFromEnd = true
@@ -119,16 +117,87 @@ class ChatDetailActivity : AppCompatActivity() {
         btnSend.setOnClickListener {
             val text = etInput.text.toString().trim()
             if (text.isNotEmpty()) {
-                val timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-                val newMsg = ChatMessage(
-                    id = System.currentTimeMillis().toString(),
-                    text = text,
-                    time = timeNow,
-                    isFromMe = true
+                sendMessageToServer(text)
+            }
+        }
+    }
+
+    private fun loadMessagesFromServer(scrollToBottom: Boolean = false) {
+        val convId = conversationId ?: return
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(this@ChatDetailActivity)
+                        .getChatMessages(convId)
+                }
+                if (response.isSuccessful && response.body() != null) {
+                    val dtos = response.body()!!
+                    val newMessages = dtos.map { dto ->
+                        ChatMessage(
+                            id = dto.id,
+                            text = dto.content,
+                            time = dto.time,
+                            isFromMe = dto.isFromMe
+                        )
+                    }
+
+                    val isNewMessageAdded = newMessages.size > messageAdapter.itemCount
+                    messageAdapter.updateList(newMessages)
+
+                    if (scrollToBottom || isNewMessageAdded) {
+                        if (messageAdapter.itemCount > 0) {
+                            rvMessages.smoothScrollToPosition(messageAdapter.itemCount - 1)
+                        }
+                    }
+                }
+            } catch (_: Exception) {
+                // Giữ nguyên tin nhắn hiện tại nếu mất kết nối tạm thời
+            }
+        }
+    }
+
+    private fun sendMessageToServer(content: String) {
+        etInput.text.clear()
+        lifecycleScope.launch {
+            try {
+                val req = SendMessageRequest(
+                    conversationId = conversationId,
+                    receiverId = receiverId,
+                    clubId = clubId,
+                    content = content
                 )
-                messageAdapter.addMessage(newMsg)
-                etInput.text.clear()
-                rvMessages.smoothScrollToPosition(messageAdapter.itemCount - 1)
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(this@ChatDetailActivity).sendMessage(req)
+                }
+                if (response.isSuccessful && response.body() != null) {
+                    val dto = response.body()!!
+                    if (conversationId == null) {
+                        conversationId = dto.conversationId
+                    }
+                    val sentMsg = ChatMessage(
+                        id = dto.id,
+                        text = dto.content,
+                        time = dto.time,
+                        isFromMe = true
+                    )
+                    messageAdapter.addMessage(sentMsg)
+                    rvMessages.smoothScrollToPosition(messageAdapter.itemCount - 1)
+                } else {
+                    Toast.makeText(this@ChatDetailActivity, "Không thể gửi tin nhắn", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@ChatDetailActivity, "Lỗi kết nối: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun startMessagePolling() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (true) {
+                    loadMessagesFromServer()
+                    delay(3000)
+                }
             }
         }
     }

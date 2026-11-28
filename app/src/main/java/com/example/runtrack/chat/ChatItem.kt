@@ -9,5 +9,7 @@ data class ChatItem(
     val isOnline: Boolean = false,
     val isGroup: Boolean = false,
     val avatarResId: Int? = null,
-    val category: ChatFilterType = ChatFilterType.FRIENDS
+    val category: ChatFilterType = ChatFilterType.FRIENDS,
+    val receiverId: Int? = null,
+    val clubId: Int? = null
 )
