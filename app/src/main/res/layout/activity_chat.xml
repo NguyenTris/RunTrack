@@ -54,17 +54,18 @@
         app:layout_constraintStart_toEndOf="@+id/tv_logo_r"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_top_right_tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:letterSpacing="0.05"
-        android:text="RT / 07"
-        android:textColor="#55555B"
-        android:textSize="12sp"
+    <ImageView
+        android:id="@+id/btn_manage_friends"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Quản lý bạn bè"
+        android:padding="4dp"
+        android:src="@drawable/ic_person_chat"
         app:layout_constraintBottom_toBottomOf="@+id/tv_app_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_app_name" />
+        app:layout_constraintTop_toTopOf="@+id/tv_app_name"
+        app:tint="#00E5FF" />
 
     <!-- Top Bar Divider -->
     <View

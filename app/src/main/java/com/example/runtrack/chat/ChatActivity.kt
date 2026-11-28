@@ -78,6 +78,10 @@ class ChatActivity : AppCompatActivity() {
             finish()
         }
 
+        findViewById<ImageView>(R.id.btn_manage_friends)?.setOnClickListener {
+            startActivity(Intent(this, com.example.runtrack.friends.FriendsActivity::class.java))
+        }
+
         btnTabAll.setOnClickListener {
             setTabSelected(ChatFilterType.ALL)
         }

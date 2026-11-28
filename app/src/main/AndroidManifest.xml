@@ -132,6 +132,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Friends Management Activity -->
+        <activity
+            android:name=".friends.FriendsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Search Activity -->
         <activity
             android:name=".search.SearchActivity"
