@@ -114,12 +114,6 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Progress & Activity Screen Activity -->
-        <activity
-            android:name=".ProgressActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
         <!-- Main Run Tracking Dashboard Activity -->
         <activity
             android:name=".MainActivity"

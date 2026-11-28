@@ -318,13 +318,19 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav?.selectedItemId = R.id.nav_activity
+    }
+
     private fun setupBottomNavigation() {
         val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav?.selectedItemId = R.id.nav_activity
         bottomNav?.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_activity -> {
-                    startActivity(Intent(this, ProgressActivity::class.java))
-                    false
+                    true
                 }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ProfileActivity::class.java))

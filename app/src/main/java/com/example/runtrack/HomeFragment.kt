@@ -203,10 +203,19 @@ class HomeFragment : Fragment() {
         )
     }
 
+    override fun onResume() {
+        super.onResume()
+        view?.findViewById<BottomNavigationView>(R.id.bottom_navigation)?.selectedItemId = R.id.nav_activity
+    }
+
     private fun setupBottomNavigation(view: View) {
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav?.selectedItemId = R.id.nav_activity
         bottomNav?.setOnItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.nav_activity -> {
+                    true
+                }
                 R.id.nav_profile -> {
                     startActivity(Intent(requireContext(), ProfileActivity::class.java))
                     true
@@ -214,10 +223,6 @@ class HomeFragment : Fragment() {
                 R.id.nav_leaderboard -> {
                     startActivity(Intent(requireContext(), LeaderboardActivity::class.java))
                     true
-                }
-                R.id.nav_activity -> {
-                    startActivity(Intent(requireContext(), ProgressActivity::class.java))
-                    false
                 }
                 R.id.nav_tracking -> {
                     startActivity(Intent(requireContext(), GpsArtActivity::class.java))
