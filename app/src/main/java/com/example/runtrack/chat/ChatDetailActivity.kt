@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,6 +21,7 @@ import com.example.runtrack.R
 import com.example.runtrack.network.ApiClient
 import com.example.runtrack.network.ApiConfig
 import com.example.runtrack.network.model.chat.SendMessageRequest
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.Dispatchers
@@ -34,10 +36,14 @@ class ChatDetailActivity : AppCompatActivity() {
     private lateinit var btnSend: FloatingActionButton
     private lateinit var messageAdapter: ChatMessageAdapter
 
+    private var btnUnfriend: MaterialButton? = null
+    private var tvNotFriendsBanner: TextView? = null
+
     private var conversationId: String? = null
     private var receiverId: Int? = null
     private var clubId: Int? = null
     private var partnerAvatarUrl: String? = null
+    private var partnerName: String = "Người dùng"
 
     private val messages = mutableListOf<ChatMessage>()
 
@@ -62,11 +68,11 @@ class ChatDetailActivity : AppCompatActivity() {
         val cId = intent.getIntExtra("EXTRA_CLUB_ID", -1)
         if (cId != -1) clubId = cId
 
-        val name = intent.getStringExtra("EXTRA_CHAT_NAME") ?: "Người dùng"
+        partnerName = intent.getStringExtra("EXTRA_CHAT_NAME") ?: "Người dùng"
         val isGroup = intent.getBooleanExtra("EXTRA_IS_GROUP", false)
         val isOnline = intent.getBooleanExtra("EXTRA_IS_ONLINE", false)
 
-        initHeader(name, isGroup, isOnline)
+        initHeader(partnerName, isGroup, isOnline)
         initMessagesRecyclerView()
         initInput()
 
@@ -85,15 +91,28 @@ class ChatDetailActivity : AppCompatActivity() {
         val ivGroup = findViewById<ImageView>(R.id.iv_detail_group_icon)
         val ivAvatar = findViewById<ShapeableImageView>(R.id.iv_detail_avatar)
 
+        btnUnfriend = findViewById(R.id.btn_unfriend_chat)
+        tvNotFriendsBanner = findViewById(R.id.tv_not_friends_banner)
+
         if (isGroup) {
             ivGroup?.visibility = View.VISIBLE
             ivAvatar?.visibility = View.GONE
             viewOnline?.visibility = View.GONE
             tvStatus?.text = "Nhóm chạy RunTrack"
+            btnUnfriend?.visibility = View.GONE
         } else {
             ivGroup?.visibility = View.GONE
             ivAvatar?.visibility = View.VISIBLE
-            
+
+            if (receiverId != null) {
+                btnUnfriend?.visibility = View.VISIBLE
+                btnUnfriend?.setOnClickListener {
+                    confirmUnfriend()
+                }
+            } else {
+                btnUnfriend?.visibility = View.GONE
+            }
+
             if (!partnerAvatarUrl.isNullOrBlank() && ivAvatar != null) {
                 val fullUrl = if (partnerAvatarUrl!!.startsWith("http://") || partnerAvatarUrl!!.startsWith("https://")) {
                     partnerAvatarUrl!!
@@ -170,9 +189,10 @@ class ChatDetailActivity : AppCompatActivity() {
                             rvMessages.smoothScrollToPosition(messageAdapter.itemCount - 1)
                         }
                     }
+                } else if (response.code() == 403) {
+                    disableChatForNonFriends()
                 }
             } catch (_: Exception) {
-                // Giữ nguyên tin nhắn hiện tại nếu mất kết nối tạm thời
             }
         }
     }
@@ -204,6 +224,9 @@ class ChatDetailActivity : AppCompatActivity() {
                     )
                     messageAdapter.addMessage(sentMsg)
                     rvMessages.smoothScrollToPosition(messageAdapter.itemCount - 1)
+                } else if (response.code() == 403) {
+                    disableChatForNonFriends()
+                    Toast.makeText(this@ChatDetailActivity, "Hai người chưa kết bạn nên không thể nhắn tin", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this@ChatDetailActivity, "Không thể gửi tin nhắn", Toast.LENGTH_SHORT).show()
                 }
@@ -211,6 +234,46 @@ class ChatDetailActivity : AppCompatActivity() {
                 Toast.makeText(this@ChatDetailActivity, "Lỗi kết nối: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun confirmUnfriend() {
+        val targetId = receiverId ?: return
+        AlertDialog.Builder(this)
+            .setTitle("Hủy kết bạn")
+            .setMessage("Bạn có chắc chắn muốn hủy kết bạn với $partnerName?")
+            .setPositiveButton("Hủy kết bạn") { dialog, _ ->
+                dialog.dismiss()
+                performUnfriend(targetId)
+            }
+            .setNegativeButton("Quay lại", null)
+            .show()
+    }
+
+    private fun performUnfriend(targetUserId: Int) {
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(this@ChatDetailActivity).removeFriendship(targetUserId)
+                }
+                if (response.isSuccessful) {
+                    Toast.makeText(this@ChatDetailActivity, "Đã hủy kết bạn với $partnerName", Toast.LENGTH_SHORT).show()
+                    disableChatForNonFriends()
+                } else {
+                    Toast.makeText(this@ChatDetailActivity, "Hủy kết bạn thất bại", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@ChatDetailActivity, "Lỗi kết nối: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun disableChatForNonFriends() {
+        btnUnfriend?.visibility = View.GONE
+        tvNotFriendsBanner?.visibility = View.VISIBLE
+        etInput.isEnabled = false
+        etInput.hint = "Bạn cần kết bạn để nhắn tin..."
+        btnSend.isEnabled = false
+        btnSend.alpha = 0.5f
     }
 
     private fun startMessagePolling() {
