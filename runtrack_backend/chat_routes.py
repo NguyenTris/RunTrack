@@ -70,6 +70,7 @@ async def get_conversations(
         )
 
         name = profile.full_name if (profile and profile.full_name) else user.email.split("@")[0]
+        avatar = getattr(user, "avatar_url", None) or (profile.avatar_url if profile else None)
         last_content = latest_msg.content if latest_msg else "Chưa có tin nhắn"
         time_str = format_chat_time(latest_msg.created_at) if latest_msg else ""
         created_iso = latest_msg.created_at.isoformat() if latest_msg else ""
@@ -87,6 +88,7 @@ async def get_conversations(
                 category="friends",
                 receiver_id=user.id,
                 club_id=None,
+                avatar_url=avatar,
             )
         )
 
@@ -155,20 +157,23 @@ async def get_messages(
 
     sender_ids = list({m.sender_id for m in messages})
     sender_names = {}
+    sender_avatars = {}
     if sender_ids:
         profiles = (
-            db.query(UserDB.id, UserDB.email, UserProfileDB.full_name)
+            db.query(UserDB.id, UserDB.email, UserDB.avatar_url, UserProfileDB.full_name, UserProfileDB.avatar_url.label("profile_avatar"))
             .outerjoin(UserProfileDB, UserDB.id == UserProfileDB.user_id)
             .filter(UserDB.id.in_(sender_ids))
             .all()
         )
-        for uid, email, fn in profiles:
+        for uid, email, u_avatar, fn, p_avatar in profiles:
             sender_names[uid] = fn if fn else email.split("@")[0]
+            sender_avatars[uid] = u_avatar or p_avatar
 
     result = []
     for msg in messages:
         is_from_me = (msg.sender_id == current_user.id)
         s_name = sender_names.get(msg.sender_id, "Thành viên")
+        s_avatar = sender_avatars.get(msg.sender_id)
         result.append(
             ChatMessageResponse(
                 id=str(msg.id),
@@ -181,6 +186,7 @@ async def get_messages(
                 created_at=msg.created_at.isoformat() if msg.created_at else "",
                 is_from_me=is_from_me,
                 time=format_chat_time(msg.created_at),
+                sender_avatar_url=s_avatar,
             )
         )
     return result
@@ -218,6 +224,7 @@ async def send_message(
 
     profile = db.query(UserProfileDB).filter(UserProfileDB.user_id == current_user.id).first()
     sender_name = profile.full_name if (profile and profile.full_name) else current_user.email.split("@")[0]
+    sender_avatar = getattr(current_user, "avatar_url", None) or (profile.avatar_url if profile else None)
 
     return ChatMessageResponse(
         id=str(new_msg.id),
@@ -230,4 +237,5 @@ async def send_message(
         created_at=new_msg.created_at.isoformat(),
         is_from_me=True,
         time=format_chat_time(new_msg.created_at),
+        sender_avatar_url=sender_avatar,
     )
