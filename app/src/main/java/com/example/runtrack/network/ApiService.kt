@@ -28,6 +28,7 @@ import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -144,4 +145,27 @@ interface ApiService {
     suspend fun sendMessage(
         @Body request: com.example.runtrack.network.model.chat.SendMessageRequest
     ): Response<com.example.runtrack.network.model.chat.ChatMessageDto>
+
+    @GET("friends")
+    suspend fun getFriendsOverview(): Response<com.example.runtrack.network.model.friend.FriendsOverviewResponse>
+
+    @GET("friends/search")
+    suspend fun searchFriendsUsers(
+        @Query("q") q: String = ""
+    ): Response<List<com.example.runtrack.network.model.friend.FriendSearchUserDto>>
+
+    @POST("friends/request/{target_user_id}")
+    suspend fun sendFriendRequest(
+        @Path("target_user_id") targetUserId: Int
+    ): Response<com.example.runtrack.network.model.friend.FriendActionResponse>
+
+    @POST("friends/accept/{requester_id}")
+    suspend fun acceptFriendRequest(
+        @Path("requester_id") requesterId: Int
+    ): Response<com.example.runtrack.network.model.friend.FriendActionResponse>
+
+    @DELETE("friends/{target_user_id}")
+    suspend fun removeFriendship(
+        @Path("target_user_id") targetUserId: Int
+    ): Response<com.example.runtrack.network.model.friend.FriendActionResponse>
 }
