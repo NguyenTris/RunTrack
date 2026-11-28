@@ -118,4 +118,17 @@ interface ApiService {
 
     @POST("clubs/{club_id}/toggle-join")
     suspend fun toggleJoinClub(@Path("club_id") clubId: Int): Response<ClubResponse>
+
+    @GET("chat/conversations")
+    suspend fun getConversations(): Response<List<com.example.runtrack.network.model.chat.ConversationDto>>
+
+    @GET("chat/messages")
+    suspend fun getChatMessages(
+        @Query("conversation_id") conversationId: String
+    ): Response<List<com.example.runtrack.network.model.chat.ChatMessageDto>>
+
+    @POST("chat/messages")
+    suspend fun sendMessage(
+        @Body request: com.example.runtrack.network.model.chat.SendMessageRequest
+    ): Response<com.example.runtrack.network.model.chat.ChatMessageDto>
 }

@@ -332,3 +332,38 @@ class GpsArtRouteItem(BaseModel):
     city: str
     icon_key: str
     points: List[RoutePoint]
+
+
+class ConversationResponse(BaseModel):
+    conversation_id: str
+    name: str
+    last_message: str
+    time: str
+    created_at: Optional[str] = None
+    unread_count: int = 0
+    is_online: bool = False
+    is_group: bool = False
+    category: str = "friends"
+    receiver_id: Optional[int] = None
+    club_id: Optional[int] = None
+
+
+class ChatMessageResponse(BaseModel):
+    id: str
+    conversation_id: str
+    sender_id: int
+    sender_name: str
+    receiver_id: Optional[int] = None
+    club_id: Optional[int] = None
+    content: str
+    created_at: str
+    is_from_me: bool
+    time: str
+
+
+class SendMessageRequest(BaseModel):
+    conversation_id: Optional[str] = None
+    receiver_id: Optional[int] = None
+    club_id: Optional[int] = None
+    content: str = Field(..., min_length=1)
+

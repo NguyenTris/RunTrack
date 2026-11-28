@@ -7,6 +7,7 @@ from community_routes import ensure_default_gps_art_routes
 from database import Base, SessionLocal, engine
 from models import (
     ActivityDB,
+    ChatMessageDB,
     ClubDB,
     ClubEventDB,
     ClubMemberDB,
@@ -153,6 +154,61 @@ def _seed_club_events(db: Session, clubs_by_name: dict[str, ClubDB]) -> None:
         db.commit()
 
 
+SEED_CHAT_MESSAGES = (
+    ("runner1@runtrack.app", "runner2@runtrack.app", None, "Chào Mai! Hôm nay có chạy công viên không?"),
+    ("runner2@runtrack.app", "runner1@runtrack.app", None, "Có chứ Tuấn ơi, 5h30 chiều mình gặp ở cổng nhé!"),
+    ("runner1@runtrack.app", "runner3@runtrack.app", None, "Nam ơi, cuối tuần này Long Run mấy km?"),
+    ("runner3@runtrack.app", "runner1@runtrack.app", None, "Kế hoạch 12km Thủ Thiêm nè Tuấn!"),
+)
+
+
+def _seed_chat_messages(db: Session, users_by_email: dict[str, UserDB], clubs_by_name: dict[str, ClubDB]) -> None:
+    created = False
+    now_utc = datetime.now(timezone.utc)
+    for sender_email, receiver_email, club_name, content in SEED_CHAT_MESSAGES:
+        sender = users_by_email.get(sender_email)
+        receiver = users_by_email.get(receiver_email) if receiver_email else None
+        club = clubs_by_name.get(club_name) if club_name else None
+        if not sender:
+            continue
+        if receiver:
+            min_id, max_id = sorted([sender.id, receiver.id])
+            conv_id = f"dm_{min_id}_{max_id}"
+            rec_id = receiver.id
+            c_id = None
+        elif club:
+            conv_id = f"club_{club.id}"
+            rec_id = None
+            c_id = club.id
+        else:
+            continue
+
+        exists = (
+            db.query(ChatMessageDB)
+            .filter(
+                ChatMessageDB.conversation_id == conv_id,
+                ChatMessageDB.sender_id == sender.id,
+                ChatMessageDB.content == content,
+            )
+            .first()
+        )
+        if not exists:
+            db.add(
+                ChatMessageDB(
+                    conversation_id=conv_id,
+                    sender_id=sender.id,
+                    receiver_id=rec_id,
+                    club_id=c_id,
+                    content=content,
+                    created_at=now_utc - timedelta(minutes=10),
+                    is_read=False,
+                )
+            )
+            created = True
+    if created:
+        db.commit()
+
+
 def seed_database(db: Session) -> dict:
     """Khởi tạo dữ liệu mẫu RunTrack (idempotent, chạy nhiều lần không trùng lặp)."""
     users_by_email = {row[0]: _upsert_user(db, row) for row in SEED_USERS}
@@ -161,12 +217,14 @@ def seed_database(db: Session) -> dict:
     _seed_memberships(db, users_by_email, clubs_by_name)
     _seed_activities(db, users_by_email)
     _seed_club_events(db, clubs_by_name)
+    _seed_chat_messages(db, users_by_email, clubs_by_name)
     ensure_default_gps_art_routes(db)
     return {
         "users": db.query(UserDB).count(),
         "clubs": db.query(ClubDB).count(),
         "club_members": db.query(ClubMemberDB).count(),
         "club_events": db.query(ClubEventDB).count(),
+        "chat_messages": db.query(ChatMessageDB).count(),
         "gps_art_routes": db.query(GpsArtRouteDB).count(),
         "activities": db.query(ActivityDB).count(),
     }

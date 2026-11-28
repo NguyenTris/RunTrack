@@ -10,6 +10,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from admin_routes import router as admin_router
+from chat_routes import router as chat_router
 from auth import (
     create_access_token,
     decode_token_payload,
@@ -83,6 +84,7 @@ app.add_middleware(
 app.include_router(admin_router)
 app.include_router(progress_router)
 app.include_router(community_router)
+app.include_router(chat_router)
 
 
 @app.post("/auth/register")

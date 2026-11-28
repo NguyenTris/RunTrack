@@ -50,4 +50,12 @@ class ChatMessageAdapter(
         messagesList.add(message)
         notifyItemInserted(messagesList.size - 1)
     }
+
+    fun updateList(newList: List<ChatMessage>) {
+        if (newList != messagesList) {
+            messagesList.clear()
+            messagesList.addAll(newList)
+            notifyDataSetChanged()
+        }
+    }
 }

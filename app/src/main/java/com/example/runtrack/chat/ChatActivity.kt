@@ -1,5 +1,6 @@
 package com.example.runtrack.chat
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -8,15 +9,19 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.runtrack.R
+import com.example.runtrack.network.ApiClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChatActivity : AppCompatActivity() {
 
@@ -31,79 +36,7 @@ class ChatActivity : AppCompatActivity() {
 
     private var currentFilter = ChatFilterType.ALL
     private var currentQuery = ""
-
-    private val mockChatList = listOf(
-        ChatItem(
-            id = "1",
-            name = "Đức Huy",
-            lastMessage = "Mình đang ở Hồ Tây, tham gia nhé?",
-            time = "09:12",
-            unreadCount = 2,
-            isOnline = true,
-            isGroup = false,
-            category = ChatFilterType.FRIENDS
-        ),
-        ChatItem(
-            id = "2",
-            name = "Sunrise Runners",
-            lastMessage = "Mai: 5:30 mai gặp ở Nhà Hát Lớn",
-            time = "08:40",
-            unreadCount = 5,
-            isOnline = false,
-            isGroup = true,
-            category = ChatFilterType.GROUPS
-        ),
-        ChatItem(
-            id = "3",
-            name = "Ngọc Mai",
-            lastMessage = "Cảm ơn bạn đã kết bạn nhé!",
-            time = "07:55",
-            unreadCount = 0,
-            isOnline = true,
-            isGroup = false,
-            category = ChatFilterType.FRIENDS
-        ),
-        ChatItem(
-            id = "4",
-            name = "Hoàng Nam",
-            lastMessage = "Đã gửi lộ trình Vòng Hồ Tây 10K",
-            time = "07:30",
-            unreadCount = 1,
-            isOnline = true,
-            isGroup = false,
-            category = ChatFilterType.FRIENDS
-        ),
-        ChatItem(
-            id = "5",
-            name = "CLB Chạy Sài Gòn",
-            lastMessage = "Lịch tập tuần này đã cập nhật",
-            time = "HÔM QUA",
-            unreadCount = 0,
-            isOnline = false,
-            isGroup = true,
-            category = ChatFilterType.GROUPS
-        ),
-        ChatItem(
-            id = "6",
-            name = "Phan Thu Trang",
-            lastMessage = "Chúc mừng bạn lên hạng #5!",
-            time = "HÔM QUA",
-            unreadCount = 0,
-            isOnline = true,
-            isGroup = false,
-            category = ChatFilterType.FRIENDS
-        ),
-        ChatItem(
-            id = "7",
-            name = "Lê Quốc Bảo",
-            lastMessage = "Cuối tuần chạy 10K không?",
-            time = "T6",
-            unreadCount = 0,
-            isOnline = true,
-            isGroup = false,
-            category = ChatFilterType.FRIENDS
-        )
-    )
+    private var allConversations = listOf<ChatItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,7 +55,12 @@ class ChatActivity : AppCompatActivity() {
         initViews()
         setupListeners()
         setupRecyclerView()
-        applyFilters()
+        loadConversationsFromServer()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadConversationsFromServer()
     }
 
     private fun initViews() {
@@ -165,22 +103,55 @@ class ChatActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         rvChatList.layoutManager = LinearLayoutManager(this)
         chatAdapter = ChatAdapter(emptyList()) { item ->
-            val intent = android.content.Intent(this, ChatDetailActivity::class.java).apply {
+            val intent = Intent(this, ChatDetailActivity::class.java).apply {
+                putExtra("EXTRA_CONVERSATION_ID", item.id)
                 putExtra("EXTRA_CHAT_NAME", item.name)
                 putExtra("EXTRA_LAST_MSG", item.lastMessage)
                 putExtra("EXTRA_IS_GROUP", item.isGroup)
                 putExtra("EXTRA_IS_ONLINE", item.isOnline)
+                item.receiverId?.let { putExtra("EXTRA_RECEIVER_ID", it) }
+                item.clubId?.let { putExtra("EXTRA_CLUB_ID", it) }
             }
             startActivity(intent)
         }
         rvChatList.adapter = chatAdapter
     }
 
+    private fun loadConversationsFromServer() {
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    ApiClient.getAuthenticatedService(this@ChatActivity).getConversations()
+                }
+                if (response.isSuccessful && response.body() != null) {
+                    val dtos = response.body()!!
+                    allConversations = dtos.map { dto ->
+                        val category = if (dto.isGroup) ChatFilterType.GROUPS else ChatFilterType.FRIENDS
+                        ChatItem(
+                            id = dto.conversationId,
+                            name = dto.name,
+                            lastMessage = dto.lastMessage,
+                            time = dto.time,
+                            unreadCount = dto.unreadCount,
+                            isOnline = dto.isOnline,
+                            isGroup = dto.isGroup,
+                            category = category,
+                            receiverId = dto.receiverId,
+                            clubId = dto.clubId
+                        )
+                    }
+                    applyFilters()
+                }
+            } catch (_: Exception) {
+                // Giữ nguyên danh sách hiện tại nếu ngoại tuyến
+            }
+        }
+    }
+
     private fun setTabSelected(filterType: ChatFilterType) {
         if (currentFilter == filterType) return
         currentFilter = filterType
 
-        // Update All tab
         if (filterType == ChatFilterType.ALL) {
             btnTabAll.background = ContextCompat.getDrawable(this, R.drawable.bg_chat_tab_selected)
             btnTabAll.setTextColor(Color.WHITE)
@@ -189,7 +160,6 @@ class ChatActivity : AppCompatActivity() {
             btnTabAll.setTextColor(Color.parseColor("#AAAAAA"))
         }
 
-        // Update Friends tab
         if (filterType == ChatFilterType.FRIENDS) {
             btnTabFriends.background = ContextCompat.getDrawable(this, R.drawable.bg_chat_tab_selected)
             btnTabFriends.setTextColor(Color.WHITE)
@@ -198,7 +168,6 @@ class ChatActivity : AppCompatActivity() {
             btnTabFriends.setTextColor(Color.parseColor("#AAAAAA"))
         }
 
-        // Update Groups tab
         if (filterType == ChatFilterType.GROUPS) {
             btnTabGroups.background = ContextCompat.getDrawable(this, R.drawable.bg_chat_tab_selected)
             btnTabGroups.setTextColor(Color.WHITE)
@@ -211,7 +180,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun applyFilters() {
-        val filteredList = mockChatList.filter { item ->
+        val filteredList = allConversations.filter { item ->
             val matchesCategory = when (currentFilter) {
                 ChatFilterType.ALL -> true
                 ChatFilterType.FRIENDS -> item.category == ChatFilterType.FRIENDS
