@@ -167,11 +167,19 @@ class HomeFragment : Fragment() {
                 val res = ApiClient.getAuthenticatedService(ctx).getCurrentUser()
                 if (res.isSuccessful && res.body() != null) {
                     val u = res.body()!!
-                    Log.d("HOME_AVATAR", "getCurrentUser avatar_url = ${u.avatar_url}")
+                    Log.d("HOME_AVATAR", "getCurrentUser avatar_url = ${u.avatar_url}, full_name = ${u.full_name}")
+                    val name = if (!u.full_name.isNullOrBlank()) u.full_name else u.email.substringBefore("@")
+                    SessionManager.saveFullName(ctx, name)
+
                     val avatar = u.avatar_url ?: SessionManager.getAvatarUrl(ctx)
                     if (!avatar.isNullOrBlank()) {
                         SessionManager.saveAvatarUrl(ctx, avatar)
-                        activity?.runOnUiThread { displayAvatarUrl(avatar) }
+                    }
+                    activity?.runOnUiThread {
+                        tvUserName?.text = "Chào $name 👋"
+                        if (!avatar.isNullOrBlank()) {
+                            displayAvatarUrl(avatar)
+                        }
                     }
                 } else {
                     Log.w("HOME_AVATAR", "getCurrentUser failed code=${res.code()}")
