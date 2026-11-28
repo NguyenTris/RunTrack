@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -178,6 +179,9 @@ class HomeFragment : Fragment() {
         val iv = ivAvatar ?: return
         if (!isAdded) return
         if (!url.isNullOrBlank()) {
+            iv.clearColorFilter()
+            ImageViewCompat.setImageTintList(iv, null)
+
             val fullUrl = if (url.startsWith("http://") || url.startsWith("https://")) {
                 url
             } else {
@@ -243,6 +247,7 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         view?.findViewById<BottomNavigationView>(R.id.bottom_navigation)?.selectedItemId = R.id.nav_activity
+        loadRecoveryAndProfile()
     }
 
     private fun setupBottomNavigation(view: View) {
