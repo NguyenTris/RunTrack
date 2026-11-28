@@ -60,6 +60,9 @@ dependencies {
     // Kotlin Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
+    // Image Loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
     // Google Maps SDK
     implementation("com.google.android.gms:play-services-maps:19.0.0")
 

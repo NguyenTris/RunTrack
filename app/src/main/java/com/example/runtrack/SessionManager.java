@@ -15,6 +15,9 @@ public class SessionManager {
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_AUTH_TOKEN = "auth_token";
+    private static final String KEY_USER_ID = "user_id";
+    private static final String KEY_FULL_NAME = "full_name";
+    private static final String KEY_AVATAR_URL = "avatar_url";
 
     private static SharedPreferences getPreferences(Context context) {
         try {
@@ -44,6 +47,9 @@ public class SessionManager {
         editor.putBoolean(KEY_IS_LOGGED_IN, isLoggedIn);
         if (!isLoggedIn) {
             editor.remove(KEY_AUTH_TOKEN);
+            editor.remove(KEY_USER_ID);
+            editor.remove(KEY_FULL_NAME);
+            editor.remove(KEY_AVATAR_URL);
         }
         editor.apply();
     }
@@ -71,6 +77,37 @@ public class SessionManager {
     public static void setUsername(Context context, String username) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
         editor.putString(KEY_USERNAME, username);
+        editor.apply();
+    }
+
+    public static int getUserId(Context context) {
+        return getPreferences(context).getInt(KEY_USER_ID, 0);
+    }
+
+    public static void saveUserId(Context context, int userId) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        editor.putInt(KEY_USER_ID, userId);
+        editor.apply();
+    }
+
+    public static String getFullName(Context context) {
+        String name = getPreferences(context).getString(KEY_FULL_NAME, null);
+        return (name != null && !name.trim().isEmpty()) ? name : getUsername(context);
+    }
+
+    public static void saveFullName(Context context, String fullName) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        editor.putString(KEY_FULL_NAME, fullName);
+        editor.apply();
+    }
+
+    public static String getAvatarUrl(Context context) {
+        return getPreferences(context).getString(KEY_AVATAR_URL, null);
+    }
+
+    public static void saveAvatarUrl(Context context, String avatarUrl) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        editor.putString(KEY_AVATAR_URL, avatarUrl);
         editor.apply();
     }
 
