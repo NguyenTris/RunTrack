@@ -160,29 +160,30 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_marginTop="12dp"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:background="@color/surface_card_sub"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_card_header_label">
 
                         <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_gravity="center"
+                            android:id="@+id/iv_user_avatar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
                             android:contentDescription="Avatar"
                             android:src="@drawable/ic_nav_profile" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                        <ImageView
+                            android:id="@+id/iv_camera_overlay"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_gravity="bottom|end"
                             android:background="@color/kinetic_orange"
-                            android:fontFamily="monospace"
-                            android:paddingHorizontal="3dp"
-                            android:paddingVertical="1dp"
-                            android:text="RUN"
-                            android:textColor="@color/white"
-                            android:textSize="8sp"
-                            android:textStyle="bold" />
+                            android:padding="3dp"
+                            android:contentDescription="Đổi ảnh đại diện"
+                            android:src="@android:drawable/ic_menu_camera"
+                            app:tint="@color/white" />
                     </FrameLayout>
 
                     <!-- Name & Badges -->

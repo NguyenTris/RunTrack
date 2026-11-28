@@ -15,8 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.runtrack.R
 import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.ApiConfig
 import com.example.runtrack.network.model.chat.SendMessageRequest
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
@@ -35,6 +37,7 @@ class ChatDetailActivity : AppCompatActivity() {
     private var conversationId: String? = null
     private var receiverId: Int? = null
     private var clubId: Int? = null
+    private var partnerAvatarUrl: String? = null
 
     private val messages = mutableListOf<ChatMessage>()
 
@@ -53,6 +56,7 @@ class ChatDetailActivity : AppCompatActivity() {
         }
 
         conversationId = intent.getStringExtra("EXTRA_CONVERSATION_ID")
+        partnerAvatarUrl = intent.getStringExtra("EXTRA_AVATAR_URL")
         val rId = intent.getIntExtra("EXTRA_RECEIVER_ID", -1)
         if (rId != -1) receiverId = rId
         val cId = intent.getIntExtra("EXTRA_CLUB_ID", -1)
@@ -89,7 +93,23 @@ class ChatDetailActivity : AppCompatActivity() {
         } else {
             ivGroup?.visibility = View.GONE
             ivAvatar?.visibility = View.VISIBLE
-            ivAvatar?.setImageResource(R.drawable.ic_person_chat)
+            
+            if (!partnerAvatarUrl.isNullOrBlank() && ivAvatar != null) {
+                val fullUrl = if (partnerAvatarUrl!!.startsWith("http://") || partnerAvatarUrl!!.startsWith("https://")) {
+                    partnerAvatarUrl!!
+                } else {
+                    ApiConfig.BASE_URL.trimEnd('/') + "/" + partnerAvatarUrl!!.trimStart('/')
+                }
+                Glide.with(this)
+                    .load(fullUrl)
+                    .placeholder(R.drawable.ic_person_chat)
+                    .error(R.drawable.ic_person_chat)
+                    .circleCrop()
+                    .into(ivAvatar)
+            } else {
+                ivAvatar?.setImageResource(R.drawable.ic_person_chat)
+            }
+
             if (isOnline) {
                 viewOnline?.visibility = View.VISIBLE
                 tvStatus?.text = "Đang hoạt động"
@@ -137,7 +157,8 @@ class ChatDetailActivity : AppCompatActivity() {
                             id = dto.id,
                             text = dto.content,
                             time = dto.time,
-                            isFromMe = dto.isFromMe
+                            isFromMe = dto.isFromMe,
+                            senderAvatarUrl = dto.senderAvatarUrl
                         )
                     }
 
@@ -178,7 +199,8 @@ class ChatDetailActivity : AppCompatActivity() {
                         id = dto.id,
                         text = dto.content,
                         time = dto.time,
-                        isFromMe = true
+                        isFromMe = true,
+                        senderAvatarUrl = dto.senderAvatarUrl
                     )
                     messageAdapter.addMessage(sentMsg)
                     rvMessages.smoothScrollToPosition(messageAdapter.itemCount - 1)

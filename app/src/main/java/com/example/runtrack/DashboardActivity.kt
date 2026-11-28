@@ -19,8 +19,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.util.Log
+import androidx.core.widget.ImageViewCompat
+import com.bumptech.glide.Glide
 import com.example.runtrack.bluetooth.BleHeartRateManager
 import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.ApiConfig
 import com.example.runtrack.network.UserProfileManager
 import com.example.runtrack.network.model.user.UserProfileUpdate
 import com.example.runtrack.network.WeatherManager
@@ -38,6 +42,7 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var hotRoutesAdapter: HotRoutesAdapter
 
     // Header Metrics Views
+    private var ivAvatar: ImageView? = null
     private var tvUserName: TextView? = null
     private var tvScorePercent: TextView? = null
     private var tvScoreLabel: TextView? = null
@@ -102,6 +107,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun initViews() {
         rvHotRoutes = findViewById(R.id.rv_hot_routes)
+        ivAvatar = findViewById(R.id.iv_avatar)
         tvUserName = findViewById(R.id.tv_user_name)
         tvScorePercent = findViewById(R.id.tv_score_percent)
         tvScoreLabel = findViewById(R.id.tv_score_label)
@@ -170,6 +176,9 @@ class DashboardActivity : AppCompatActivity() {
     // 1. LOGIC PHỤC HỒI & READINESS (24 GIỜ LÀ 100%)
     // ========================================================
     private fun loadRecoveryAndProfile() {
+        val cachedAvatar = SessionManager.getAvatarUrl(this)
+        displayAvatarUrl(cachedAvatar)
+
         UserProfileManager.loadProfileAndRecovery(this) { profile ->
             runOnUiThread {
                 tvUserName?.text = "Chào ${profile.fullName} 👋"
@@ -187,6 +196,59 @@ class DashboardActivity : AppCompatActivity() {
                 tvScorePercent?.setTextColor(color)
                 tvScoreLabel?.setTextColor(color)
             }
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val res = ApiClient.getAuthenticatedService(this@DashboardActivity).getCurrentUser()
+                if (res.isSuccessful && res.body() != null) {
+                    val u = res.body()!!
+                    Log.d("HOME_AVATAR", "getCurrentUser avatar_url = ${u.avatar_url}, full_name = ${u.full_name}")
+                    val name = if (!u.full_name.isNullOrBlank()) u.full_name else u.email.substringBefore("@")
+                    SessionManager.saveFullName(this@DashboardActivity, name)
+
+                    val avatar = u.avatar_url ?: SessionManager.getAvatarUrl(this@DashboardActivity)
+                    if (!avatar.isNullOrBlank()) {
+                        SessionManager.saveAvatarUrl(this@DashboardActivity, avatar)
+                    }
+                    runOnUiThread {
+                        tvUserName?.text = "Chào $name 👋"
+                        if (!avatar.isNullOrBlank()) {
+                            displayAvatarUrl(avatar)
+                        }
+                    }
+                } else {
+                    Log.w("HOME_AVATAR", "getCurrentUser failed code=${res.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("HOME_AVATAR", "getCurrentUser error: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun displayAvatarUrl(url: String?) {
+        val iv = ivAvatar ?: return
+        if (isFinishing || isDestroyed) return
+        Log.d("HOME_AVATAR", "displayAvatarUrl raw url = $url")
+        if (!url.isNullOrBlank()) {
+            val fullUrl = if (url.startsWith("http://") || url.startsWith("https://")) {
+                url
+            } else {
+                ApiConfig.BASE_URL.trimEnd('/') + "/" + url.trimStart('/')
+            }
+            Log.d("HOME_AVATAR", "displayAvatarUrl fullUrl = $fullUrl")
+
+            iv.setPadding(0, 0, 0, 0)
+            iv.scaleType = ImageView.ScaleType.CENTER_CROP
+            iv.clearColorFilter()
+            ImageViewCompat.setImageTintList(iv, null)
+
+            Glide.with(this)
+                .load(fullUrl)
+                .placeholder(R.drawable.ic_nav_profile)
+                .error(R.drawable.ic_nav_profile)
+                .circleCrop()
+                .into(iv)
         }
     }
 
@@ -322,6 +384,7 @@ class DashboardActivity : AppCompatActivity() {
         super.onResume()
         val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottom_navigation)
         bottomNav?.selectedItemId = R.id.nav_activity
+        loadRecoveryAndProfile()
     }
 
     private fun setupBottomNavigation() {

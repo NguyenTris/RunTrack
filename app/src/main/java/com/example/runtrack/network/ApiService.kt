@@ -23,13 +23,17 @@ import com.example.runtrack.network.model.search.FriendResponse
 import com.example.runtrack.network.model.user.UserProfileDto
 import com.example.runtrack.network.model.user.UserProfileResponse
 import com.example.runtrack.network.model.user.UserProfileUpdate
+import com.example.runtrack.network.model.user.UserResponse
 import com.google.gson.JsonObject
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -82,6 +86,15 @@ interface ApiService {
     suspend fun getUserProfile(
         @Header("Authorization") authorization: String? = null
     ): Response<UserProfileDto>
+
+    @GET("users/me")
+    suspend fun getCurrentUser(): Response<UserResponse>
+
+    @Multipart
+    @POST("users/me/avatar")
+    suspend fun uploadAvatar(
+        @Part file: MultipartBody.Part
+    ): Response<UserResponse>
 
     @PUT("user/profile")
     suspend fun updateUserProfile(

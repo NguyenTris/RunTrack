@@ -44,8 +44,18 @@ class WeeklyProgress(BaseModel):
     sunday: bool
 
 
-class UserProfileResponse(BaseModel):
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
     full_name: str
+    avatar_url: Optional[str] = None
+
+
+class UserProfileResponse(BaseModel):
+    id: Optional[int] = None
+    email: Optional[str] = None
+    full_name: str
+    avatar_url: Optional[str] = None
     height: Optional[float] = None
     weight: Optional[float] = None
     weekly_goal_km: float = 40.0
@@ -346,6 +356,7 @@ class ConversationResponse(BaseModel):
     category: str = "friends"
     receiver_id: Optional[int] = None
     club_id: Optional[int] = None
+    avatar_url: Optional[str] = None
 
 
 class ChatMessageResponse(BaseModel):
@@ -359,6 +370,7 @@ class ChatMessageResponse(BaseModel):
     created_at: str
     is_from_me: bool
     time: str
+    sender_avatar_url: Optional[str] = None
 
 
 class SendMessageRequest(BaseModel):

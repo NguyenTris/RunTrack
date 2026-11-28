@@ -2,10 +2,12 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 import os
 import secrets
+import uuid
 from typing import List, Optional
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
+from fastapi import Depends, FastAPI, File, Header, HTTPException, Query, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
@@ -38,6 +40,7 @@ from schemas import (
     UserProfileResponse,
     UserProfileUpdate,
     UserRegister,
+    UserResponse,
     WeatherResponse,
     WeeklyActivitiesResponse,
 )
@@ -46,6 +49,7 @@ from services import (
     build_user_profile_response,
     build_weekly_activities_response,
     ensure_activities_route_points_column,
+    ensure_users_avatar_url_column,
     ensure_users_role_column,
     ensure_utc,
     fetch_weather_and_aqi,
@@ -61,6 +65,8 @@ async def lifespan(_app: FastAPI):
     Base.metadata.create_all(bind=engine)
     ensure_users_role_column(engine)
     ensure_activities_route_points_column(engine)
+    ensure_users_avatar_url_column(engine)
+    os.makedirs("uploads/avatars", exist_ok=True)
     if os.getenv("AUTO_SEED_DEMO", "false").strip().lower() == "true":
         db = SessionLocal()
         try:
@@ -71,6 +77,9 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="RunTrack Backend API (SQL Schema)", lifespan=lifespan)
+
+os.makedirs("uploads/avatars", exist_ok=True)
+app.mount("/uploads/avatars", StaticFiles(directory="uploads/avatars"), name="avatars")
 
 _raw_origins = os.getenv("CORS_ORIGINS", "*").strip()
 _cors_origins = ["*"] if _raw_origins == "*" else [o.strip() for o in _raw_origins.split(",") if o.strip()]
@@ -220,6 +229,68 @@ async def update_user_profile(
     db.refresh(profile)
 
     return build_user_profile_response(current_user, profile, db)
+
+
+@app.get("/users/me", response_model=UserResponse)
+async def get_current_user_info(
+    current_user: UserDB = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    profile = db.query(UserProfileDB).filter(UserProfileDB.user_id == current_user.id).first()
+    full_name = profile.full_name if profile and profile.full_name else current_user.email.split("@")[0]
+    avatar = getattr(current_user, "avatar_url", None) or (profile.avatar_url if profile else None)
+    return UserResponse(
+        id=current_user.id,
+        email=current_user.email,
+        full_name=full_name,
+        avatar_url=avatar,
+    )
+
+
+@app.post("/users/me/avatar", response_model=UserResponse)
+async def upload_user_avatar(
+    file: UploadFile = File(...),
+    current_user: UserDB = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    filename = file.filename or ""
+    ext = os.path.splitext(filename)[1].lower()
+    if ext not in [".jpg", ".jpeg", ".png", ".webp"] and not (file.content_type and file.content_type.startswith("image/")):
+        raise HTTPException(
+            status_code=400,
+            detail="Định dạng ảnh không hợp lệ (chấp nhận jpg, png, webp)",
+        )
+    if not ext:
+        ext = ".png"
+
+    os.makedirs("uploads/avatars", exist_ok=True)
+    saved_filename = f"avatar_{current_user.id}_{uuid.uuid4().hex[:8]}{ext}"
+    file_path = os.path.join("uploads/avatars", saved_filename)
+
+    content = await file.read()
+    with open(file_path, "wb") as f:
+        f.write(content)
+
+    avatar_url = f"/uploads/avatars/{saved_filename}"
+
+    current_user.avatar_url = avatar_url
+    profile = db.query(UserProfileDB).filter(UserProfileDB.user_id == current_user.id).first()
+    if not profile:
+        profile = UserProfileDB(user_id=current_user.id, avatar_url=avatar_url)
+        db.add(profile)
+    else:
+        profile.avatar_url = avatar_url
+
+    db.commit()
+    db.refresh(current_user)
+
+    full_name = profile.full_name if profile and profile.full_name else current_user.email.split("@")[0]
+    return UserResponse(
+        id=current_user.id,
+        email=current_user.email,
+        full_name=full_name,
+        avatar_url=avatar_url,
+    )
 
 
 @app.get("/dashboard/home-stats", response_model=HomeStatsResponse)

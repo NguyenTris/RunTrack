@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.runtrack.R
+import com.example.runtrack.network.ApiConfig
 import com.google.android.material.imageview.ShapeableImageView
 
 class ChatAdapter(
@@ -46,8 +48,20 @@ class ChatAdapter(
         } else {
             holder.ivGroupIcon.visibility = View.GONE
             holder.ivAvatar.visibility = View.VISIBLE
-            
-            if (item.avatarResId != null) {
+
+            if (!item.avatarUrl.isNullOrBlank()) {
+                val fullUrl = if (item.avatarUrl.startsWith("http://") || item.avatarUrl.startsWith("https://")) {
+                    item.avatarUrl
+                } else {
+                    ApiConfig.BASE_URL.trimEnd('/') + "/" + item.avatarUrl.trimStart('/')
+                }
+                Glide.with(holder.itemView.context)
+                    .load(fullUrl)
+                    .placeholder(R.drawable.ic_person_chat)
+                    .error(R.drawable.ic_person_chat)
+                    .circleCrop()
+                    .into(holder.ivAvatar)
+            } else if (item.avatarResId != null) {
                 holder.ivAvatar.setImageResource(item.avatarResId)
             } else {
                 holder.ivAvatar.setImageResource(R.drawable.ic_person_chat)

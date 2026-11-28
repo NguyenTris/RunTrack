@@ -10,8 +10,18 @@ data class WeeklyProgressDto(
     val sunday: Boolean = false
 )
 
+data class UserResponse(
+    val id: Int = 0,
+    val email: String = "",
+    val full_name: String? = null,
+    val avatar_url: String? = null
+)
+
 data class UserProfileDto(
+    val id: Int? = null,
+    val email: String? = null,
     val full_name: String = "Runner",
+    val avatar_url: String? = null,
     val height: Float? = null,
     val weight: Float? = null,
     val weekly_goal_km: Float = 40.0f,

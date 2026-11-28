@@ -2,16 +2,20 @@ package com.example.runtrack
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.runtrack.network.ApiClient
+import com.example.runtrack.network.ApiConfig
 import com.example.runtrack.network.UserProfileManager
 import com.example.runtrack.network.model.user.UserProfileUpdate
 import com.example.runtrack.network.WeatherManager
@@ -30,6 +34,7 @@ class HomeFragment : Fragment() {
     private lateinit var hotRoutesAdapter: HotRoutesAdapter
 
     // Metric views
+    private var ivAvatar: ImageView? = null
     private var tvUserName: TextView? = null
     private var tvScorePercent: TextView? = null
     private var tvScoreLabel: TextView? = null
@@ -71,6 +76,7 @@ class HomeFragment : Fragment() {
 
     private fun initViews(view: View) {
         rvHotRoutes = view.findViewById(R.id.rv_hot_routes)
+        ivAvatar = view.findViewById(R.id.iv_avatar)
         tvUserName = view.findViewById(R.id.tv_user_name)
         tvScorePercent = view.findViewById(R.id.tv_score_percent)
         tvScoreLabel = view.findViewById(R.id.tv_score_label)
@@ -134,24 +140,79 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadRecoveryAndProfile() {
-        context?.let { ctx ->
-            UserProfileManager.loadProfileAndRecovery(ctx) { profile ->
-                activity?.runOnUiThread {
-                    tvUserName?.text = "Chào ${profile.fullName} 👋"
-                    tvScorePercent?.text = "${profile.recoveryPercentage}%"
-                    tvScoreLabel?.text = profile.recoveryLabel
-                    tvRecoveryValue?.text = profile.displayText
+        val ctx = context ?: return
+        val cachedAvatar = SessionManager.getAvatarUrl(ctx)
+        displayAvatarUrl(cachedAvatar)
 
-                    val colorResId = when {
-                        profile.recoveryPercentage > 85 -> R.color.neon_green
-                        profile.recoveryPercentage > 60 -> R.color.accent_yellow
-                        else -> R.color.hr_zone_5
-                    }
-                    val color = ContextCompat.getColor(ctx, colorResId)
-                    tvScorePercent?.setTextColor(color)
-                    tvScoreLabel?.setTextColor(color)
+        UserProfileManager.loadProfileAndRecovery(ctx) { profile ->
+            activity?.runOnUiThread {
+                tvUserName?.text = "Chào ${profile.fullName} 👋"
+                tvScorePercent?.text = "${profile.recoveryPercentage}%"
+                tvScoreLabel?.text = profile.recoveryLabel
+                tvRecoveryValue?.text = profile.displayText
+
+                val colorResId = when {
+                    profile.recoveryPercentage > 85 -> R.color.neon_green
+                    profile.recoveryPercentage > 60 -> R.color.accent_yellow
+                    else -> R.color.hr_zone_5
                 }
+                val color = ContextCompat.getColor(ctx, colorResId)
+                tvScorePercent?.setTextColor(color)
+                tvScoreLabel?.setTextColor(color)
             }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val res = ApiClient.getAuthenticatedService(ctx).getCurrentUser()
+                if (res.isSuccessful && res.body() != null) {
+                    val u = res.body()!!
+                    Log.d("HOME_AVATAR", "getCurrentUser avatar_url = ${u.avatar_url}, full_name = ${u.full_name}")
+                    val name = if (!u.full_name.isNullOrBlank()) u.full_name else u.email.substringBefore("@")
+                    SessionManager.saveFullName(ctx, name)
+
+                    val avatar = u.avatar_url ?: SessionManager.getAvatarUrl(ctx)
+                    if (!avatar.isNullOrBlank()) {
+                        SessionManager.saveAvatarUrl(ctx, avatar)
+                    }
+                    activity?.runOnUiThread {
+                        tvUserName?.text = "Chào $name 👋"
+                        if (!avatar.isNullOrBlank()) {
+                            displayAvatarUrl(avatar)
+                        }
+                    }
+                } else {
+                    Log.w("HOME_AVATAR", "getCurrentUser failed code=${res.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("HOME_AVATAR", "getCurrentUser error: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun displayAvatarUrl(url: String?) {
+        val iv = ivAvatar ?: return
+        if (!isAdded) return
+        Log.d("HOME_AVATAR", "displayAvatarUrl raw url = $url")
+        if (!url.isNullOrBlank()) {
+            val fullUrl = if (url.startsWith("http://") || url.startsWith("https://")) {
+                url
+            } else {
+                ApiConfig.BASE_URL.trimEnd('/') + "/" + url.trimStart('/')
+            }
+            Log.d("HOME_AVATAR", "displayAvatarUrl fullUrl = $fullUrl")
+
+            iv.setPadding(0, 0, 0, 0)
+            iv.scaleType = ImageView.ScaleType.CENTER_CROP
+            iv.clearColorFilter()
+            ImageViewCompat.setImageTintList(iv, null)
+
+            Glide.with(this)
+                .load(fullUrl)
+                .placeholder(R.drawable.ic_nav_profile)
+                .error(R.drawable.ic_nav_profile)
+                .circleCrop()
+                .into(iv)
         }
     }
 
@@ -206,6 +267,7 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         view?.findViewById<BottomNavigationView>(R.id.bottom_navigation)?.selectedItemId = R.id.nav_activity
+        loadRecoveryAndProfile()
     }
 
     private fun setupBottomNavigation(view: View) {

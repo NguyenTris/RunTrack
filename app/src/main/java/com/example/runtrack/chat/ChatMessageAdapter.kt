@@ -6,13 +6,17 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.runtrack.R
+import com.example.runtrack.network.ApiConfig
+import com.google.android.material.imageview.ShapeableImageView
 
 class ChatMessageAdapter(
     private val messagesList: MutableList<ChatMessage>
 ) : RecyclerView.Adapter<ChatMessageAdapter.MessageViewHolder>() {
 
     class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val ivReceivedAvatar: ShapeableImageView? = itemView.findViewById(R.id.iv_received_avatar)
         val layoutReceived: LinearLayout = itemView.findViewById(R.id.layout_received_message)
         val tvReceivedText: TextView = itemView.findViewById(R.id.tv_received_text)
         val tvReceivedTime: TextView = itemView.findViewById(R.id.tv_received_time)
@@ -34,13 +38,32 @@ class ChatMessageAdapter(
         if (message.isFromMe) {
             holder.layoutSent.visibility = View.VISIBLE
             holder.layoutReceived.visibility = View.GONE
+            holder.ivReceivedAvatar?.visibility = View.GONE
             holder.tvSentText.text = message.text
             holder.tvSentTime.text = message.time
         } else {
             holder.layoutReceived.visibility = View.VISIBLE
             holder.layoutSent.visibility = View.GONE
+            holder.ivReceivedAvatar?.visibility = View.VISIBLE
             holder.tvReceivedText.text = message.text
             holder.tvReceivedTime.text = message.time
+
+            val avatarUrl = message.senderAvatarUrl
+            if (!avatarUrl.isNullOrBlank() && holder.ivReceivedAvatar != null) {
+                val fullUrl = if (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://")) {
+                    avatarUrl
+                } else {
+                    ApiConfig.BASE_URL.trimEnd('/') + "/" + avatarUrl.trimStart('/')
+                }
+                Glide.with(holder.itemView.context)
+                    .load(fullUrl)
+                    .placeholder(R.drawable.ic_person_chat)
+                    .error(R.drawable.ic_person_chat)
+                    .circleCrop()
+                    .into(holder.ivReceivedAvatar)
+            } else {
+                holder.ivReceivedAvatar?.setImageResource(R.drawable.ic_person_chat)
+            }
         }
     }
 
