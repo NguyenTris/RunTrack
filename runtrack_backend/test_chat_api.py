@@ -1,7 +1,7 @@
 import pytest
 
 from auth import create_access_token, get_password_hash
-from models import UserDB, UserProfileDB
+from models import FriendshipDB, UserDB, UserProfileDB
 
 
 @pytest.fixture
@@ -23,6 +23,14 @@ def test_users(db_session):
         db_session.commit()
         db_session.refresh(u2)
         db_session.add(UserProfileDB(user_id=u2.id, full_name="User Chat Two"))
+        db_session.commit()
+
+    existing_f = db_session.query(FriendshipDB).filter(
+        FriendshipDB.requester_id == u1.id,
+        FriendshipDB.addressee_id == u2.id
+    ).first()
+    if not existing_f:
+        db_session.add(FriendshipDB(requester_id=u1.id, addressee_id=u2.id, status="accepted"))
         db_session.commit()
 
     token1 = create_access_token({"sub": u1.email})

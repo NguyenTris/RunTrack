@@ -2,11 +2,12 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
 from auth import get_current_user
 from database import get_db
-from models import ChatMessageDB, ClubDB, ClubMemberDB, UserDB, UserProfileDB
+from models import ChatMessageDB, ClubDB, ClubMemberDB, FriendshipDB, UserDB, UserProfileDB
 from schemas import ChatMessageResponse, ConversationResponse, SendMessageRequest
 from services import VN_TZ, ensure_utc
 
@@ -27,6 +28,22 @@ def format_chat_time(dt: Optional[datetime]) -> str:
         return dt_vn.strftime("%d/%m")
 
 
+def _check_are_friends(user1_id: int, user2_id: int, db: Session) -> bool:
+    """Kiểm tra 2 người dùng có quan hệ bạn bè status == 'accepted' hay không."""
+    f = (
+        db.query(FriendshipDB)
+        .filter(
+            FriendshipDB.status == "accepted",
+            or_(
+                and_(FriendshipDB.requester_id == user1_id, FriendshipDB.addressee_id == user2_id),
+                and_(FriendshipDB.requester_id == user2_id, FriendshipDB.addressee_id == user1_id),
+            ),
+        )
+        .first()
+    )
+    return f is not None
+
+
 @router.get("/chat/conversations", response_model=List[ConversationResponse])
 async def get_conversations(
     current_user: UserDB = Depends(get_current_user),
@@ -39,16 +56,35 @@ async def get_conversations(
         .all()
     )
 
-    other_users = (
-        db.query(UserDB, UserProfileDB)
-        .outerjoin(UserProfileDB, UserDB.id == UserProfileDB.user_id)
-        .filter(UserDB.id != current_user.id)
+    accepted_friendships = (
+        db.query(FriendshipDB)
+        .filter(
+            FriendshipDB.status == "accepted",
+            or_(
+                FriendshipDB.requester_id == current_user.id,
+                FriendshipDB.addressee_id == current_user.id,
+            ),
+        )
         .all()
     )
 
+    friend_ids = {
+        f.addressee_id if f.requester_id == current_user.id else f.requester_id
+        for f in accepted_friendships
+    }
+
+    friend_users = []
+    if friend_ids:
+        friend_users = (
+            db.query(UserDB, UserProfileDB)
+            .outerjoin(UserProfileDB, UserDB.id == UserProfileDB.user_id)
+            .filter(UserDB.id.in_(friend_ids))
+            .all()
+        )
+
     conversations = []
 
-    for user, profile in other_users:
+    for user, profile in friend_users:
         min_id, max_id = sorted([current_user.id, user.id])
         conv_id = f"dm_{min_id}_{max_id}"
 
@@ -141,6 +177,16 @@ async def get_messages(
     current_user: UserDB = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    if conversation_id.startswith("dm_"):
+        try:
+            parts = conversation_id.replace("dm_", "").split("_")
+            u1, u2 = int(parts[0]), int(parts[1])
+            target_id = u2 if u1 == current_user.id else u1
+            if not _check_are_friends(current_user.id, target_id, db):
+                raise HTTPException(status_code=403, detail="Hai người chưa kết bạn nên không thể nhắn tin")
+        except (ValueError, IndexError):
+            pass
+
     db.query(ChatMessageDB).filter(
         ChatMessageDB.conversation_id == conversation_id,
         ChatMessageDB.sender_id != current_user.id,
@@ -199,6 +245,8 @@ async def send_message(
     db: Session = Depends(get_db),
 ):
     conv_id = data.conversation_id
+    target_user_id: Optional[int] = data.receiver_id
+
     if not conv_id:
         if data.receiver_id:
             min_id, max_id = sorted([current_user.id, data.receiver_id])
@@ -207,6 +255,17 @@ async def send_message(
             conv_id = f"club_{data.club_id}"
         else:
             raise HTTPException(status_code=400, detail="Thiếu conversation_id, receiver_id hoặc club_id")
+    elif conv_id.startswith("dm_") and target_user_id is None:
+        try:
+            parts = conv_id.replace("dm_", "").split("_")
+            u1, u2 = int(parts[0]), int(parts[1])
+            target_user_id = u2 if u1 == current_user.id else u1
+        except (ValueError, IndexError):
+            pass
+
+    if target_user_id is not None and target_user_id != current_user.id:
+        if not _check_are_friends(current_user.id, target_user_id, db):
+            raise HTTPException(status_code=403, detail="Hai người chưa kết bạn nên không thể nhắn tin")
 
     now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
     new_msg = ChatMessageDB(
