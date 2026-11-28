@@ -2,6 +2,7 @@ package com.example.runtrack
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -166,27 +167,38 @@ class HomeFragment : Fragment() {
                 val res = ApiClient.getAuthenticatedService(ctx).getCurrentUser()
                 if (res.isSuccessful && res.body() != null) {
                     val u = res.body()!!
-                    u.avatar_url?.let {
-                        SessionManager.saveAvatarUrl(ctx, it)
-                        activity?.runOnUiThread { displayAvatarUrl(it) }
+                    Log.d("HOME_AVATAR", "getCurrentUser avatar_url = ${u.avatar_url}")
+                    val avatar = u.avatar_url ?: SessionManager.getAvatarUrl(ctx)
+                    if (!avatar.isNullOrBlank()) {
+                        SessionManager.saveAvatarUrl(ctx, avatar)
+                        activity?.runOnUiThread { displayAvatarUrl(avatar) }
                     }
+                } else {
+                    Log.w("HOME_AVATAR", "getCurrentUser failed code=${res.code()}")
                 }
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                Log.e("HOME_AVATAR", "getCurrentUser error: ${e.message}", e)
+            }
         }
     }
 
     private fun displayAvatarUrl(url: String?) {
         val iv = ivAvatar ?: return
         if (!isAdded) return
+        Log.d("HOME_AVATAR", "displayAvatarUrl raw url = $url")
         if (!url.isNullOrBlank()) {
-            iv.clearColorFilter()
-            ImageViewCompat.setImageTintList(iv, null)
-
             val fullUrl = if (url.startsWith("http://") || url.startsWith("https://")) {
                 url
             } else {
                 ApiConfig.BASE_URL.trimEnd('/') + "/" + url.trimStart('/')
             }
+            Log.d("HOME_AVATAR", "displayAvatarUrl fullUrl = $fullUrl")
+
+            iv.setPadding(0, 0, 0, 0)
+            iv.scaleType = ImageView.ScaleType.CENTER_CROP
+            iv.clearColorFilter()
+            ImageViewCompat.setImageTintList(iv, null)
+
             Glide.with(this)
                 .load(fullUrl)
                 .placeholder(R.drawable.ic_nav_profile)
